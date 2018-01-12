@@ -1,5 +1,4 @@
-from django.conf.urls import url, include
-from django.contrib.auth.views import logout_then_login
+from django.conf.urls import url
 from multimeter import views
 
 urlpatterns = [

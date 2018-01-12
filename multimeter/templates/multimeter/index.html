@@ -4,65 +4,9 @@
     <div class="container">
         <div class="row">
             <div class="col-xs-12">
-                <h1>{% block title %}{% trans 'Problem batches' %}{% endblock %}</h1>
-                {% if object_list %}
-                    <table class="table table-condensed table-hover">
-                        <thead>
-                        <tr>
-                            <th>{% trans 'name'|capfirst %}</th>
-                            <th>{% trans 'start'|capfirst %}</th>
-                            <th>{% trans 'stop'|capfirst %}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for object in object_list %}
-                            <tr data-id="{{ object.id }}"{% if now >= object.start and now <= object.stop %} class="clickable-row"{% endif %}>
-                                <td>{{ object.name }}</td>
-                                <td>{{ object.start|date:"Y-m-d H:i" }}</td>
-                                <td>{{ object.stop|date:"Y-m-d H:i" }}</td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                    {% if page_obj.paginator.num_pages > 1 %}
-                        <ul class="pager">
-                            {% if page_obj.has_previous %}
-                                <li class="previous">
-                                    <a href="?page={{ page_obj.previous_page_number }}">
-                                        <span>&larr;</span>
-                                    </a>
-                                </li>
-                            {% else %}
-                                <li class="previous disabled"><a href="#"><span>&larr;</span></a></li>
-                            {% endif %}
-                            <li>{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</li>
-                            {% if page_obj.has_next %}
-                                <li class="next">
-                                    <a href="?page={{ page_obj.next_page_number }}">
-                                        <span>&rarr;</span>
-                                    </a>
-                                </li>
-                            {% else %}
-                                <li class="next disabled"><a href="#"><span>&rarr;</span></a></li>
-                            {% endif %}
-                        </ul>
-                    {% endif %}
-                {% else %}
-                    <p>{% trans 'There are no accessible for you problem batches.' %}</p>
-                {% endif %}
+                <h1>{% block title %}{% trans 'Index page' %}{% endblock %}</h1>
             </div>
         </div>
     </div>
 {% endblock %}
-{% block scripts %}
-    <script>
-        $(function () {
-            var base_link = '';
-
-            $(".clickable-row").on('click', function () {
-                var id = $(this).data('id');
-                window.location = base_link + id + '/';
-            });
-        });
-    </script>
-{% endblock %}
+{% block scripts %}{% endblock %}

@@ -99,3 +99,12 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# Django migrations
+*/migrations/
+
+# PyCharm project
+.idea
+
+# Development DB
+db.sqlite3
