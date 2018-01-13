@@ -1,4 +1,5 @@
-from django.db import models
+from django.db.models import Model, BooleanField, CASCADE, CharField, DateField, IntegerField, ForeignKey, TextField, \
+    DateTimeField
 from django.contrib.auth.models import AbstractUser
 
 
@@ -11,42 +12,50 @@ class Account(AbstractUser):
         )
 
 
-class Attribute(models.Model):
+class Attribute(Model):
     class Meta:
         verbose_name = 'атрибут участника'
         verbose_name_plural = 'атрибуты участников'
         ordering = ['number']
 
-    name = models.CharField('название', max_length=30)
-    number = models.IntegerField('номер по порядку')
-    mandatory = models.BooleanField('обязательный')
-    attr_type = models.ForeignKey('contenttypes.ContentType', limit_choices_to={'model__contains': 'participant'},
-                                  on_delete=models.CASCADE, verbose_name='тип атрибута')
+    identifier = CharField('идентификатор', max_length=30)
+    name = CharField('название', max_length=30)
+    number = IntegerField('номер по порядку')
+    mandatory = BooleanField('обязательный')
+    attr_type = ForeignKey('contenttypes.ContentType', limit_choices_to={'model__contains': 'participant'},
+                           on_delete=CASCADE, verbose_name='тип атрибута')
 
 
-class ParticipantCharAttribute(models.Model):
+class Value(Model):
+    class Meta:
+        abstract = True
+        verbose_name = 'значение атрибута'
+        verbose_name_plural = 'значения атрибутов'
+        unique_together = (('account', 'attribute'),)
+
+    account = ForeignKey('Account', on_delete=CASCADE, verbose_name='участник')
+    attribute = ForeignKey('Attribute', on_delete=CASCADE, verbose_name='атрибут')
+
+
+class ParticipantCharValue(Value):
     class Meta:
         verbose_name = 'значение атрибута типа "Строка"'
         verbose_name_plural = 'значения атрибутов типа "Строка"'
-        unique_together = (('account', 'attribute'),)
+        unique_together = [('account', 'attribute')]
 
-    account = models.ForeignKey('Account', on_delete=models.CASCADE, verbose_name='участник')
-    attribute = models.ForeignKey('Attribute', on_delete=models.CASCADE, verbose_name='атрибут')
-    value = models.CharField('значение', max_length=100)
+    value = CharField('значение', max_length=100)
 
 
-class ParticipantDateValue(models.Model):
+class ParticipantDateValue(Value):
     class Meta:
         verbose_name = 'значение атрибута типа "Дата"'
         verbose_name_plural = 'значения атрибутов типа "Дата"'
         unique_together = (('account', 'attribute'),)
 
-    account = models.ForeignKey('Account', on_delete=models.CASCADE, verbose_name='участник')
-    attribute = models.ForeignKey('Attribute', on_delete=models.CASCADE, verbose_name='атрибут')
-    value = models.DateField('значение')
+    value = DateField('значение')
 
 
-class Contest(models.Model):
+class Contest(Model):
     """
     Краткое наименование нужно для внутреннего использования. Пример:
     9 класс
@@ -74,6 +83,7 @@ class Contest(models.Model):
     Флаг show_tests разрешает участникам и гостям видеть тесты после окончания олимпиады
 
     """
+
     class Meta:
         verbose_name = 'олимпиада'
         verbose_name_plural = 'олимпиады'
@@ -82,23 +92,23 @@ class Contest(models.Model):
     def __str__(self):
         return self.brief_name
 
-    brief_name = models.CharField('краткое наименование', max_length=100)
-    full_name = models.TextField('полное наименование')
-    description = models.TextField('описание')
-    active = models.BooleanField('активность')
-    start = models.DateTimeField('время начала')
-    stop = models.DateTimeField('время завершения', blank=True)
-    freeze = models.DateTimeField('время заморозки результатов', blank=True)
-    show_results = models.DateTimeField('время публиковации результатов', blank=True)
-    conditions = models.CharField('путь к файлу с условиями', max_length=255)
-    rules = models.CharField('путь к файлу с правилами', max_length=255)
-    personal_rules = models.BooleanField('личный зачет')
-    command_rules = models.BooleanField('командный зачет')
-    show_tests = models.BooleanField('публиковать тесты')
-    anonymous_access = models.BooleanField('доступ без авторизации')
+    brief_name = CharField('краткое наименование', max_length=100)
+    full_name = TextField('полное наименование')
+    description = TextField('описание')
+    active = BooleanField('активность')
+    start = DateTimeField('время начала')
+    stop = DateTimeField('время завершения', blank=True)
+    freeze = DateTimeField('время заморозки результатов', blank=True)
+    show_results = DateTimeField('время публиковации результатов', blank=True)
+    conditions = CharField('путь к файлу с условиями', max_length=255)
+    rules = CharField('путь к файлу с правилами', max_length=255)
+    personal_rules = BooleanField('личный зачет')
+    command_rules = BooleanField('командный зачет')
+    show_tests = BooleanField('публиковать тесты')
+    anonymous_access = BooleanField('доступ без авторизации')
 
 
-class Problem(models.Model):
+class Problem(Model):
     class Meta:
         verbose_name = 'задача'
         verbose_name_plural = 'задачи'
@@ -107,16 +117,16 @@ class Problem(models.Model):
     def __str__(self):
         return self.name
 
-    name = models.CharField('название', max_length=100)
-    author = models.ForeignKey('multimeter.Account', verbose_name='автор', on_delete=models.CASCADE)
-    conditions = models.TextField('текст условия в TeX')
-    solutions = models.TextField('текст разбора в TeX')
-    input = models.CharField('входной файл', max_length=100)
-    output = models.CharField('выходной файл', max_length=100)
-    checker = models.TextField('чекер')
+    name = CharField('название', max_length=100)
+    author = ForeignKey('multimeter.Account', verbose_name='автор', on_delete=CASCADE)
+    conditions = TextField('текст условия в TeX')
+    solutions = TextField('текст разбора в TeX')
+    input = CharField('входной файл', max_length=100)
+    output = CharField('выходной файл', max_length=100)
+    checker = TextField('чекер')
 
 
-class ContestProblem(models.Model):
+class ContestProblem(Model):
     class Meta:
         verbose_name = 'код задачи в олимпиаде'
         verbose_name_plural = 'коды задач в олимпиаде'
@@ -129,12 +139,12 @@ class ContestProblem(models.Model):
             self.problem,
         )
 
-    code = models.CharField('код', max_length=10)
-    contest = models.ForeignKey('multimeter.Contest', verbose_name='олимпиада', on_delete=models.CASCADE)
-    problem = models.ForeignKey('multimeter.Problem', verbose_name='задача', on_delete=models.CASCADE)
+    code = CharField('код', max_length=10)
+    contest = ForeignKey('multimeter.Contest', verbose_name='олимпиада', on_delete=CASCADE)
+    problem = ForeignKey('multimeter.Problem', verbose_name='задача', on_delete=CASCADE)
 
 
-class Example(models.Model):
+class Example(Model):
     class Meta:
         verbose_name = 'пример'
         verbose_name_plural = 'примеры'
@@ -146,13 +156,13 @@ class Example(models.Model):
             self.number,
         )
 
-    problem = models.ForeignKey('multimeter.Problem', verbose_name='задача', on_delete=models.CASCADE)
-    number = models.IntegerField('номер по порядку')
-    input = models.TextField('входные данные')
-    output = models.TextField('выходные данные')
+    problem = ForeignKey('multimeter.Problem', verbose_name='задача', on_delete=CASCADE)
+    number = IntegerField('номер по порядку')
+    input = TextField('входные данные')
+    output = TextField('выходные данные')
 
 
-class SubTask(models.Model):
+class SubTask(Model):
     class Meta:
         verbose_name = 'подзадача'
         verbose_name_plural = 'подзадачи'
@@ -168,25 +178,25 @@ class SubTask(models.Model):
     ENTIRE = 'ENT'
 
     SCORING = [
-        (PARTIAL, 'за каждый тест', ),
-        (ENTIRE, 'за подзадачу в целом', ),
+        (PARTIAL, 'за каждый тест',),
+        (ENTIRE, 'за подзадачу в целом',),
     ]
 
     FULL = 'FUL'
     BRIEF = 'BRF'
 
     RESULTS = [
-        (FULL, 'за каждый тест', ),
-        (BRIEF, 'за подзадачу в целом', ),
+        (FULL, 'за каждый тест',),
+        (BRIEF, 'за подзадачу в целом',),
     ]
 
-    problem = models.ForeignKey('multimeter.Problem', verbose_name='задача', on_delete=models.CASCADE)
-    number = models.IntegerField('номер по порядку')
-    scoring = models.CharField('начисление баллов', max_length=3, choices=SCORING)
-    results = models.CharField('отображение результатов', max_length=3, choices=RESULTS)
+    problem = ForeignKey('multimeter.Problem', verbose_name='задача', on_delete=CASCADE)
+    number = IntegerField('номер по порядку')
+    scoring = CharField('начисление баллов', max_length=3, choices=SCORING)
+    results = CharField('отображение результатов', max_length=3, choices=RESULTS)
 
 
-class Test(models.Model):
+class Test(Model):
     class Meta:
         verbose_name = 'тест'
         verbose_name_plural = 'тесты'
@@ -198,13 +208,13 @@ class Test(models.Model):
             self.number,
         )
 
-    sub_task = models.ForeignKey('multimeter.SubTask', verbose_name='подзадача', on_delete=models.CASCADE)
-    number = models.IntegerField('номер по порядку')
-    input = models.TextField('входные данные')
-    output = models.TextField('выходные данные')
+    sub_task = ForeignKey('multimeter.SubTask', verbose_name='подзадача', on_delete=CASCADE)
+    number = IntegerField('номер по порядку')
+    input = TextField('входные данные')
+    output = TextField('выходные данные')
 
 
-class Submission(models.Model):
+class Submission(Model):
     class Meta:
         verbose_name = 'подзадача'
         verbose_name_plural = 'подзадачи'
@@ -217,15 +227,15 @@ class Submission(models.Model):
             self.number,
         )
 
-    contest_problem = models.ForeignKey('multimeter.ContestProblem', verbose_name='задача', on_delete=models.CASCADE)
-    user = models.ForeignKey('multimeter.Account', on_delete=models.CASCADE)
-    language = models.ForeignKey('multimeter.Language', on_delete=models.CASCADE, verbose_name='язык программирования')
-    number = models.IntegerField('номер попытки')
-    moment = models.DateTimeField('дата и время отправки')
-    source = models.TextField('текст решения')
+    contest_problem = ForeignKey('multimeter.ContestProblem', verbose_name='задача', on_delete=CASCADE)
+    user = ForeignKey('multimeter.Account', on_delete=CASCADE)
+    language = ForeignKey('multimeter.Language', on_delete=CASCADE, verbose_name='язык программирования')
+    number = IntegerField('номер попытки')
+    moment = DateTimeField('дата и время отправки')
+    source = TextField('текст решения')
 
 
-class Language(models.Model):
+class Language(Model):
     class Meta:
         verbose_name = 'язык программирования'
         verbose_name_plural = 'языки программирования'
@@ -234,9 +244,9 @@ class Language(models.Model):
     def __str__(self):
         return self.name
 
-    name = models.CharField('название', max_length=100)
-    compilation = models.TextField('строки компиляции')
-    execution = models.TextField('строка выполнения')
+    name = CharField('название', max_length=100)
+    compilation = TextField('строки компиляции')
+    execution = TextField('строка выполнения')
 
 
 CE = 'CE'
@@ -260,7 +270,7 @@ EXECUTION_RESULTS = [
 ]
 
 
-class Check(models.Model):
+class Check(Model):
     """
     Алгоритм работы автоматизированной системы проверки:
     * Веб-сервер получает от участника решение
@@ -273,20 +283,20 @@ class Check(models.Model):
     * Веб-сервер создает Check, ExampleResult и TestResult
     * Веб-сервер возвращает отчет о проверке участнику
     """
-    submission = models.ForeignKey('multimeter.Submission', on_delete=models.CASCADE, verbose_name='попытка')
-    moment = models.DateTimeField('дата и время проверки')
-    compilation_result = models.CharField('результат компиляции', max_length=2, choices=COMPILATION_RESULTS)
-    score = models.IntegerField('баллы')
+    submission = ForeignKey('multimeter.Submission', on_delete=CASCADE, verbose_name='попытка')
+    moment = DateTimeField('дата и время проверки')
+    compilation_result = CharField('результат компиляции', max_length=2, choices=COMPILATION_RESULTS)
+    score = IntegerField('баллы')
 
 
-class ExecutionResult(models.Model):
+class ExecutionResult(Model):
     class Meta:
         abstract = True
         verbose_name = 'результат проверки'
         verbose_name_plural = 'результаты проверки'
 
-    check = models.ForeignKey('multimeter.Check', on_delete=models.CASCADE, verbose_name='проверка')
-    execution_result = models.CharField('результат выполнения', max_length=2, choices=EXECUTION_RESULTS)
+    check = ForeignKey('multimeter.Check', on_delete=CASCADE, verbose_name='проверка')
+    execution_result = CharField('результат выполнения', max_length=2, choices=EXECUTION_RESULTS)
 
 
 class ExampleResult(ExecutionResult):
@@ -295,7 +305,7 @@ class ExampleResult(ExecutionResult):
         verbose_name = 'результат проверки на примере'
         verbose_name_plural = 'результаты проверок на примерах'
 
-    subject = models.ForeignKey('multimeter.Example', on_delete=models.CASCADE, verbose_name='пример')
+    subject = ForeignKey('multimeter.Example', on_delete=CASCADE, verbose_name='пример')
 
 
 class TestResult(ExecutionResult):
@@ -304,4 +314,4 @@ class TestResult(ExecutionResult):
         verbose_name = 'результат проверки на тесте'
         verbose_name_plural = 'результаты проверок на тестах'
 
-    subject = models.ForeignKey('multimeter.Test', on_delete=models.CASCADE, verbose_name='тест')
+    subject = ForeignKey('multimeter.Test', on_delete=CASCADE, verbose_name='тест')

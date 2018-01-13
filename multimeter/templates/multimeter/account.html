@@ -1,0 +1,36 @@
+{% extends "multimeter/menu.html" %}
+{% load multimeter_custom_tags %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-4 col-md-offset-4">
+                <h1>{% block title %}Профиль{% endblock %}</h1>
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {% for error in form.non_field_errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <form method="post">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        {% if field.is_hidden %}
+                            {{ field }}
+                        {% else %}
+                            <div class="form-group{% if field.errors %} has-error{% endif %}">
+                                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {{ field|form_control }}
+                                {% for error in field.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    <input type="submit" name="sudmit" class="btn btn-primary" value="Сохранить">
+                    <a href="{% url 'index' %}" class="btn btn-default">Отменить</a>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

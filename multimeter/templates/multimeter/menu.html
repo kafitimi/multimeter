@@ -1,23 +1,20 @@
 {% extends "multimeter/page.html" %}
-{% load i18n %}
 {% load static %}
 {% block body %}
     <nav class="navbar navbar-default" role="navigation">
         <div class="container">
             <div class="navbar-header">
-                <a class="navbar-brand" href="{% url 'index' %}">
-                    {% trans 'Main' %}
-                </a>
+                <a class="navbar-brand" href="{% url 'index' %}">Главная</a>
             </div>
             <ul class="nav navbar-nav">
                 {% if perms.ruler.add_template %}
                     <li{% if request.resolver_match.namespace == 'template' %} class="active"{% endif %}>
-                        <a href="">{% trans 'Problem templates' %}</a>
+                        <a href="">Задачи</a>
                     </li>
                 {% endif %}
                 {% if perms.ruler.add_batch %}
                     <li{% if request.resolver_match.namespace == 'batch' %} class="active"{% endif %}>
-                        <a href="">{% trans 'Problem batches' %}</a>
+                        <a href="">Условия</a>
                     </li>
                 {% endif %}
             </ul>
@@ -27,14 +24,9 @@
                         {{ user }} <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="">
-                            <span class="glyphicon glyphicon-user"></span> {% trans 'Account' %}</a>
-                        </li>
-                        <li><a href="">
-                            <span class="glyphicon glyphicon-lock"></span> {% trans 'Change the password' %}</a>
-                        </li>
-                        <li><a href="">
-                            <span class="glyphicon glyphicon-log-in"></span> {% trans 'Logout' %}</a>
+                        <li><a href="{% url 'account' %}"><span class="glyphicon glyphicon-user"></span> Профиль</a></li>
+                        <li><a href="{% url 'password' %}"><span class="glyphicon glyphicon-lock"></span> Изменить пароль</a></li>
+                        <li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-in"></span> Выйти</a>
                         </li>
                     </ul>
                 </li>
