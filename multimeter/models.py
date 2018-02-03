@@ -1,15 +1,46 @@
-from django.db.models import Model, BooleanField, CASCADE, CharField, DateField, IntegerField, ForeignKey, TextField, \
+from django.contrib.contenttypes.models import ContentType
+from django.db.models import Model, BooleanField, CASCADE, CharField, IntegerField, ForeignKey, TextField, \
     DateTimeField
 from django.contrib.auth.models import AbstractUser
 
 
 class Account(AbstractUser):
+
+    attributes = TextField('Атрибуты пользователя', blank=True)
+
     def __str__(self):
         return '%s %s (%s)' % (
             self.last_name,
             self.first_name,
             self.username,
         )
+
+    def get_data(self):
+        data = {
+            'username': self.username,
+            'first_name': self.first_name,
+            'last_name': self.last_name
+        }
+        for ct in ContentType.objects.all():
+            if ct.model.startswith('accountvalue'):
+                for instance in ct.model_class.objects.filter(account=self).select_related('Attribute'):
+                    data[instance.attribute.identifier] = instance.get_value()
+        return data
+
+    def update(self, data):
+        account_attrs = ['username', 'first_name', 'last_name']
+        for attr in account_attrs:
+            if attr in data:
+                self.__setattr__(attr, data[attr])
+        if 'password' in data:
+            self.set_password(data['password'])
+        self.save()
+
+        for attr in Attribute.objects.all():
+            value = data.get(attr.identifier, '')
+            if value != '':
+                model_cls = attr.attr_type.model_class()
+                model_cls.update(self, attr, value)
 
 
 class Attribute(Model):
@@ -18,41 +49,19 @@ class Attribute(Model):
         verbose_name_plural = 'атрибуты участников'
         ordering = ['number']
 
-    identifier = CharField('идентификатор', max_length=30)
-    name = CharField('название', max_length=30)
+    STRING = 'STR'
+    DATE = 'DAT'
+
+    DATA_TYPES = [
+        (STRING, 'строка'),
+        (DATE, 'дата'),
+    ]
+
     number = IntegerField('номер по порядку')
-    mandatory = BooleanField('обязательный')
-    attr_type = ForeignKey('contenttypes.ContentType', limit_choices_to={'model__contains': 'participant'},
-                           on_delete=CASCADE, verbose_name='тип атрибута')
-
-
-class Value(Model):
-    class Meta:
-        abstract = True
-        verbose_name = 'значение атрибута'
-        verbose_name_plural = 'значения атрибутов'
-        unique_together = (('account', 'attribute'),)
-
-    account = ForeignKey('Account', on_delete=CASCADE, verbose_name='участник')
-    attribute = ForeignKey('Attribute', on_delete=CASCADE, verbose_name='атрибут')
-
-
-class ParticipantCharValue(Value):
-    class Meta:
-        verbose_name = 'значение атрибута типа "Строка"'
-        verbose_name_plural = 'значения атрибутов типа "Строка"'
-        unique_together = [('account', 'attribute')]
-
-    value = CharField('значение', max_length=100)
-
-
-class ParticipantDateValue(Value):
-    class Meta:
-        verbose_name = 'значение атрибута типа "Дата"'
-        verbose_name_plural = 'значения атрибутов типа "Дата"'
-        unique_together = (('account', 'attribute'),)
-
-    value = DateField('значение')
+    identifier = CharField('идентификатор', max_length=30)
+    name = CharField('название', max_length=50)
+    required = BooleanField('обязательный')
+    data_type = CharField('Тип данных', max_length=3, choices=DATA_TYPES)
 
 
 class Contest(Model):
@@ -106,6 +115,7 @@ class Contest(Model):
     command_rules = BooleanField('командный зачет')
     show_tests = BooleanField('публиковать тесты')
     anonymous_access = BooleanField('доступ без авторизации')
+    registration_enabled = BooleanField('регистрация пользователей разрешена')
 
 
 class Problem(Model):
