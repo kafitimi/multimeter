@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}{% endblock %}</title>
     <link rel="icon" href="{% static 'multimeter/favicon.ico' %}">
+    <link rel="stylesheet" href="{% static 'multimeter/css/fontawesome-all.min.css' %}">
     <link rel="stylesheet" href="{% static 'multimeter/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'multimeter/css/styles.css' %}">
     {% block styles %}{% endblock %}
@@ -17,7 +18,7 @@
 </head>
 <body>
 {% block body %}{% endblock %}
-<script src="{% static 'multimeter/js/jquery.min.js' %}"></script>
+<script src="{% static 'multimeter/js/jquery-3.3.1.slim.min.js' %}"></script>
 <script src="{% static 'multimeter/js/bootstrap.min.js' %}"></script>
 {% block scripts %}{% endblock %}
 </body>
