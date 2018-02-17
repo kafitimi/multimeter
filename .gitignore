@@ -108,3 +108,8 @@ ENV/
 
 # Development DB
 db.sqlite3
+
+# TeX files
+*.aux
+*.pdf
+*.synctex.gz
