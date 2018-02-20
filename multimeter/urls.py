@@ -1,7 +1,8 @@
+""" Multimeter urls """
 from django.urls import path
 from django.contrib.auth.views import logout_then_login
 
-from multimeter import views
+from . import views
 
 urlpatterns = [
     path('login/', views.login_page, name='login'),
@@ -10,9 +11,10 @@ urlpatterns = [
     path('account/', views.account_page, name='account'),
     path('password/', views.password_page, name='password'),
 
-    path('contest/list/', views.contest_list, name='contest_list'),
-    path('contest/add/', views.contest_edit, name='contest_add'),
-    path('contest/edit/<int:contest_id>/', views.contest_edit, name='contest_edit'),
+    path('contest/list/', views.ContestList.as_view(), name='contest_list'),
+    path('contest/create/', views.ContestCreate.as_view(), name='contest_create'),
+    path('contest/update/<int:pk>/', views.ContestUpdate.as_view(), name='contest_update'),
+    path('contest/delete/<int:pk>/', views.ContestDelete.as_view(), name='contest_delete'),
 
     path('problem/list/', views.problem_list, name='problem_list'),
     path('problem/add/', views.problem_edit, name='problem_add'),

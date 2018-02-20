@@ -1,0 +1,43 @@
+{% extends 'multimeter/menu.html' %}
+{% load multimeter_custom_tags %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h1>{% block title %}Редактирование контеста{% endblock %}</h1>
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    {% include 'multimeter/form_input.html' with field=form.brief_name %}
+                    {% include 'multimeter/form_input.html' with field=form.full_name %}
+                    {% include 'multimeter/form_input.html' with field=form.conditions %}
+                    {% include 'multimeter/form_input.html' with field=form.rules %}
+                    
+                    <div class="form-row">
+                        {% include 'multimeter/form_input.html' with field=form.start col='col' %}
+                        {% include 'multimeter/form_input.html' with field=form.stop col='col' %}
+                        {% include 'multimeter/form_input.html' with field=form.freeze col='col' %}
+                    </div>
+
+                    <div class="form-row">
+                        {% include 'multimeter/form_check.html' with field=form.personal_rules col='col' %}
+                        {% include 'multimeter/form_check.html' with field=form.command_rules col='col' %}
+                    </div>
+
+                    <div class="form-row">
+                        {% include 'multimeter/form_check.html' with field=form.guest_access col='col' %}
+                        {% include 'multimeter/form_check.html' with field=form.participant_access col='col' %}
+                    </div>
+
+                    <div class="form-row">
+                        {% include 'multimeter/form_check.html' with field=form.show_tests col='col' %}
+                        {% include 'multimeter/form_check.html' with field=form.show_results col='col' %}
+                    </div>
+
+                    <input type="submit" name="submit" class="btn btn-primary" value="Сохранить">
+                    <a href="{% url 'contest_list' %}" class="btn btn-default">Отменить</a>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

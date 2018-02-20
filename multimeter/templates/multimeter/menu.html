@@ -12,7 +12,7 @@
                         <li class="nav-item{% if request.resolver_match.view_name == 'template' %} active{% endif %}">
                             <a class="nav-link" href="">Задачи</a>
                         </li>
-                        {% if user.is_staff %}
+                        {% if user.is_superuser %}
                             <li class="nav-item{% if request.resolver_match.view_name == 'contest_list' %} active{% endif %}">
                                 <a class="nav-link" href="{% url 'contest_list' %}">Контесты</a>
                             </li>

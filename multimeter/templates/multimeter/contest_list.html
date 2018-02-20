@@ -5,23 +5,29 @@
         <div class="row">
             <div class="col">
                 <h1>{% block title %}Список контестов{% endblock %}</h1>
-                {% if contests %}
+                {% if object_list %}
                     <table class="table table-hover">
                         <thead>
-                        <tr>
-                            <th>Название</th>
-                            <th>Время начала</th>
-                            <th>Время завершения</th>
-                        </tr>
+                            <tr>
+                                <th>Название</th>
+                                <th>Время начала</th>
+                                <th>Время завершения</th>
+                                <th></th>
+                            </tr>
                         </thead>
                         <tbody>
-                        {% for c in contests %}
+                        {% for contest in object_list %}
                             <tr>
                                 <td>
-                                    <a href="{% url 'contest_edit' c.id %}">{{ c.brief_name }}</a>
+                                    <a href="{% url 'contest_update' contest.id %}">
+                                        {{ contest.brief_name }}
+                                    </a>
                                 </td>
-                                <td>{{ c.start }}</td>
-                                <td>{{ c.stop }}</td>
+                                <td>{{ contest.start }}</td>
+                                <td>{{ contest.stop }}</td>
+                                <td class="text-right">
+                                    <a href="{% url 'contest_delete' contest.id %}" class="btn btn-danger" role="button"><i class="fas fa-trash-alt"></i></a>
+                                </td>
                             </tr>
                         {% endfor %}
                         </tbody>
@@ -29,7 +35,7 @@
                 {% else %}
                     <p>Ни один контест ещё не создан</p>
                 {% endif %}
-                <a href="{% url 'contest_add' %}" class="btn btn-primary">Добавить</a>
+                <a href="{% url 'contest_create' %}" class="btn btn-primary">Добавить</a>
             </div>
         </div>
     </div>

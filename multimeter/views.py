@@ -1,9 +1,12 @@
+""" Multimeter views """
 from django.contrib.auth import authenticate, login, update_session_auth_hash
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
+from django.utils.decorators import method_decorator
+from django.views.generic import ListView, DeleteView, CreateView, UpdateView
 
-from multimeter.forms import LoginForm, AccountForm, PasswordForm, ContestForm, ProblemForm
+from multimeter.forms import LoginForm, AccountForm, PasswordForm, ProblemForm
 from multimeter.models import Contest, Problem
 
 
@@ -25,6 +28,7 @@ def login_page(request):
 
 @login_required
 def index_page(request):
+    """ Главная страница """
     return render(request, 'multimeter/index.html', {})
 
 
@@ -65,33 +69,50 @@ def password_page(request):
     })
 
 
-@login_required
-def contest_list(request):
-    contests = Contest.objects.all()
-    return render(request, 'multimeter/contest_list.html', {
-        'contests': contests
-    })
+@method_decorator(user_passes_test(lambda u: u.is_superuser), name='dispatch')  # pylint: disable=too-many-ancestors
+class ContestList(ListView):
+    """ Список контестов """
+    model = Contest
 
 
-@login_required
-def contest_edit(request, contest_id=None):
-    instance = None if contest_id is None else get_object_or_404(Contest, id=contest_id)
-    if request.method == 'POST':
-        form = ContestForm(request.POST, instance=instance)
-        if form.is_valid():
-            form.save()
-            return redirect('contest_list')
-    else:
-        form = ContestForm(instance=instance)
-    return render(request, 'multimeter/edit.html', {
-        'caption': 'Редактирование контеста',
-        'cancel_url': reverse('contest_list'),
-        'form': form
-    })
+@method_decorator(user_passes_test(lambda u: u.is_superuser), name='dispatch')  # pylint: disable=too-many-ancestors
+class ContestCreate(CreateView):
+    """ Создание контеста """
+    model = Contest
+    fields = [
+        'brief_name', 'full_name', 'conditions', 'rules',
+        'start', 'stop', 'freeze',
+        'personal_rules', 'command_rules',
+        'guest_access', 'participant_access',
+        'show_tests', 'show_results',
+    ]
+    success_url = reverse_lazy('contest_list')
+
+
+@method_decorator(user_passes_test(lambda u: u.is_superuser), name='dispatch')  # pylint: disable=too-many-ancestors
+class ContestUpdate(UpdateView):
+    """ Редактирование контеста """
+    model = Contest
+    fields = [
+        'brief_name', 'full_name', 'conditions', 'rules',
+        'start', 'stop', 'freeze',
+        'personal_rules', 'command_rules',
+        'guest_access', 'participant_access',
+        'show_tests', 'show_results',
+    ]
+    success_url = reverse_lazy('contest_list')
+
+
+@method_decorator(user_passes_test(lambda u: u.is_superuser), name='dispatch')  # pylint: disable=too-many-ancestors
+class ContestDelete(DeleteView):
+    """ Удаление контеста """
+    model = Contest
+    success_url = reverse_lazy('contest_list')
 
 
 @login_required
 def problem_list(request):
+    """ Список задач """
     problems = Problem.objects.all()
     return render(request, 'multimeter/problem_list.html', {
         'problems': problems
@@ -100,6 +121,7 @@ def problem_list(request):
 
 @login_required
 def problem_edit(request, problem_id=None):
+    """ Редактирование задач """
     instance = None if problem_id is None else get_object_or_404(Problem, id=problem_id)
     if request.method == 'POST':
         form = ProblemForm(request.POST, instance=instance)

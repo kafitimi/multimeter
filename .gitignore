@@ -113,3 +113,8 @@ db.sqlite3
 *.aux
 *.pdf
 *.synctex.gz
+*.fdb_latexmk
+*.fls
+
+# PyLint settings
+.pylintrc

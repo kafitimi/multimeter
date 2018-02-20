@@ -1,7 +1,8 @@
+""" Multimeter forms """
 from django.core.exceptions import ValidationError
 from django.forms import Form, CharField, PasswordInput, ModelForm
 
-from multimeter.models import Account, Contest, Problem
+from multimeter.models import Account, Problem
 
 
 class LoginForm(Form):
@@ -11,6 +12,7 @@ class LoginForm(Form):
 
 
 class AccountForm(ModelForm):
+    """ Форма настроек учетной записи пользователя """
     class Meta:
         model = Account
         fields = ['username', 'first_name', 'last_name', 'patronymic_name', 'birthday', 'country']
@@ -24,35 +26,25 @@ class PasswordForm(Form):
     confirm_password = CharField(widget=PasswordInput(), label='Подтверждение нового пароля')
 
     def clean_current_password(self):
+        """ Валидация текущего пароля """
         current_password = self.cleaned_data['current_password']
         if not self.user.check_password(current_password):
             raise ValidationError('Неверный текущий пароль')
         return current_password
 
     def clean_confirm_password(self):
+        """ Валидация подтверждения пароля """
         confirm_password = self.cleaned_data['confirm_password']
         if confirm_password != self.cleaned_data['new_password']:
             raise ValidationError('Пароли не совпадают')
         return confirm_password
 
 
-class ContestForm(ModelForm):
-    class Meta:
-        model = Contest
-        fields = [
-            'brief_name', 'full_name', 'description',
-            'start', 'stop', 'freeze', 'show_results',
-            'active', 'anonymous_access',
-            'command_rules', 'personal_rules',
-            'show_tests',
-            'registration_enabled',
-            'conditions', 'rules'
-        ]
-
-
 class ProblemForm(ModelForm):
+    """ Форма редактирования задачи """
     class Meta:
         model = Problem
         fields = [
-            'name', 'conditions', 'input', 'output', 'solutions', 'checker', 'checker_lang', 'author'
+            'name', 'conditions', 'input', 'output', 'solutions', 'checker', 'checker_lang',
+            'author'
         ]
