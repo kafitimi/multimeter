@@ -1,37 +1,53 @@
 \documentclass{book}
-\usepackage[utf8]{inputenc}
+
+% На случай компиляции через PdfLatex
+%\usepackage[T1,T2A]{fontenc}
+%\usepackage[utf8]{inputenc}
+
+% Поддержка русского языка (переносы и т.п.)
 \usepackage[english, russian]{babel}
+
+% Размеры и положение страницы, поля
 \usepackage[a6paper, landscape, margin=10mm]{geometry}
-%\usepackage{fontspec}
-%\defaultfontfeatures[\rmfamily, \sffamily]{Ligatures={TeX}}
-%\setmainfont[
-%	BoldFont={[PTF75F.ttf]}, 
-%	BoldItalicFont={[PTF76F.ttf]}, 
-%	ItalicFont={[PTF56F.ttf]}, 
-%	Ligatures={TeX,Historic}]
-%	{[PTF55F.ttf]}
-%\setsansfont[
-%	BoldFont={[PTS75F.ttf]}, 
-%	BoldItalicFont={[PTS76F.ttf]}, 
-%	ItalicFont={[PTS56F.ttf]}, 
-%	Ligatures={TeX,Historic}]
-%	{[PTS55F.ttf]} %% задаёт шрифт без засечек
-%\setmonofont[Scale=1.05]{consola.ttf}              %% задаёт моноширинный шрифт 
-%\usepackage{unicode-math}
-%\setmathfont{[latinmodern-math.otf]}
-%\setmathfont[range=\mathit/{latin,Latin}]{[PTF56F.ttf]}
-%\setmathfont[range=\mathit/{greek,Greek}]{latinmodern-math.otf}    
-%\setmathfont[range=up]{[PTF55F.ttf]}
-%\setmathfont[range="2264-"2265]{[PTF55F.ttf]}
-%\setmathfont[range="003C-"003E]{[PTF55F.ttf]}
-%\allsectionsfont{\sffamily}
+
+% Пакет для работы со шрифтами
+\usepackage{fontspec}
+
+% Теховские лигатуры
+\defaultfontfeatures[\rmfamily, \sffamily]{Ligatures={TeX}}
+
+% Основным шрифтом используем паратайповский шрифт с засечками
+\setmainfont[
+	BoldFont={[PT_Serif-Web-Bold.ttf]}
+	, BoldItalicFont={[PT_Serif-Web-BoldItalic.ttf]}
+	, ItalicFont={[PT_Serif-Web-Italic.ttf]}
+	]{[PT_Serif-Web-Regular.ttf]}
+
+% Паратайповский шрифт без засечек
+\setsansfont[
+	BoldFont={[PT_Sans-Web-Bold.ttf]}
+	, BoldItalicFont={[PT_Sans-Web-BoldItalic.ttf]}
+	, ItalicFont={[PT_Sans-Web-Italic.ttf]}
+	]{[PT_Sans-Web-Regular.ttf]}
+
+% не консоласом единым...
+\setmonofont[Scale=1.05]{PTM55FT.ttf}
+
+% какая-то чушь про математические шрифты
+\usepackage{unicode-math}
+\setmathfont{[latinmodern-math.otf]}
+\setmathfont[range=\mathit/{greek,Greek}]{latinmodern-math.otf}
+
+% Красная строка
 \usepackage{indentfirst}
+
+% Отключаем номера страниц
 \pagestyle{empty}
 
 \begin{document}
 
 \section*{P-01 Саморегистрация}
-\textbf{Участник} должен иметь возможность зарегистрироваться в системе, указав свои 
+\textbf{Участник} должен иметь возможность зарегистрироваться в системе, указав свои
 данные, если это разрешено администратором.
 
 \newpage \section*{P-02 Сумма баллов}
@@ -47,18 +63,18 @@
 \end{itemize}
 
 \newpage \section*{P-04 Отправка решения}
-\textbf{Участник} может отправить исходный код своего решения в виде файла или ввести 
+\textbf{Участник} может отправить исходный код своего решения в виде файла или ввести
 его на сайте. При этом он должен указать язык программирования (по-умолчанию
 на странице выбран язык программирования последней отправки).
 
 \newpage \section*{P-05 Страница контеста }
-\textbf{Участник} может получать на странице контеста список задач, информацию о 
-максимальном балле по каждой задаче, а также (?) файл с условиями и файл (?) с 
+\textbf{Участник} может получать на странице контеста список задач, информацию о
+максимальном балле по каждой задаче, а также (?) файл с условиями и файл (?) с
 правилами проведения.
 
 \newpage \section*{P-06 Список контестов }
-\textbf{Участник} может выбрать контест из списка доступных ему, при этом ему видно 
-время, оставшееся до окончания контеста, либо дата/время окончания для 
+\textbf{Участник} может выбрать контест из списка доступных ему, при этом ему видно
+время, оставшееся до окончания контеста, либо дата/время окончания для
 завершившихся.
 
 \newpage \section*{P-07 Сброс пароля}
@@ -69,7 +85,7 @@
 
 \newpage \section*{P-09 Подглядывать в тесты}
 \textbf{Участник} может в зависимости от настроек подзадачи в контесте посмотреть
-содержание теста, ответа своей посылки, коды выхода своей посылки и чекера, 
+содержание теста, ответа своей посылки, коды выхода своей посылки и чекера,
 затраченное время и память.
 
 % Автор задачи
@@ -165,14 +181,23 @@
 	\item по дате модификации 
 \end{itemize}
 
-\newpage \section*{A-13 Сверкающее будущее}
-\textbf{Автор} импортировать / экспортировать задачи. Должны импортироваться задачи в 
-формате Poligon.
+\newpage \section*{A-13 <<Прекрасное далеко...>>}
+\textbf{Автор} может импортировать / экспортировать задачи. Система должна импортироваться задачи в формате Poligon.
 
 
 % Организатор контеста
 
-\newpage \section*{O-xx Отладочная информация}
+\newpage \section*{O-01 Редактирование контекста}
+\textbf{Организаатор контеста} может создать и редактировать контест.
+Обязательными реквизитами контеста являются
+\begin{itemize}\setlength{\itemsep}{0pt}
+	\item название;
+\end{itemize}
+
+\newpage \section*{O-02 Добавление и удаление авторов}
+\textbf{Организаатор контеста} может добавлять авторов в контест (и удалять их из него).
+
+\newpage \section*{O-03 Отладочная информация}
 \textbf{Организатор контеста} может разрешить просмотр отладочной информации по задаче:
 \begin{itemize}\setlength{\itemsep}{0pt}
 	\item входные данные теста
@@ -186,9 +211,6 @@
 	\item время работы решения участника/студента
 \end{itemize}
 
-\textbf{Организаатор контеста} может создать и редактировать контест.
-
-\textbf{Организаатор контеста} может добавлять авторов контест (и удалять их из него).
 
 
 \end{document}
