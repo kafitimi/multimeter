@@ -111,7 +111,7 @@ class Contest(Model):
     guest_access = BooleanField('гостевой доступ')
     participant_access = BooleanField('доступ для участников')
     show_tests = BooleanField('публиковать тесты для участников и гостей')
-    show_results = BooleanField('публиковать результаты для участников')
+    show_results = BooleanField('публиковать таблицу результаты для участников')
 
     class Meta:
         verbose_name = 'олимпиада'
