@@ -6,8 +6,8 @@ from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DeleteView, CreateView, UpdateView
 
-from multimeter.forms import LoginForm, AccountForm, PasswordForm
-from multimeter.models import Contest, Problem
+from .forms import LoginForm, AccountForm, PasswordForm
+from . import models
 
 
 def login_page(request):
@@ -72,13 +72,13 @@ def password_page(request):
 @method_decorator(user_passes_test(lambda u: u.is_superuser), name='dispatch')  # pylint: disable=too-many-ancestors
 class ContestList(ListView):
     """ Список контестов """
-    model = Contest
+    model = models.Contest
 
 
 @method_decorator(user_passes_test(lambda u: u.is_superuser), name='dispatch')  # pylint: disable=too-many-ancestors
 class ContestCreate(CreateView):
     """ Создание контеста """
-    model = Contest
+    model = models.Contest
     fields = [
         'brief_name', 'full_name', 'conditions', 'rules',
         'start', 'stop', 'freeze',
@@ -92,7 +92,7 @@ class ContestCreate(CreateView):
 @method_decorator(user_passes_test(lambda u: u.is_superuser), name='dispatch')  # pylint: disable=too-many-ancestors
 class ContestUpdate(UpdateView):
     """ Редактирование контеста """
-    model = Contest
+    model = models.Contest
     fields = [
         'brief_name', 'full_name', 'conditions', 'rules',
         'start', 'stop', 'freeze',
@@ -106,20 +106,20 @@ class ContestUpdate(UpdateView):
 @method_decorator(user_passes_test(lambda u: u.is_superuser), name='dispatch')  # pylint: disable=too-many-ancestors
 class ContestDelete(DeleteView):
     """ Удаление контеста """
-    model = Contest
+    model = models.Contest
     success_url = reverse_lazy('contest_list')
 
 
 @method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')  # pylint: disable=too-many-ancestors
-class ProblemList(ListView):
+class TaskList(ListView):
     """ Список задач """
-    model = Problem
+    model = models.Task
 
 
 @method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')  # pylint: disable=too-many-ancestors
-class ProblemCreate(CreateView):
+class TaskCreate(CreateView):
     """ Создание задачи """
-    model = Problem
+    model = models.Task
     fields = [
         'name', 'conditions', 'input', 'output', 'solutions', 'checker', 'checker_lang', 'author',
     ]
@@ -127,17 +127,43 @@ class ProblemCreate(CreateView):
 
 
 @method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')  # pylint: disable=too-many-ancestors
-class ProblemUpdate(UpdateView):
+class TaskUpdate(UpdateView):
     """ Редактирование задачи """
-    model = Problem
+    model = models.Task
     fields = [
         'name', 'conditions', 'input', 'output', 'solutions', 'checker', 'checker_lang', 'author',
     ]
-    success_url = reverse_lazy('problem_list')
+    success_url = reverse_lazy('task_list')
 
 
 @method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')  # pylint: disable=too-many-ancestors
-class ProblemDelete(DeleteView):
+class TaskDelete(DeleteView):
     """ Удаление задачи """
-    model = Problem
-    success_url = reverse_lazy('problem_list')
+    model = models.Task
+    success_url = reverse_lazy('task_list')
+
+
+@method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')  # pylint: disable=too-many-ancestors
+class SubTaskCreate(CreateView):
+    """ Создание подзадачи """
+    model = models.SubTask
+    fields = [
+        'task', 'number', 'scoring', 'results'
+    ]
+    success_url = reverse_lazy('task_list')
+
+@method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')  # pylint: disable=too-many-ancestors
+class SubTaskUpdate(UpdateView):
+    """ Редактирование подзадачи """
+    model = models.SubTask
+    fields = [
+        'task', 'number', 'scoring', 'results'
+    ]
+    success_url = reverse_lazy('task_list')
+
+
+@method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')  # pylint: disable=too-many-ancestors
+class SubTaskDelete(DeleteView):
+    """ Удаление подзадачи """
+    model = models.SubTask
+    success_url = reverse_lazy('task_list')

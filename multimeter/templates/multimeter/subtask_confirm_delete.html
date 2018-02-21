@@ -7,9 +7,9 @@
                 <h1>{% block title %}Подтвердите удаление{% endblock %}</h1>
                 <form method="post">
                     {% csrf_token %}
-                    <p>Вы действительно хотите удалить задачу "{{ object }}"?</p>
+                    <p>Вы действительно хотите удалить подзадачу "{{ object }}"?</p>
                     <input type="submit" class="btn btn-danger" role="button" value="Удалить" />
-                    <a href="{% url 'problem_list' %}" class="btn btn-default" role="button" >Отменить</a>
+                    <a href="{% url 'task_update' object.task.id %}#subtasks" class="btn btn-default">Отменить</a>
                 </form>
             </div>
         </div>

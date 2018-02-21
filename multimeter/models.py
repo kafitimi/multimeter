@@ -122,13 +122,13 @@ class Contest(Model):
         return self.brief_name
 
 
-class Problem(Model):
+class Task(Model):
     """
     Задача
     """
     name = CharField('название', max_length=100)
-    input = CharField('входной файл', max_length=100)
-    output = CharField('выходной файл', max_length=100)
+    input = CharField('входной файл', max_length=100, blank=True, default='')
+    output = CharField('выходной файл', max_length=100, blank=True, default='')
     conditions = TextField('условия в формате TeX', blank=True)
     solutions = TextField('разбор в формате TeX', blank=True)
     checker = TextField('чекер', blank=True)
@@ -145,13 +145,13 @@ class Problem(Model):
         return self.name
 
 
-class ContestProblem(Model):
+class ContestTask(Model):
     """
     Код задачи в контесте
     """
     code = CharField('код', max_length=10)
     contest = ForeignKey('multimeter.Contest', on_delete=CASCADE, verbose_name='олимпиада')
-    problem = ForeignKey('multimeter.Problem', on_delete=CASCADE, verbose_name='задача')
+    task = ForeignKey('multimeter.Task', on_delete=CASCADE, verbose_name='задача')
 
     class Meta:
         verbose_name = 'код задачи в олимпиаде'
@@ -162,7 +162,7 @@ class ContestProblem(Model):
         return '%s, задача %s "%s"' % (
             self.contest,
             self.code,
-            self.problem,
+            self.task,
         )
 
 
@@ -174,19 +174,21 @@ class SubTask(Model):
     ENTIRE = 'ENT'
 
     SCORING = (
-        (PARTIAL, 'за каждый тест',),
-        (ENTIRE, 'за подзадачу в целом',),
+        (PARTIAL, 'за каждый тест'),
+        (ENTIRE, 'за подзадачу в целом'),
     )
 
-    FULL = 'FUL'
     BRIEF = 'BRF'
+    ERROR = 'ERR'
+    FULL = 'FUL'
 
     RESULTS = (
-        (FULL, 'за каждый тест',),
-        (BRIEF, 'за подзадачу в целом',),
+        (BRIEF, 'за подзадачу в целом'),
+        (ERROR, 'до первой ошибки'),
+        (FULL, 'за каждый тест'),
     )
 
-    problem = ForeignKey('multimeter.Problem', verbose_name='задача', on_delete=CASCADE)
+    task = ForeignKey('multimeter.Task', verbose_name='задача', on_delete=CASCADE)
     number = IntegerField('номер по порядку')
     scoring = CharField('начисление баллов', max_length=3, choices=SCORING)
     results = CharField('отображение результатов', max_length=3, choices=RESULTS)
@@ -194,11 +196,11 @@ class SubTask(Model):
     class Meta:
         verbose_name = 'подзадача'
         verbose_name_plural = 'подзадачи'
-        ordering = ['problem', 'number']
+        ordering = ['task', 'number']
 
     def __str__(self):
         return 'задача "%s", подзадача %s' % (
-            self.problem,
+            self.task,
             self.number,
         )
 
@@ -219,17 +221,17 @@ class Sample(AbstractTest):
     """
     Пример к задаче
     """
-    problem = ForeignKey('multimeter.Problem', on_delete=CASCADE, verbose_name='задача')
+    task = ForeignKey('multimeter.Task', on_delete=CASCADE, verbose_name='задача')
     required = BooleanField('обязателен при проверке', default=False)
 
     class Meta:
         verbose_name = 'пример'
         verbose_name_plural = 'примеры'
-        ordering = ['problem', 'number']
+        ordering = ['task', 'number']
 
     def __str__(self):
         return 'задача "%s", пример %s' % (
-            self.problem,
+            self.task,
             self.number,
         )
 
@@ -256,8 +258,7 @@ class Submission(Model):
     """
     Отправка попытки решения на проверку
     """
-    contest_problem = ForeignKey('multimeter.ContestProblem', on_delete=CASCADE,
-                                 verbose_name='задача')
+    contest_task = ForeignKey('multimeter.ContestTask', on_delete=CASCADE, verbose_name='задача')
     user = ForeignKey('multimeter.Account', on_delete=CASCADE)
     language = ForeignKey('multimeter.Language', on_delete=CASCADE,
                           verbose_name='язык программирования')
@@ -272,7 +273,7 @@ class Submission(Model):
 
     def __str__(self):
         return '%s, пользователь %s, попытка %s' % (
-            self.contest_problem,
+            self.contest_task,
             self.user,
             self.number,
         )

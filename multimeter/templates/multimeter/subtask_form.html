@@ -1,0 +1,31 @@
+{% extends "multimeter/menu.html" %}
+{% load static %}
+{% load multimeter_custom_tags %}
+{% block content %}
+	<div class="container">
+		<div class="row">
+			<div class="col">
+				<h1>{% block title %}Редактирование подзадачи{% endblock %}</h1>
+				<form method="post">
+					{% csrf_token %}
+					
+					{% if object %}
+						<input type="hidden" name="task" value="{{ object.task.id }}">
+					{% else %}
+						<input type="hidden" name="task" value="{{ view.kwargs.task_id }}">
+					{% endif %}
+					{% include 'multimeter/form_input.html' with field=form.number %}
+					{% include 'multimeter/form_input.html' with field=form.scoring %}
+					{% include 'multimeter/form_input.html' with field=form.results %}
+
+					<input type="submit" name="submit" class="btn btn-primary" value="Сохранить">
+					{% if object %}
+						<a href="{% url 'task_update' object.task.id %}#subtasks" class="btn btn-default">Отменить</a>
+					{% else %}
+						<a href="{% url 'task_update' view.kwargs.task_id %}#subtasks" class="btn btn-default">Отменить</a>
+					{% endif %}
+				</form>
+			</div>
+		</div>
+	</div>
+{% endblock %}

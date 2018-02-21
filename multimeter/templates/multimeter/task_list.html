@@ -4,34 +4,34 @@
 	<div class="container">
 		<div class="row">
 			<div class="col">
-				<h1>{% block title %}Список контестов{% endblock %}</h1>
+				<h1>{% block title %}Список задач{% endblock %}</h1>
 				{% if object_list %}
 					<table class="table table-hover">
 						<thead>
 							<tr>
 								<th>Название</th>
-								<th>Время начала</th>
-								<th>Время завершения</th>
+								<th>Автор</th>
 								<th></th>
 							</tr>
 						</thead>
 						<tbody>
-						{% for contest in object_list %}
-							<tr data-url="{% url 'contest_update' contest.id %}">
-								<td>{{ contest.brief_name }}</td>
-								<td>{{ contest.start }}</td>
-								<td>{{ contest.stop }}</td>
+						{% for task in object_list %}
+							<tr data-url="{% url 'task_update' task.id %}">
+								<td>{{ task.name }}</td>
+								<td>{{ task.author }}</td>
 								<td class="text-right">
-									<a href="{% url 'contest_delete' contest.id %}" class="btn btn-danger" role="button"><i class="fas fa-trash-alt"></i></a>
+									<a href="{% url 'task_delete' task.id %}" class="btn btn-danger" role="button">
+										<i class="fas fa-trash-alt"></i>
+									</a>
 								</td>
 							</tr>
 						{% endfor %}
 						</tbody>
 					</table>
 				{% else %}
-					<p>Ни один контест ещё не создан</p>
+					<p>Ни одна задаче ещё не создана</p>
 				{% endif %}
-				<a href="{% url 'contest_create' %}" class="btn btn-primary">Добавить</a>
+				<a href="{% url 'task_create' %}" class="btn btn-primary">Создать</a>
 			</div>
 		</div>
 	</div>

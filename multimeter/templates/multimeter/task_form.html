@@ -1,0 +1,154 @@
+{% extends "multimeter/menu.html" %}
+{% load static %}
+{% load multimeter_custom_tags %}
+{% block content %}
+	<div class="container">
+		<div class="row">
+			<div class="col">
+				<h1>{% block title %}Редактирование задачи{% endblock %}</h1>
+				<nav>
+					<div class="nav nav-tabs" id="tabs" role="tablist">
+						<a class="nav-item nav-link active" id="general-tab" data-toggle="tab" href="#general" role="tab">Общие</a>
+						<a class="nav-item nav-link" id="conditions-tab" data-toggle="tab" href="#conditions" role="tab">Условия</a>
+						<a class="nav-item nav-link" id="check-tab" data-toggle="tab" href="#check" role="tab">Чекер</a>
+						<a class="nav-item nav-link" id="subtasks-tab" data-toggle="tab" href="#subtasks" role="tab">Подзадачи</a>
+					</div>
+				</nav>
+				<form method="post">
+					{% csrf_token %}
+
+					<div class="tab-content">
+
+						<div class="tab-pane fade show active" id="general" role="tabpanel">
+							<div class="form-row">
+								{% include 'multimeter/form_input.html' with field=form.name col='col' %}
+								{% include 'multimeter/form_input.html' with field=form.author col='col' %}
+							</div>
+							<div class="form-row">
+								{% include 'multimeter/form_input.html' with field=form.input col='col' %}
+								{% include 'multimeter/form_input.html' with field=form.output col='col' %}
+							</div>
+						</div>
+
+						<div class="tab-pane fade show active" id="conditions" role="tabpanel">
+							{% include 'multimeter/form_input.html' with field=form.conditions %}
+							{% include 'multimeter/form_input.html' with field=form.solutions %}
+						</div>
+
+						<div class="tab-pane fade show active" id="check" role="tabpanel">
+							{% include 'multimeter/form_input.html' with field=form.checker_lang %}
+							{% include 'multimeter/form_input.html' with field=form.checker %}
+						</div>
+
+						<div class="tab-pane fade show active" id="subtasks" role="tabpanel">
+						{% if object is None %}
+							<p>Подзадачи можно создать после сохранения задачи</p>
+						{% elif object.subtask_set.all|length == 0 %}
+							<p>Подзадачи ещё не созданы</p>
+						{% else %}
+							<table class="table table-hover">
+								<thead>
+									<tr>
+										<th>Номер</th>
+										<th>Начисление баллов</th>
+										<th>Отображение результатов</th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody>
+								{% for subtask in object.subtask_set.all %}
+									<tr data-url="{% url 'subtask_update' subtask.id %}">
+										<td>{{ subtask.number }}</td>
+										<td>{{ subtask.get_scoring_display }}</td>
+										<td>{{ subtask.get_results_display }}</td>
+										<td class="text-right">
+											<a href="{% url 'subtask_delete' subtask.id %}" class="btn btn-danger" role="button">
+												<i class="fas fa-trash-alt"></i>
+											</a>
+										</td>
+									</tr>
+								{% endfor %}
+								</tbody>
+							</table>
+						{% endif %}
+						</div>
+
+					</div>
+
+					<input type="submit" name="submit" class="btn btn-primary" value="Сохранить">
+					<a href="{% url 'task_list' %}" class="btn btn-default">Отменить</a>
+					{% if not object is None %}
+						<a href="{% url 'subtask_create' object.id %}" class="btn btn-default" role="button">Создать подзадачу</a>
+					{% endif %}
+				</form>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+{% block styles %}
+	<link rel="stylesheet" href="{% static 'multimeter/css/codemirror.css' %}">
+	<style>
+		.CodeMirror {
+			border: 1px solid #ced4da;
+			border-radius: .25rem;
+			height: auto;
+		}
+
+		.CodeMirror-code {
+			min-height: 200px;
+		}
+
+		.CodeMirror-focused {
+			border-color: #80bdff;
+			outline: 0;
+			box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25);
+		}
+	</style>
+{% endblock %}
+{% block scripts %}
+	<script src="{% static 'multimeter/js/codemirror.js' %}"></script>
+	<script src="{% static 'multimeter/js/mode/stex.js' %}"></script>
+	<script src="{% static 'multimeter/js/mode/clike.js' %}"></script>
+	<script>
+		$(function () {
+			CodeMirror.fromTextArea(
+				document.getElementById('id_conditions'), {
+					lineNumbers: true,
+					matchBrackets: true,
+					mode: 'text/x-stex'
+				}
+			);
+
+			CodeMirror.fromTextArea(
+				document.getElementById('id_solutions'), {
+					lineNumbers: true,
+					matchBrackets: true,
+					mode: 'text/x-stex'
+				}
+			);
+
+			CodeMirror.fromTextArea(
+				document.getElementById('id_checker'), {
+					lineNumbers: true,
+					matchBrackets: true,
+					mode: 'text/x-c++src'
+				}
+			);
+			
+			// Переключаемся на вкладку
+			var hash = window.location.hash;
+			if (!hash) hash = '#general';
+			$('#tabs a[href="' + hash + '"]').tab('show')
+			
+			// CodeMirror неправильно рисует элементы с display:none, поэтому
+			// костыль скрывает изначально отображающееся содержимое вкладок
+			var $tabs_should_be_hidden = $('div.tab-pane').not(hash);
+			$tabs_should_be_hidden.removeClass('show active');
+
+			// При клике на подзадачу переходим на форму редактирования
+			$('table tbody tr').on('click', function(event) {
+				window.location.href = $(this).data('url');
+			});
+		});
+	</script>
+{% endblock %}
