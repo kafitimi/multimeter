@@ -10,9 +10,9 @@
 					{% csrf_token %}
 					
 					{% if object %}
-						<input type="hidden" name="task" value="{{ object.task.id }}">
+						<input type="hidden" name="problem" value="{{ object.problem.id }}">
 					{% else %}
-						<input type="hidden" name="task" value="{{ view.kwargs.task_id }}">
+						<input type="hidden" name="problem" value="{{ view.kwargs.problem_id }}">
 					{% endif %}
 					{% include 'multimeter/form_input.html' with field=form.number %}
 					{% include 'multimeter/form_input.html' with field=form.scoring %}
@@ -20,9 +20,9 @@
 
 					<input type="submit" name="submit" class="btn btn-primary" value="Сохранить">
 					{% if object %}
-						<a href="{% url 'task_update' object.task.id %}#subtasks" class="btn btn-default">Отменить</a>
+						<a href="{% url 'problem_update' object.problem.id %}#subtasks" class="btn btn-default">Отменить</a>
 					{% else %}
-						<a href="{% url 'task_update' view.kwargs.task_id %}#subtasks" class="btn btn-default">Отменить</a>
+						<a href="{% url 'problem_update' view.kwargs.problem_id %}#subtasks" class="btn btn-default">Отменить</a>
 					{% endif %}
 				</form>
 			</div>

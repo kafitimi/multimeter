@@ -5,6 +5,8 @@ from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DeleteView, CreateView, UpdateView
+from django.forms import CheckboxSelectMultiple
+from django.forms.models import modelform_factory
 
 from .forms import LoginForm, AccountForm, PasswordForm
 from . import models
@@ -111,36 +113,38 @@ class ContestDelete(DeleteView):
 
 
 @method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')  # pylint: disable=too-many-ancestors
-class TaskList(ListView):
+class ProblemList(ListView):
     """ Список задач """
-    model = models.Task
+    model = models.Problem
 
 
 @method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')  # pylint: disable=too-many-ancestors
-class TaskCreate(CreateView):
+class ProblemCreate(CreateView):
     """ Создание задачи """
-    model = models.Task
+    model = models.Problem
     fields = [
-        'name', 'conditions', 'input', 'output', 'solutions', 'checker', 'checker_lang', 'author',
+        'name', 'conditions', 'input_file', 'output_file', 'solutions', 'checker', 'checker_lang',
+        'author', 'contests', 'time_limit', 'memory_limit'
     ]
     success_url = reverse_lazy('problem_list')
 
 
 @method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')  # pylint: disable=too-many-ancestors
-class TaskUpdate(UpdateView):
+class ProblemUpdate(UpdateView):
     """ Редактирование задачи """
-    model = models.Task
-    fields = [
-        'name', 'conditions', 'input', 'output', 'solutions', 'checker', 'checker_lang', 'author',
-    ]
-    success_url = reverse_lazy('task_list')
+    model = models.Problem
+    form_class = modelform_factory(
+        models.Problem, widgets={"contests": CheckboxSelectMultiple}, fields=[
+            'name', 'conditions', 'input_file', 'output_file', 'solutions', 'checker',
+            'checker_lang', 'author', 'contests', 'time_limit', 'memory_limit'])
+    success_url = reverse_lazy('problem_list')
 
 
 @method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')  # pylint: disable=too-many-ancestors
-class TaskDelete(DeleteView):
+class ProblemDelete(DeleteView):
     """ Удаление задачи """
-    model = models.Task
-    success_url = reverse_lazy('task_list')
+    model = models.Problem
+    success_url = reverse_lazy('problem_list')
 
 
 @method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')  # pylint: disable=too-many-ancestors
@@ -148,22 +152,22 @@ class SubTaskCreate(CreateView):
     """ Создание подзадачи """
     model = models.SubTask
     fields = [
-        'task', 'number', 'scoring', 'results'
+        'problem', 'number', 'scoring', 'results'
     ]
-    success_url = reverse_lazy('task_list')
+    success_url = reverse_lazy('problem_list')
 
 @method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')  # pylint: disable=too-many-ancestors
 class SubTaskUpdate(UpdateView):
     """ Редактирование подзадачи """
     model = models.SubTask
     fields = [
-        'task', 'number', 'scoring', 'results'
+        'problem', 'number', 'scoring', 'results'
     ]
-    success_url = reverse_lazy('task_list')
+    success_url = reverse_lazy('problem_list')
 
 
 @method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')  # pylint: disable=too-many-ancestors
 class SubTaskDelete(DeleteView):
     """ Удаление подзадачи """
     model = models.SubTask
-    success_url = reverse_lazy('task_list')
+    success_url = reverse_lazy('problem_list')

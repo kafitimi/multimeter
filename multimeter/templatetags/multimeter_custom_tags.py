@@ -1,3 +1,5 @@
+""" Кастомные фильтры """
+
 from django import template
 from django.forms import CheckboxInput
 
@@ -6,6 +8,7 @@ register = template.Library()
 
 @register.filter
 def form_control(field):
+    """ Добавляет классы form-control и is-invalid к виджету поля формы для работы с Bootstrap """
     attributes = field.field.widget.attrs
     if 'class' not in attributes:
         attributes['class'] = ''
@@ -24,6 +27,7 @@ def form_control(field):
 
 @register.filter
 def form_check_input(field):
+    """ Добавляет класс form-check-input к виджету поля формы для работы с Bootstrap """
     attributes = field.field.widget.attrs
     if 'class' not in attributes:
         attributes['class'] = ''
@@ -37,5 +41,14 @@ def form_check_input(field):
 
 
 @register.filter
+def set_placeholder(field, text):
+    """ Устанавливает атрибут placeholder у виджета поля формы """
+    attributes = field.field.widget.attrs
+    attributes['placeholder'] = text
+    return field
+
+
+@register.filter
 def is_boolean(field):
+    """ Проверяет является ли виджет поля формы чекбоксом или нет """
     return isinstance(field.field.widget, CheckboxInput)

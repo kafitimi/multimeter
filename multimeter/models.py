@@ -1,6 +1,6 @@
 """ Multimeter models """
 from django.db.models import (Model, BooleanField, CASCADE, CharField, IntegerField, ForeignKey,
-                              TextField, DateTimeField, DateField)
+                              TextField, DateTimeField, DateField, ManyToManyField)
 from django.contrib.auth.models import AbstractUser
 
 
@@ -122,19 +122,22 @@ class Contest(Model):
         return self.brief_name
 
 
-class Task(Model):
+class Problem(Model):
     """
     Задача
     """
     name = CharField('название', max_length=100)
-    input = CharField('входной файл', max_length=100, blank=True, default='')
-    output = CharField('выходной файл', max_length=100, blank=True, default='')
+    input_file = CharField('входной файл', max_length=100, blank=True, default='')
+    output_file = CharField('выходной файл', max_length=100, blank=True, default='')
     conditions = TextField('условия в формате TeX', blank=True)
     solutions = TextField('разбор в формате TeX', blank=True)
     checker = TextField('чекер', blank=True)
     checker_lang = ForeignKey('multimeter.Language', on_delete=CASCADE,
                               verbose_name='язык программирования')
-    author = ForeignKey('multimeter.Account', on_delete=CASCADE, verbose_name='автор')
+    author = ForeignKey('multimeter.Account', on_delete=CASCADE, verbose_name='контесты')
+    time_limit = IntegerField('лимит времени (мс)', default=1000)
+    memory_limit = IntegerField('лимит памяти (мб)', default=64)
+    contests = ManyToManyField('multimeter.Contest', verbose_name='контесты')
 
     class Meta:
         verbose_name = 'задача'
@@ -145,13 +148,13 @@ class Task(Model):
         return self.name
 
 
-class ContestTask(Model):
+class ContestProblem(Model):
     """
     Код задачи в контесте
     """
     code = CharField('код', max_length=10)
     contest = ForeignKey('multimeter.Contest', on_delete=CASCADE, verbose_name='олимпиада')
-    task = ForeignKey('multimeter.Task', on_delete=CASCADE, verbose_name='задача')
+    problem = ForeignKey('multimeter.Problem', on_delete=CASCADE, verbose_name='задача')
 
     class Meta:
         verbose_name = 'код задачи в олимпиаде'
@@ -162,7 +165,7 @@ class ContestTask(Model):
         return '%s, задача %s "%s"' % (
             self.contest,
             self.code,
-            self.task,
+            self.problem,
         )
 
 
@@ -188,7 +191,7 @@ class SubTask(Model):
         (FULL, 'за каждый тест'),
     )
 
-    task = ForeignKey('multimeter.Task', verbose_name='задача', on_delete=CASCADE)
+    problem = ForeignKey('multimeter.Problem', verbose_name='задача', on_delete=CASCADE)
     number = IntegerField('номер по порядку')
     scoring = CharField('начисление баллов', max_length=3, choices=SCORING)
     results = CharField('отображение результатов', max_length=3, choices=RESULTS)
@@ -196,11 +199,11 @@ class SubTask(Model):
     class Meta:
         verbose_name = 'подзадача'
         verbose_name_plural = 'подзадачи'
-        ordering = ['task', 'number']
+        ordering = ['problem', 'number']
 
     def __str__(self):
         return 'задача "%s", подзадача %s' % (
-            self.task,
+            self.problem,
             self.number,
         )
 
@@ -221,17 +224,17 @@ class Sample(AbstractTest):
     """
     Пример к задаче
     """
-    task = ForeignKey('multimeter.Task', on_delete=CASCADE, verbose_name='задача')
+    problem = ForeignKey('multimeter.Problem', on_delete=CASCADE, verbose_name='задача')
     required = BooleanField('обязателен при проверке', default=False)
 
     class Meta:
         verbose_name = 'пример'
         verbose_name_plural = 'примеры'
-        ordering = ['task', 'number']
+        ordering = ['problem', 'number']
 
     def __str__(self):
         return 'задача "%s", пример %s' % (
-            self.task,
+            self.problem,
             self.number,
         )
 
@@ -258,7 +261,8 @@ class Submission(Model):
     """
     Отправка попытки решения на проверку
     """
-    contest_task = ForeignKey('multimeter.ContestTask', on_delete=CASCADE, verbose_name='задача')
+    contest_problem = ForeignKey('multimeter.ContestProblem', on_delete=CASCADE,
+                                 verbose_name='задача')
     user = ForeignKey('multimeter.Account', on_delete=CASCADE)
     language = ForeignKey('multimeter.Language', on_delete=CASCADE,
                           verbose_name='язык программирования')
@@ -273,7 +277,7 @@ class Submission(Model):
 
     def __str__(self):
         return '%s, пользователь %s, попытка %s' % (
-            self.contest_task,
+            self.contest_problem,
             self.user,
             self.number,
         )

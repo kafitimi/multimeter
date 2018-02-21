@@ -25,9 +25,18 @@
 								{% include 'multimeter/form_input.html' with field=form.author col='col' %}
 							</div>
 							<div class="form-row">
-								{% include 'multimeter/form_input.html' with field=form.input col='col' %}
-								{% include 'multimeter/form_input.html' with field=form.output col='col' %}
+								{% include 'multimeter/form_input.html' with field=form.input_file|set_placeholder:'стандартный ввод' col='col' %}
+								{% include 'multimeter/form_input.html' with field=form.output_file|set_placeholder:'стандартный вывод' col='col' %}
 							</div>
+							<div class="form-row">
+								{% include 'multimeter/form_input.html' with field=form.time_limit col='col' %}
+								{% include 'multimeter/form_input.html' with field=form.memory_limit col='col' %}
+							</div>
+							{% for option in form.contests %}
+							<div class="form-check">
+								{{ option }}
+							</div>
+							{% endfor %}
 						</div>
 
 						<div class="tab-pane fade show active" id="conditions" role="tabpanel">
@@ -76,7 +85,7 @@
 					</div>
 
 					<input type="submit" name="submit" class="btn btn-primary" value="Сохранить">
-					<a href="{% url 'task_list' %}" class="btn btn-default">Отменить</a>
+					<a href="{% url 'problem_list' %}" class="btn btn-default">Отменить</a>
 					{% if not object is None %}
 						<a href="{% url 'subtask_create' object.id %}" class="btn btn-default" role="button">Создать подзадачу</a>
 					{% endif %}
