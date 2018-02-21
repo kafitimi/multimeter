@@ -16,7 +16,8 @@ urlpatterns = [
     path('contest/update/<int:pk>/', views.ContestUpdate.as_view(), name='contest_update'),
     path('contest/delete/<int:pk>/', views.ContestDelete.as_view(), name='contest_delete'),
 
-    path('problem/list/', views.problem_list, name='problem_list'),
-    path('problem/add/', views.problem_edit, name='problem_add'),
-    path('problem/edit/<int:problem_id>/', views.problem_edit, name='problem_edit'),
+    path('problem/list/', views.ProblemList.as_view(), name='problem_list'),
+    path('problem/create/', views.ProblemCreate.as_view(), name='problem_create'),
+    path('problem/update/<int:pk>/', views.ProblemUpdate.as_view(), name='problem_update'),
+    path('problem/delete/<int:pk>/', views.ProblemDelete.as_view(), name='problem_delete'),
 ]

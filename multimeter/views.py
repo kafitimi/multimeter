@@ -1,12 +1,12 @@
 """ Multimeter views """
 from django.contrib.auth import authenticate, login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DeleteView, CreateView, UpdateView
 
-from multimeter.forms import LoginForm, AccountForm, PasswordForm, ProblemForm
+from multimeter.forms import LoginForm, AccountForm, PasswordForm
 from multimeter.models import Contest, Problem
 
 
@@ -110,28 +110,34 @@ class ContestDelete(DeleteView):
     success_url = reverse_lazy('contest_list')
 
 
-@login_required
-def problem_list(request):
+@method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')  # pylint: disable=too-many-ancestors
+class ProblemList(ListView):
     """ Список задач """
-    problems = Problem.objects.all()
-    return render(request, 'multimeter/problem_list.html', {
-        'problems': problems
-    })
+    model = Problem
 
 
-@login_required
-def problem_edit(request, problem_id=None):
-    """ Редактирование задач """
-    instance = None if problem_id is None else get_object_or_404(Problem, id=problem_id)
-    if request.method == 'POST':
-        form = ProblemForm(request.POST, instance=instance)
-        if form.is_valid():
-            form.save()
-            return redirect('problem_list')
-    else:
-        form = ProblemForm(instance=instance)
-    return render(request, 'multimeter/problem_edit.html', {
-        'caption': 'Редактирование задачи',
-        'cancel_url': reverse('problem_list'),
-        'form': form
-    })
+@method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')  # pylint: disable=too-many-ancestors
+class ProblemCreate(CreateView):
+    """ Создание задачи """
+    model = Problem
+    fields = [
+        'name', 'conditions', 'input', 'output', 'solutions', 'checker', 'checker_lang', 'author',
+    ]
+    success_url = reverse_lazy('problem_list')
+
+
+@method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')  # pylint: disable=too-many-ancestors
+class ProblemUpdate(UpdateView):
+    """ Редактирование задачи """
+    model = Problem
+    fields = [
+        'name', 'conditions', 'input', 'output', 'solutions', 'checker', 'checker_lang', 'author',
+    ]
+    success_url = reverse_lazy('problem_list')
+
+
+@method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')  # pylint: disable=too-many-ancestors
+class ProblemDelete(DeleteView):
+    """ Удаление задачи """
+    model = Problem
+    success_url = reverse_lazy('problem_list')

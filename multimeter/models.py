@@ -129,8 +129,8 @@ class Problem(Model):
     name = CharField('название', max_length=100)
     input = CharField('входной файл', max_length=100)
     output = CharField('выходной файл', max_length=100)
-    conditions = TextField('текст условия в формате TeX', blank=True)
-    solutions = TextField('текст разбора в формате TeX', blank=True)
+    conditions = TextField('условия в формате TeX', blank=True)
+    solutions = TextField('разбор в формате TeX', blank=True)
     checker = TextField('чекер', blank=True)
     checker_lang = ForeignKey('multimeter.Language', on_delete=CASCADE,
                               verbose_name='язык программирования')

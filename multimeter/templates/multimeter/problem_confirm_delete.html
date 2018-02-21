@@ -1,0 +1,17 @@
+{% extends 'multimeter/menu.html' %}
+{% load multimeter_custom_tags %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h1>{% block title %}Подтвердите удаление{% endblock %}</h1>
+                <form method="post">
+                    {% csrf_token %}
+                    <p>Вы действительно хотите удалить задачу "{{ object }}"?</p>
+                    <input type="submit" class="btn btn-danger" role="button" value="Удалить" />
+                    <a href="{% url 'problem_list' %}" class="btn btn-default" role="button" >Отменить</a>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -2,7 +2,7 @@
 from django.core.exceptions import ValidationError
 from django.forms import Form, CharField, PasswordInput, ModelForm
 
-from multimeter.models import Account, Problem
+from multimeter.models import Account
 
 
 class LoginForm(Form):
@@ -38,13 +38,3 @@ class PasswordForm(Form):
         if confirm_password != self.cleaned_data['new_password']:
             raise ValidationError('Пароли не совпадают')
         return confirm_password
-
-
-class ProblemForm(ModelForm):
-    """ Форма редактирования задачи """
-    class Meta:
-        model = Problem
-        fields = [
-            'name', 'conditions', 'input', 'output', 'solutions', 'checker', 'checker_lang',
-            'author'
-        ]

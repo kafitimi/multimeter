@@ -5,22 +5,28 @@
         <div class="row">
             <div class="col">
                 <h1>{% block title %}Список задач{% endblock %}</h1>
-                {% if problems %}
+                {% if object_list %}
                     <table class="table table-hover">
                         <thead>
-                        <tr>
-                            <th>Название</th>
-                            <th>Автор</th>
-                        </tr>
+                            <tr>
+                                <th>Название</th>
+                                <th>Автор</th>
+                                <th></th>
+                            </tr>
                         </thead>
                         <tbody>
-                        {% for p in problems %}
+                        {% for problem in object_list %}
                             <tr>
                                 <td>
-                                    <a href="{% url 'problem_edit' p.id %}">{{ p.name }}</a>
+                                    <a href="{% url 'problem_update' problem.id %}">
+                                        {{ problem.name }}
+                                    </a>
                                 </td>
                                 <td>
-                                    {{ p.author }}
+                                    {{ problem.author }}
+                                </td>
+                                <td class="text-right">
+                                    <a href="{% url 'problem_delete' problem.id %}" class="btn btn-danger" role="button"><i class="fas fa-trash-alt"></i></a>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -29,7 +35,7 @@
                 {% else %}
                     <p>Ни одна задаче ещё не создана</p>
                 {% endif %}
-                <a href="{% url 'problem_add' %}" class="btn btn-primary">Добавить</a>
+                <a href="{% url 'problem_create' %}" class="btn btn-primary">Добавить</a>
             </div>
         </div>
     </div>
