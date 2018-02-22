@@ -1,9 +1,12 @@
+""" Модульный тест для проверки работы учётных записей """
 from django.test import TestCase, Client
 
 from multimeter import models
 
 
 class TestAccount(TestCase):
+    """ Тестирование представлений (views) учетной записи """
+
     def setUp(self):
         admin = models.Account()
         admin.is_superuser = True
@@ -12,50 +15,79 @@ class TestAccount(TestCase):
         admin.save()
 
     def test_login_page(self):
-        c = Client()
+        """ Тест страницы авторизации """
+        client = Client()
 
         # Неавторизованный пользователь
-        r = c.get('/')
-        self.assertRedirects(r, '/login/?next=/')
+        response = client.get('/')
+        self.assertRedirects(response, '/login/?next=/')
 
         # Страница входа
-        r = c.get('/login/')
-        self.assertTemplateUsed(r, 'multimeter/login.html')
+        response = client.get('/login/')
+        self.assertTemplateUsed(response, 'multimeter/login.html')
 
         # Неправильный логин
-        r = c.post('/login/', {'username': 'wrong', 'password': 'right'})
-        self.assertContains(r, 'Неправильный логин или пароль', status_code=200)
+        response = client.post('/login/', {'username': 'wrong', 'password': 'right'})
+        self.assertContains(response, 'Неправильный логин или пароль', status_code=200)
 
         # Неправильный пароль
-        r = c.post('/login/', {'username': 'admin', 'password': 'wrong'})
-        self.assertContains(r, 'Неправильный логин или пароль', status_code=200)
+        response = client.post('/login/', {'username': 'admin', 'password': 'wrong'})
+        self.assertContains(response, 'Неправильный логин или пароль', status_code=200)
 
         # Правильный логин и пароль
-        r = c.post('/login/', {'username': 'admin', 'password': 'right'})
-        self.assertRedirects(r, '/')
+        response = client.post('/login/', {'username': 'admin', 'password': 'right'})
+        self.assertRedirects(response, '/')
 
     def test_logout(self):
-        c = Client()
-        c.login(username='admin', password='right')
+        """ Тест страницы выхода из системы """
+        client = Client()
+        client.login(username='admin', password='right')
 
-        r = c.get('/logout/')
-        self.assertRedirects(r, '/login/')
+        response = client.get('/logout/')
+        self.assertRedirects(response, '/login/')
 
     def test_account_page(self):
-        c = Client()
-        c.login(username='admin', password='right')
+        """ Тест страницы редактирования учетной записи """
+        client = Client()
+        client.login(username='admin', password='right')
 
-        r = c.get('/account/')
-        self.assertContains(r, 'Профиль пользователя', status_code=200)
-        self.assertNotContains(r, 'John', status_code=200)
-        self.assertNotContains(r, 'Doe', status_code=200)
-        self.assertNotContains(r, 'Jay', status_code=200)
-        self.assertNotContains(r, '31.12.2000', status_code=200)
+        # Открытие профиля пользоватея /account/ => страница страница профиля без новых данных
+        response = client.get('/account/')
+        self.assertContains(response, 'Профиль пользователя', status_code=200)
+        self.assertNotContains(response, 'John', status_code=200)
+        self.assertNotContains(response, 'Doe', status_code=200)
+        self.assertNotContains(response, 'Jay', status_code=200)
+        self.assertNotContains(response, '31.12.2000', status_code=200)
 
-        r = c.post('/account/', {
+        # Отправка данных пользователя без необязательных полей => успех
+        response = client.post('/account/', {
             'username': 'admin',
             'first_name': 'John',
-            'second_name': 'Jay',
-            'last_name': 'Doe'
+            'last_name': 'Doe',
+            'birthday': '31.12.2000',
         })
-        # self.assertTemplateUsed(r, 'multimeter/login.html')
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['location'], '/')
+
+        # Открытие профиля пользоватея /account/ => страница страница профиля с новыми данными
+        response = client.get('/account/')
+        self.assertContains(response, 'John', status_code=200)
+        self.assertContains(response, 'Doe', status_code=200)
+        self.assertContains(response, '31.12.2000', status_code=200)
+
+        # Очистка необязательных полей пользователя => перенаправление на главную страницу
+        response = client.post('/account/', {
+            'username': 'admin',
+            'first_name': '',
+            'last_name': '',
+            'second_name': '',
+            'birthday': '31.12.2000',
+        })
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['location'], '/')
+
+        # Открытие профиля => страница страница не должна содержать очищенных данных
+        response = client.get('/account/')
+        self.assertNotContains(response, 'John', status_code=200)
+        self.assertNotContains(response, 'Doe', status_code=200)
+        self.assertNotContains(response, 'Jay', status_code=200)
