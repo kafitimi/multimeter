@@ -1,6 +1,6 @@
 {% extends 'multimeter/menu.html' %}
-{% load multimeter_custom_tags %}
 {% block content %}
+    <div id="form" class="d-none">{{ form }}</div>
     <div class="container">
         <div class="row">
             <div class="col">
@@ -8,30 +8,42 @@
                 <form method="post">
                     {% csrf_token %}
                     
-                    {% include 'multimeter/form_input.html' with field=form.brief_name %}
-                    {% include 'multimeter/form_input.html' with field=form.full_name %}
-                    {% include 'multimeter/form_input.html' with field=form.conditions %}
-                    {% include 'multimeter/form_input.html' with field=form.rules %}
+                    <div class="form-group" data-form="brief_name"></div>
+                    <div class="form-group" data-form="full_name"></div>
+                    <div class="form-group" data-form="conditions"></div>
+                    <div class="form-group" data-form="rules"></div>
                     
                     <div class="form-row">
-                        {% include 'multimeter/form_input.html' with field=form.start col='col' %}
-                        {% include 'multimeter/form_input.html' with field=form.stop col='col' %}
-                        {% include 'multimeter/form_input.html' with field=form.freeze col='col' %}
+                        <div class="form-group col" data-form="start"></div>
+                        <div class="form-group col" data-form="stop"></div>
+                        <div class="form-group col" data-form="freeze"></div>
                     </div>
 
                     <div class="form-row">
-                        {% include 'multimeter/form_check.html' with field=form.personal_rules col='col' %}
-                        {% include 'multimeter/form_check.html' with field=form.command_rules col='col' %}
+                        <div class="form-group col">
+                            <div class="form-check" data-form="personal_rules"></div>
+                        </div>
+                        <div class="form-group col">
+                            <div class="form-check" data-form="command_rules"></div>
+                        </div>
                     </div>
 
                     <div class="form-row">
-                        {% include 'multimeter/form_check.html' with field=form.guest_access col='col' %}
-                        {% include 'multimeter/form_check.html' with field=form.participant_access col='col' %}
+                        <div class="form-group col">
+                            <div class="form-check" data-form="guest_access"></div>
+                        </div>
+                        <div class="form-group col">
+                            <div class="form-check" data-form="participant_access"></div>
+                        </div>
                     </div>
 
                     <div class="form-row">
-                        {% include 'multimeter/form_check.html' with field=form.show_tests col='col' %}
-                        {% include 'multimeter/form_check.html' with field=form.show_results col='col' %}
+                        <div class="form-group col">
+                            <div class="form-check" data-form="show_tests"></div>
+                        </div>
+                        <div class="form-group col">
+                            <div class="form-check" data-form="show_results"></div>
+                        </div>
                     </div>
 
                     <input type="submit" name="submit" class="btn btn-primary" value="Сохранить">

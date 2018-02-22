@@ -44,11 +44,7 @@ def account_page(request):
             return redirect('index')
     else:
         form = AccountForm(instance=request.user)
-    return render(request, 'multimeter/edit.html', {
-        'caption': 'Профиль пользователя',
-        'cancel_url': reverse('index'),
-        'form': form
-    })
+    return render(request, 'multimeter/account_form.html', {'form': form})
 
 
 @login_required
@@ -64,11 +60,7 @@ def password_page(request):
             return redirect('index')
     else:
         form = PasswordForm()
-    return render(request, 'multimeter/edit.html', {
-        'caption': 'Изменение пароля',
-        'cancel_url': reverse('index'),
-        'form': form
-    })
+    return render(request, 'multimeter/password_change.html', {'form': form})
 
 
 @method_decorator(user_passes_test(lambda u: u.is_superuser), name='dispatch')  # pylint: disable=too-many-ancestors

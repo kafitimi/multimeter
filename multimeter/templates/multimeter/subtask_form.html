@@ -1,7 +1,6 @@
 {% extends "multimeter/menu.html" %}
-{% load static %}
-{% load multimeter_custom_tags %}
 {% block content %}
+	<div id="form" class="d-none">{{ form }}</div>
 	<div class="container">
 		<div class="row">
 			<div class="col">
@@ -14,9 +13,9 @@
 					{% else %}
 						<input type="hidden" name="problem" value="{{ view.kwargs.problem_id }}">
 					{% endif %}
-					{% include 'multimeter/form_input.html' with field=form.number %}
-					{% include 'multimeter/form_input.html' with field=form.scoring %}
-					{% include 'multimeter/form_input.html' with field=form.results %}
+					<div class="form-group" data-form="number"></div>
+					<div class="form-group" data-form="scoring"></div>
+					<div class="form-group" data-form="results"></div>
 
 					<input type="submit" name="submit" class="btn btn-primary" value="Сохранить">
 					{% if object %}
