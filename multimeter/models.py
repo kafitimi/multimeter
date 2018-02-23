@@ -2,6 +2,7 @@
 from django.db.models import (Model, BooleanField, CASCADE, CharField, IntegerField, ForeignKey,
                               TextField, DateTimeField, DateField, ManyToManyField)
 from django.contrib.auth.models import AbstractUser
+from django.utils.timezone import now
 
 
 CE = 'CE'
@@ -132,12 +133,12 @@ class Problem(Model):
     conditions = TextField('условия в формате TeX', blank=True)
     solutions = TextField('разбор в формате TeX', blank=True)
     checker = TextField('чекер', blank=True)
-    checker_lang = ForeignKey('multimeter.Language', on_delete=CASCADE,
+    checker_lang = ForeignKey('multimeter.Language', on_delete=CASCADE, blank=True, null=True,
                               verbose_name='язык программирования')
     author = ForeignKey('multimeter.Account', on_delete=CASCADE, verbose_name='контесты')
     time_limit = IntegerField('лимит времени (мс)', default=1000)
     memory_limit = IntegerField('лимит памяти (мб)', default=64)
-    contests = ManyToManyField('multimeter.Contest', verbose_name='контесты')
+    last_modified = DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = 'задача'
@@ -147,12 +148,30 @@ class Problem(Model):
     def __str__(self):
         return self.name
 
+    def set_tags(self, new_tags: str):
+        """ Сохранение измененного списка тегов """
+        new_tags = new_tags.lower()
+        new_tags = new_tags.replace(',', ' ')
+        new_tags = set(new_tags.split())
+
+        old_tags = {t.tag for t in self.tags.all()}
+
+        tags_to_add = new_tags - old_tags
+        for tag in tags_to_add:
+            tag_object, _ = Tag.objects.get_or_create(tag=tag)
+            tag_object.problems.add(self)
+
+        tags_to_del = old_tags - new_tags
+        for tag in tags_to_del:
+            tag_object, _ = Tag.objects.get_or_create(tag=tag)
+            tag_object.problems.remove(self)
+
 
 class ContestProblem(Model):
     """
     Код задачи в контесте
     """
-    code = CharField('код', max_length=10)
+    code = CharField('код', max_length=10, blank=True)
     contest = ForeignKey('multimeter.Contest', on_delete=CASCADE, verbose_name='олимпиада')
     problem = ForeignKey('multimeter.Problem', on_delete=CASCADE, verbose_name='задача')
 
@@ -344,3 +363,16 @@ class TestResult(Model):
         abstract = True
         verbose_name = 'результат проверки на тесте'
         verbose_name_plural = 'результаты проверок на тестах'
+
+
+class Tag(Model):
+    """ Теги """
+    tag = CharField(max_length=25, unique=True)
+    problems = ManyToManyField('Problem', related_name="tags", blank=True)
+
+    class Meta:
+        verbose_name = 'тег'
+        verbose_name_plural = 'теги'
+
+    def __str__(self):
+        return self.tag

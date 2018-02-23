@@ -1,8 +1,8 @@
 """ Multimeter forms """
 from django.core.exceptions import ValidationError
-from django.forms import Form, CharField, PasswordInput, ModelForm
+from django.forms import Form, ModelForm, CharField, HiddenInput, PasswordInput
 
-from multimeter.models import Account
+from multimeter.models import Account, Problem
 
 
 class LoginForm(Form):
@@ -38,3 +38,13 @@ class PasswordForm(Form):
         if confirm_password != self.cleaned_data['new_password']:
             raise ValidationError('Пароли не совпадают')
         return confirm_password
+
+
+class ProblemForm(ModelForm):
+    """ Форма редактирования задачи """
+    tags = CharField(max_length=200, label='Теги', required=False)
+
+    class Meta:
+        exclude = []
+        model = Problem
+        widgets = {'author': HiddenInput}

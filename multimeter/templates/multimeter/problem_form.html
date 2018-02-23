@@ -6,6 +6,7 @@
 		<div class="row">
 			<div class="col">
 				<h1>{% block title %}Редактирование задачи{% endblock %}</h1>
+				<div class="text-danger" data-form="nonfield-errorlist"></div>
 				<nav>
 					<div class="nav nav-tabs" id="tabs" role="tablist">
 						<a class="nav-item nav-link active" id="general-tab" data-toggle="tab" href="#general" role="tab">Общие</a>
@@ -22,16 +23,29 @@
 						<div class="tab-pane fade show active" id="general" role="tabpanel">
 							<div class="form-row">
 								<div class="form-group col" data-form="name"></div>
-								<div class="form-group col" data-form="author"></div>
+								<div class="form-group col" data-form="tags">
+									<small class="form-text text-muted">
+	  									Тег — это слово в нижнем регистре. Теги должны быть разделены пробелами.
+									</small>
+								</div>
 							</div>
 							<div class="form-row">
-								<div class="form-group col" data-form="input_file"></div>
-								<div class="form-group col" data-form="output_file"></div>
+								<div class="form-group col" data-form="input_file">
+									<small class="form-text text-muted">
+										Если не задано, то будет использоваться стандартный поток ввода
+									</small>
+								</div>
+								<div class="form-group col" data-form="output_file">
+									<small class="form-text text-muted">
+										Если не задано, то будет использоваться стандартный поток вывода
+									</small>
+								</div>
 							</div>
 							<div class="form-row">
 								<div class="form-group col" data-form="time_limit"></div>
 								<div class="form-group col" data-form="memory_limit"></div>
 							</div>
+							<div class="form-group d-none" data-form="author"></div>
 						</div>
 
 						<div class="tab-pane fade show active" id="conditions" role="tabpanel">
@@ -45,9 +59,9 @@
 						</div>
 
 						<div class="tab-pane fade show active" id="subtasks" role="tabpanel">
-						{% if object is None %}
+						{% if problem is None %}
 							<p>Подзадачи можно создать после сохранения задачи</p>
-						{% elif object.subtask_set.all|length == 0 %}
+						{% elif problem.subtask_set.all|length == 0 %}
 							<p>Подзадачи ещё не созданы</p>
 						{% else %}
 							<table class="table table-hover">
@@ -60,7 +74,7 @@
 									</tr>
 								</thead>
 								<tbody>
-								{% for subtask in object.subtask_set.all %}
+								{% for subtask in problem.subtask_set.all %}
 									<tr data-url="{% url 'subtask_update' subtask.id %}">
 										<td>{{ subtask.number }}</td>
 										<td>{{ subtask.get_scoring_display }}</td>
@@ -81,8 +95,8 @@
 
 					<input type="submit" name="submit" class="btn btn-primary" value="Сохранить">
 					<a href="{% url 'problem_list' %}" class="btn btn-default">Отменить</a>
-					{% if not object is None %}
-						<a href="{% url 'subtask_create' object.id %}" class="btn btn-default" role="button">Создать подзадачу</a>
+					{% if not problem is None %}
+						<a href="{% url 'subtask_create' problem.id %}" class="btn btn-default" role="button">Создать подзадачу</a>
 					{% endif %}
 				</form>
 			</div>

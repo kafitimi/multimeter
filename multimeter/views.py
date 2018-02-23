@@ -1,15 +1,14 @@
 """ Multimeter views """
 from django.contrib.auth import authenticate, login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.shortcuts import render, redirect
-from django.urls import reverse, reverse_lazy
+from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DeleteView, CreateView, UpdateView
-from django.forms import CheckboxSelectMultiple
-from django.forms.models import modelform_factory
 
-from .forms import LoginForm, AccountForm, PasswordForm
-from . import models
+from multimeter.forms import LoginForm, AccountForm, PasswordForm, ProblemForm
+from multimeter.models import Problem
+from multimeter import models
 
 
 def login_page(request):
@@ -104,32 +103,30 @@ class ContestDelete(DeleteView):
     success_url = reverse_lazy('contest_list')
 
 
-@method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')  # pylint: disable=too-many-ancestors
-class ProblemList(ListView):
+@user_passes_test(lambda u: u.is_staff)
+def problem_list_page(request):
     """ Список задач """
-    model = models.Problem
+    problem_list = Problem.objects.filter(author=request.user)
+    return render(request, 'multimeter/problem_list.html', {'object_list': problem_list})
 
 
-@method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')  # pylint: disable=too-many-ancestors
-class ProblemCreate(CreateView):
-    """ Создание задачи """
-    model = models.Problem
-    fields = [
-        'name', 'conditions', 'input_file', 'output_file', 'solutions', 'checker', 'checker_lang',
-        'author', 'contests', 'time_limit', 'memory_limit'
-    ]
-    success_url = reverse_lazy('problem_list')
-
-
-@method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')  # pylint: disable=too-many-ancestors
-class ProblemUpdate(UpdateView):
-    """ Редактирование задачи """
-    model = models.Problem
-    form_class = modelform_factory(
-        models.Problem, widgets={"contests": CheckboxSelectMultiple}, fields=[
-            'name', 'conditions', 'input_file', 'output_file', 'solutions', 'checker',
-            'checker_lang', 'author', 'contests', 'time_limit', 'memory_limit'])
-    success_url = reverse_lazy('problem_list')
+@user_passes_test(lambda u: u.is_staff)
+def problem_edit_page(request, problem_id=None):
+    """ Страница создания / редактирования задачи """
+    problem = None if problem_id is None else get_object_or_404(Problem, pk=problem_id)
+    initial = {
+        'author': request.user if problem is None else problem.author,
+        'tags': '' if problem is None else ' '.join([t.tag for t in problem.tags.all()])
+    }
+    if request.method == 'POST':
+        form = ProblemForm(request.POST, instance=problem)
+        if form.is_valid():
+            problem = form.save()
+            problem.set_tags(form.cleaned_data['tags'])
+            return redirect('problem_list')
+    else:
+        form = ProblemForm(initial=initial, instance=problem)
+    return render(request, 'multimeter/problem_form.html', {'form': form, 'problem': problem})
 
 
 @method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')  # pylint: disable=too-many-ancestors
