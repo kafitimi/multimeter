@@ -6,7 +6,7 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DeleteView, CreateView, UpdateView
 
-from multimeter.forms import LoginForm, AccountForm, PasswordForm, ProblemForm
+from multimeter.forms import LoginForm, AccountForm, PasswordForm, ProblemForm, SignupForm
 from multimeter.models import Problem
 from multimeter import models
 
@@ -127,6 +127,30 @@ def problem_edit_page(request, problem_id=None):
     else:
         form = ProblemForm(initial=initial, instance=problem)
     return render(request, 'multimeter/problem_form.html', {'form': form, 'problem': problem})
+
+
+class SignupFormView(CreateView):
+    form_class = SignupForm
+    template_name = 'multimeter/signup.html'
+
+    def get(self, request):
+        form = self.form_class(None)
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user.set_password(password)
+            user.save()
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+                    return redirect('index')
+        return render(request, self.template_name, {'form': form})
 
 
 @method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')  # pylint: disable=too-many-ancestors
