@@ -6,8 +6,8 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DeleteView, CreateView, UpdateView
 
-from multimeter.forms import LoginForm, AccountForm, PasswordForm, ProblemForm
-from multimeter.models import Problem
+from multimeter.forms import LoginForm, AccountForm, PasswordForm, ProblemForm, SignupForm
+from multimeter.models import Problem, Account
 from multimeter import models
 
 
@@ -127,6 +127,32 @@ def problem_edit_page(request, problem_id=None):
     else:
         form = ProblemForm(initial=initial, instance=problem)
     return render(request, 'multimeter/problem_form.html', {'form': form, 'problem': problem})
+
+
+class SignupFormView(CreateView):
+    form_class = SignupForm
+    template_name = 'multimeter/signup.html'
+
+    def get(self, request):
+        form = self.form_class(None)
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            email = form.cleaned_data['email']
+            if not (Account.objects.filter(username=username).exists() or Account.objects.filter(email=email).exists()):
+                user = form.save(commit=False)
+                user.set_password(password)
+                user.save()
+                user = authenticate(username=username, password=password)
+                login(request, user)
+                return redirect('index')
+            else:
+                form.add_error(None, "Логин и(или) адрес электронной почты уже заняты")
+        return render(request, self.template_name, {'form': form})
 
 
 @method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')  # pylint: disable=too-many-ancestors

@@ -1,6 +1,6 @@
 """ Multimeter forms """
 from django.core.exceptions import ValidationError
-from django.forms import Form, ModelForm, CharField, HiddenInput, PasswordInput
+from django.forms import Form, ModelForm, CharField, HiddenInput, PasswordInput, EmailField, DateField, DateInput
 
 from multimeter.models import Account, Problem
 
@@ -9,6 +9,15 @@ class LoginForm(Form):
     """ Форма входа в систему """
     username = CharField(max_length=150, label='Логин')
     password = CharField(widget=PasswordInput(), label='Пароль')
+
+
+class SignupForm(ModelForm):
+    password = CharField(widget=PasswordInput())
+    email = EmailField(label='Адрес электронной почты')
+
+    class Meta:
+        model = Account
+        fields = ['username', 'password', 'first_name', 'last_name', 'patronymic_name', 'email']
 
 
 class AccountForm(ModelForm):
