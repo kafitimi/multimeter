@@ -24,6 +24,7 @@
                         {% endif %}
                     </ul>
                     <ul class="navbar-nav">
+                        {% if user.is_authenticated %}
                         <li class="nav-item dropdown{% if request.resolver_match.namespace == 'profile' %} active{% endif %}">
                             <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
                                 {{ user }}
@@ -40,6 +41,14 @@
                                 </a>
                             </div>
                         </li>
+                        {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href={% url 'login' %}>Вход</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href={% url 'signup' %}>Регистрация</a>
+                        </li>
+                        {% endif %}
                     </ul>
                 </nav>
             </div>

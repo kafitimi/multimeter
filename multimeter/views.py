@@ -27,7 +27,6 @@ def login_page(request):
     return render(request, 'multimeter/login.html', {'form': form})
 
 
-@login_required
 def index_page(request):
     """ Главная страница """
     return render(request, 'multimeter/index.html', {})
