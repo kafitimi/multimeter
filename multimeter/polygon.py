@@ -21,7 +21,7 @@ def process_problem(_path, _lang):
     source = open(os.path.join(_path, 'problem.xml'), 'rb')
     problem = ET.parse(source)
     root = problem.getroot()
-    titles = root.find('names').findall('name');
+    titles = root.find('names').findall('name')
     title = titles[0].attrib['value']
     for t in titles:
         if t.attrib['language'] == _lang:
