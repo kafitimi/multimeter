@@ -1,6 +1,3 @@
-# Project Specific
-multimeter/tests/test_problem
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
