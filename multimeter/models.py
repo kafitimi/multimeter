@@ -133,10 +133,9 @@ class Problem(Model):
     conditions = TextField('условия в формате TeX', blank=True)
     solutions = TextField('разбор в формате TeX', blank=True)
     checker = TextField('чекер', blank=True)
-    # checker_lang = ForeignKey('multimeter.Language', on_delete=CASCADE, blank=True, null=True,
-    #                          verbose_name='язык программирования')
-    # author = ForeignKey('multimeter.Account', on_delete=CASCADE, verbose_name='контесты')
-    author = CharField('автор', max_length=100, default='')
+    checker_lang = ForeignKey('multimeter.Language', on_delete=CASCADE, blank=True, null=True,
+                              verbose_name='язык программирования')
+    author = ForeignKey('multimeter.Account', on_delete=CASCADE, verbose_name='контесты')
     time_limit = IntegerField('лимит времени (мс)', default=1000)
     memory_limit = IntegerField('лимит памяти (мб)', default=64)
     last_modified = DateTimeField(auto_now=True)
