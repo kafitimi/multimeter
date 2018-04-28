@@ -34,15 +34,22 @@ def process_problem(_path, _lang=EN):
     for t in titles:
         if t.attrib['language'] == _lang:
             title = t.attrib['value']
-    statements = root.find('statements')
-    statement_path = None
-    for s in statements:
-        if s.attrib['language'] == _lang and s.attrib['type'] == 'application/x-tex':
-            statement_path = s.attrib['path']
+    checker_source = ''
+    assets_node = root.find('assets')
+    if assets_node is not None:
+        checker_node = assets_node.find('checker')
+        if checker_node is not None:
+            source_node = checker_node.find('source')
+            if source_node is not None:
+                checker_path = os.path.join(_path, source_node.attrib['path'])
+                with open(checker_path, 'r') as checker_file:
+                    checker_source = checker_file.read()
     judging = root.find('judging')
     input_file = judging.attrib['input-file']
     output_file = judging.attrib['output-file']
     testsets = judging.findall('testset')
+    tl = 0
+    ml = 0
     for t in testsets:
         tl = int(float(t.find('time-limit').text) * 0.001)
         ml = int(t.find('memory-limit').text) // (1024 * 1024)
@@ -52,4 +59,5 @@ def process_problem(_path, _lang=EN):
     problem.output_file = output_file
     problem.time_limit = tl
     problem.memory_limit = ml
+    problem.checker = checker_source
     return problem
