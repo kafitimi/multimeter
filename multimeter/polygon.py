@@ -36,15 +36,11 @@ def process_problem(_path, _lang=EN):
         if t.attrib['language'] == _lang:
             title = t.attrib['value']
     checker_source = ''
-    assets_node = root.find('assets')
-    if assets_node is not None:
-        checker_node = assets_node.find('checker')
-        if checker_node is not None:
-            source_node = checker_node.find('source')
-            if source_node is not None:
-                checker_path = os.path.join(_path, source_node.attrib['path'])
-                with open(checker_path, 'r') as checker_file:
-                    checker_source = checker_file.read()
+    source_node = root.find('assets/checker/source')
+    if source_node is not None:
+        checker_path = os.path.join(_path, source_node.attrib['path'])
+        with open(checker_path, 'r') as checker_file:
+            checker_source = checker_file.read()
     judging = root.find('judging')
     input_file = judging.attrib['input-file']
     output_file = judging.attrib['output-file']
