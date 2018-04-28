@@ -28,8 +28,8 @@ def process_archive(_path, _lang=EN):
 
 def process_problem(_path, _lang=EN):
     path = os.path.join(_path, 'problem.xml')
-    file = open(path)
-    root = ET.parse(file).getroot()
+    with open(path) as file:
+        root = ET.parse(file).getroot()
     titles = root.find('names').findall('name')
     title = titles[0].attrib['value']
     for t in titles:
@@ -44,12 +44,14 @@ def process_problem(_path, _lang=EN):
     judging = root.find('judging')
     input_file = judging.attrib['input-file']
     output_file = judging.attrib['output-file']
-    testsets = judging.findall('testset')
     tl = 0
     ml = 0
-    for t in testsets:
-        tl = int(float(t.find('time-limit').text) * 0.001)
-        ml = int(t.find('memory-limit').text) // (1024 * 1024)
+    tl_node = root.find('judging/testset/time-limit')
+    if tl_node is not None:
+        tl = int(float(tl_node.text) * 0.001)
+    ml_node = root.find('judging/testset/memory-limit')
+    if ml_node is not None:
+        ml = int(ml_node.text) // (1024 * 1024)
     problem = Problem()
     problem.name = title
     problem.input_file = input_file
@@ -57,5 +59,4 @@ def process_problem(_path, _lang=EN):
     problem.time_limit = tl
     problem.memory_limit = ml
     problem.checker = checker_source
-    file.close()
     return problem
