@@ -2,7 +2,7 @@ import os
 import tempfile
 import shutil
 import zipfile
-import xml.etree.cElementTree as ET
+import xml.etree.ElementTree as ET
 from multimeter.models import Problem
 
 EN = 'english'
@@ -28,7 +28,8 @@ def process_archive(_path, _lang=EN):
 
 def process_problem(_path, _lang=EN):
     path = os.path.join(_path, 'problem.xml')
-    root = ET.ElementTree(file=path).getroot()
+    file = open(path)
+    root = ET.parse(file).getroot()
     titles = root.find('names').findall('name')
     title = titles[0].attrib['value']
     for t in titles:
@@ -60,4 +61,5 @@ def process_problem(_path, _lang=EN):
     problem.time_limit = tl
     problem.memory_limit = ml
     problem.checker = checker_source
+    file.close()
     return problem
