@@ -1,0 +1,5 @@
+\begin{tutorial}{Fire stations}
+
+Use dynamic programming. Denote $A_i$ the minimum expenditure to provide fire protection to settlements number 1 to $i$, while having a fire station in settlement number $i$. Obviously, $A_1=C_1$. If we have a station at $i$, the distance to the previous station must be no greater $2k+1$. Therefore $$A_i = \min(A_{\overline{i-2k-1}}, A_{\overline{i-2k}}, \dots, A_{i-1}) + C_i,$$ where $\overline{x}$ denotes $\max(x,1)$. The answer to the problem is $\min(A_{\overline{n-k}}, A_{\overline{n-k+1}}, \dots, A_n)$.
+
+\end{tutorial}
