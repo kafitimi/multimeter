@@ -35,6 +35,21 @@ def process_problem(_path, _lang=EN):
     for t in titles:
         if t.attrib['language'] == _lang:
             title = t.attrib['value']
+
+    conditions_source = None
+    conditions_path = try_get_conditions_path(root, _lang)
+    if conditions_path is not None:
+        conditions_path = os.path.join(_path, conditions_path)
+        with open(conditions_path) as file:
+            conditions_source = file.read()
+
+    solution_source = None
+    solution_path = try_get_solutions_path(root, _lang)
+    if solution_path is not None or False:
+        solution_path = os.path.join(_path, solution_path)
+        with open(solution_path) as file:
+            solution_source = file.read()
+
     checker_source = ''
     source_node = root.find('assets/checker/source')
     if source_node is not None:
@@ -58,5 +73,27 @@ def process_problem(_path, _lang=EN):
     problem.output_file = output_file
     problem.time_limit = tl
     problem.memory_limit = ml
+    problem.conditions = conditions_source
+    problem.solutions = solution_source
     problem.checker = checker_source
     return problem
+
+
+def try_get_conditions_path(_xmlroot, _lang):
+    path = None
+    for statement in _xmlroot.find('statements').iter('statement'):
+        lang = statement.attrib['language']
+        _type = statement.attrib['type']
+        if lang == _lang and _type == 'application/x-tex':
+            path = statement.attrib['path']
+    return path
+
+
+def try_get_solutions_path(_xmlroot, _lang):
+    path = None
+    for tutorial in _xmlroot.find('tutorials').iter('tutorial'):
+        lang = tutorial.attrib['language']
+        _type = tutorial.attrib['type']
+        if lang == _lang and _type == 'application/x-tex':
+            path = tutorial.attrib['path']
+    return path
