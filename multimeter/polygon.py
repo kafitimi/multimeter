@@ -1,7 +1,7 @@
 import os
 import tempfile
 import shutil
-import zipfile
+from zipfile import ZipFile, BadZipFile
 import xml.etree.ElementTree as ET
 from multimeter.models import Problem
 
@@ -10,11 +10,17 @@ RU = 'russian'
 
 
 def process_archive(_path, _lang=EN):
-    tempdir = tempfile.mkdtemp()
-    contest_zip = zipfile.ZipFile(_path)
-    contest_zip.extractall(tempdir)
-    contest_zip.close()
     problems = []
+    tempdir = tempfile.mkdtemp()
+    try:
+        contest_zip = ZipFile(_path)
+    except BadZipFile:
+        return problems
+    try:
+        contest_zip.extractall(tempdir)
+    except IOError:
+        return problems
+    contest_zip.close()
     if os.path.isfile(os.path.join(tempdir, "contest.xml")):
         problems_path = os.path.join(tempdir, "problems")
         for problem_dir in os.listdir(problems_path):
