@@ -42,14 +42,14 @@ def process_problem(_path, _lang=EN):
         if t.attrib['language'] == _lang:
             title = t.attrib['value']
 
-    conditions_source = None
+    conditions_source = ''
     conditions_path = try_get_conditions_path(root, _lang)
     if conditions_path is not None:
         conditions_path = os.path.join(_path, conditions_path)
         with open(conditions_path, 'r', encoding='utf-8') as file:
             conditions_source = file.read()
 
-    solution_source = None
+    solution_source = ''
     solution_path = try_get_solutions_path(root, _lang)
     if solution_path is not None or False:
         solution_path = os.path.join(_path, solution_path)
