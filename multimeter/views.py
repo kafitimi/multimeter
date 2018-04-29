@@ -192,10 +192,11 @@ def problem_import(request):
     if request.method == 'POST':
         form = ImportProblemForm(request.POST, request.FILES)
         if form.is_valid():
-            for p in multimeter.polygon.process_archive(request.FILES['file'].file):
+            problems = multimeter.polygon.process_archive(request.FILES['file'].file)
+            for p in problems:
                 p.author = request.user
                 p.save()
-        return redirect('index')
+        return render(request, 'multimeter/problem_import_result.html', {'object_list': problems})
     else:
         form = ImportProblemForm()
     return render(request, 'multimeter/problem_import.html', {'form': form})
