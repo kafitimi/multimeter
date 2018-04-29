@@ -6,9 +6,10 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DeleteView, CreateView, UpdateView
 
-from multimeter.forms import LoginForm, AccountForm, PasswordForm, ProblemForm, SignupForm
+from multimeter.forms import LoginForm, AccountForm, PasswordForm, ProblemForm, SignupForm, ImportProblemForm
 from multimeter.models import Problem, Account
 from multimeter import models
+import multimeter.polygon
 
 
 def login_page(request):
@@ -185,3 +186,16 @@ class SubTaskDelete(DeleteView):
     """ Удаление подзадачи """
     model = models.SubTask
     success_url = reverse_lazy('problem_list')
+
+
+def problem_import(request):
+    if request.method == 'POST':
+        form = ImportProblemForm(request.POST, request.FILES)
+        if form.is_valid():
+            for p in multimeter.polygon.process_archive(request.FILES['file'].file):
+                p.author = request.user
+                p.save()
+        return redirect('index')
+    else:
+        form = ImportProblemForm()
+    return render(request, 'multimeter/problem_import.html', {'form': form})

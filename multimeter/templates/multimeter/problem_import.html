@@ -1,0 +1,18 @@
+{% extends "multimeter/page.html" %}
+{% block body %}
+<div id="form" class="d-none">{{ form }}</div>
+<div class="container">
+    <div class="row">
+        <div class="col-4 offset-4">
+            <h3>{% block title %}Импорт задач из Polygon{% endblock %}</h3>
+            <div class="text-danger" data-form="nonfield-errorlist"></div>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group" data-form="file"></div>
+                <input type="submit" name="submit" class="btn btn-primary" value="Импортировать">
+                <a href="{% url 'index' %}" class="btn btn-default">Отменить</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

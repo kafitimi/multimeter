@@ -1,6 +1,6 @@
 """ Multimeter forms """
 from django.core.exceptions import ValidationError
-from django.forms import Form, ModelForm, CharField, HiddenInput, PasswordInput, EmailField, DateField, DateInput
+from django.forms import Form, ModelForm, CharField, HiddenInput, PasswordInput, EmailField, DateField, DateInput, FileField
 
 from multimeter.models import Account, Problem
 
@@ -57,3 +57,7 @@ class ProblemForm(ModelForm):
         exclude = []
         model = Problem
         widgets = {'author': HiddenInput}
+
+
+class ImportProblemForm(Form):
+    file = FileField(label='Файл', required=True)
