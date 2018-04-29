@@ -192,7 +192,7 @@ def problem_import(request):
     if request.method == 'POST':
         form = ImportProblemForm(request.POST, request.FILES)
         if form.is_valid():
-            problems = multimeter.polygon.process_archive(request.FILES['file'].file)
+            problems = multimeter.polygon.process_archive(request.FILES['file'].file, form.cleaned_data.get('language'))
             for p in problems:
                 p.author = request.user
                 p.save()

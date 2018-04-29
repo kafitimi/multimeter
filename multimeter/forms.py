@@ -1,6 +1,6 @@
 """ Multimeter forms """
 from django.core.exceptions import ValidationError
-from django.forms import Form, ModelForm, CharField, HiddenInput, PasswordInput, EmailField, DateField, DateInput, FileField
+from django.forms import Form, ModelForm, CharField, HiddenInput, PasswordInput, EmailField, FileField, ChoiceField
 
 from multimeter.models import Account, Problem
 
@@ -61,3 +61,5 @@ class ProblemForm(ModelForm):
 
 class ImportProblemForm(Form):
     file = FileField(label='Файл', required=True)
+    language = ChoiceField(label='Предпочтительный язык', choices=(('russian', 'Русский'), ('english', 'English')))
+
