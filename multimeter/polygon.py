@@ -34,7 +34,7 @@ def process_archive(_path, _lang=EN):
 
 def process_problem(_path, _lang=EN):
     path = os.path.join(_path, 'problem.xml')
-    with open(path) as file:
+    with open(path, 'r', encoding='utf-8') as file:
         root = ET.parse(file).getroot()
     titles = root.find('names').findall('name')
     title = titles[0].attrib['value']
@@ -46,14 +46,14 @@ def process_problem(_path, _lang=EN):
     conditions_path = try_get_conditions_path(root, _lang)
     if conditions_path is not None:
         conditions_path = os.path.join(_path, conditions_path)
-        with open(conditions_path) as file:
+        with open(conditions_path, 'r', encoding='utf-8') as file:
             conditions_source = file.read()
 
     solution_source = None
     solution_path = try_get_solutions_path(root, _lang)
     if solution_path is not None or False:
         solution_path = os.path.join(_path, solution_path)
-        with open(solution_path) as file:
+        with open(solution_path, 'r', encoding='utf-8') as file:
             solution_source = file.read()
 
     checker_source = ''
