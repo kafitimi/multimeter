@@ -188,6 +188,7 @@ class SubTaskDelete(DeleteView):
     success_url = reverse_lazy('problem_list')
 
 
+@user_passes_test(lambda u: u.is_staff)
 def problem_import(request):
     if request.method == 'POST':
         form = ImportProblemForm(request.POST, request.FILES)
