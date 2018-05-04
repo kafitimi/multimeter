@@ -52,7 +52,7 @@ def process_problem(_path, _lang=EN):
 
     solution_source = ''
     solution_path = try_get_solutions_path(root, _lang)
-    if solution_path is not None or False:
+    if solution_path is not None:
         solution_path = os.path.join(_path, solution_path)
         with open(solution_path, 'r', encoding='utf-8') as file:
             solution_source = file.read()
