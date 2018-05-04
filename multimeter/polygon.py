@@ -1,9 +1,10 @@
 import os
 import tempfile
 import shutil
+from pathlib import Path
 from zipfile import ZipFile, BadZipFile
 import xml.etree.ElementTree as ET
-from multimeter.models import Problem
+from multimeter.models import Problem, Language
 
 EN = 'english'
 RU = 'russian'
@@ -57,9 +58,11 @@ def process_problem(_path, _lang=EN):
             solution_source = file.read()
 
     checker_source = ''
+    checker_lang = None
     source_node = root.find('assets/checker/source')
     if source_node is not None:
         checker_path = os.path.join(_path, source_node.attrib['path'])
+        checker_lang = try_get_checker_lang(checker_path)
         with open(checker_path, 'r') as checker_file:
             checker_source = checker_file.read()
     judging = root.find('judging')
@@ -82,6 +85,7 @@ def process_problem(_path, _lang=EN):
     problem.conditions = conditions_source
     problem.solutions = solution_source
     problem.checker = checker_source
+    problem.checker_lang = checker_lang
     return problem
 
 
@@ -103,3 +107,8 @@ def try_get_solutions_path(_xmlroot, _lang):
         if lang == _lang and _type == 'application/x-tex':
             path = tutorial.attrib['path']
     return path
+
+
+def try_get_checker_lang(checker_path):
+    extension = Path(checker_path).suffix
+    return Language.objects.filter(source_ext=extension).first()
