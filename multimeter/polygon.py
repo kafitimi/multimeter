@@ -112,3 +112,12 @@ def try_get_solutions_path(_xmlroot, _lang):
 def try_get_checker_lang(checker_path):
     extension = Path(checker_path).suffix
     return Language.objects.filter(source_ext=extension).first()
+
+
+class ImportResult:
+    def __init__(self, problem):
+        self.problem = problem
+        self.has_statement = bool(problem.conditions)
+        self.has_solution = bool(problem.solutions)
+        self.has_checker = bool(problem.checker)
+        self.language = problem.checker_lang
