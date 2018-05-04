@@ -10,6 +10,7 @@ from multimeter.forms import LoginForm, AccountForm, PasswordForm, ProblemForm, 
 from multimeter.models import Problem, Account
 from multimeter import models
 import multimeter.polygon
+from multimeter.polygon import ImportResult
 
 
 def login_page(request):
@@ -194,10 +195,12 @@ def problem_import(request):
         form = ImportProblemForm(request.POST, request.FILES)
         if form.is_valid():
             problems = multimeter.polygon.process_archive(request.FILES['file'].file, form.cleaned_data.get('language'))
+            results = []
             for p in problems:
                 p.author = request.user
                 p.save()
-        return render(request, 'multimeter/problem_import_result.html', {'object_list': problems})
+                results.append(ImportResult(p))
+        return render(request, 'multimeter/problem_import_result.html', {'object_list': results})
     else:
         form = ImportProblemForm()
     return render(request, 'multimeter/problem_import.html', {'form': form})
