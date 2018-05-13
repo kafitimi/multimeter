@@ -195,12 +195,11 @@ def problem_import(request):
         form = ImportProblemForm(request.POST, request.FILES)
         if form.is_valid():
             problems = multimeter.polygon.process_archive(request.FILES['file'].file, form.cleaned_data.get('language'))
-            results = []
             for p in problems:
-                p.author = request.user
-                p.save()
-                results.append(ImportResult(p))
-        return render(request, 'multimeter/problem_import_result.html', {'object_list': results})
+                p.problem.author = request.user
+                p.problem.save()
+                p.problem.set_tags(p.tags)
+        return render(request, 'multimeter/problem_import_result.html', {'object_list': problems})
     else:
         form = ImportProblemForm()
     return render(request, 'multimeter/problem_import.html', {'form': form})

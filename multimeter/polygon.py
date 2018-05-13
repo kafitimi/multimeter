@@ -86,7 +86,8 @@ def process_problem(_path, _lang=EN):
     problem.solutions = solution_source
     problem.checker = checker_source
     problem.checker_lang = checker_lang
-    return problem
+    result = ImportResult(problem, get_tags(_path))
+    return result
 
 
 def try_get_conditions_path(_xmlroot, _lang):
@@ -114,10 +115,21 @@ def try_get_checker_lang(checker_path):
     return Language.objects.filter(source_ext=extension).first()
 
 
+def get_tags(problem_root):
+    tags = ''
+    tags_path = os.path.join(problem_root, 'tags')
+    if os.path.isfile(tags_path):
+        with open(tags_path, 'r') as file:
+            for tag in file:
+                tags += tag.replace(' ', '_') + ' '
+    return tags
+
+
 class ImportResult:
-    def __init__(self, problem):
+    def __init__(self, problem, tags):
         self.problem = problem
         self.has_statement = bool(problem.conditions)
         self.has_solution = bool(problem.solutions)
         self.has_checker = bool(problem.checker)
         self.language = problem.checker_lang
+        self.tags = tags
