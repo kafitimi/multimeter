@@ -151,8 +151,8 @@ class Problem(Model):
     def set_tags(self, new_tags: str):
         """ Сохранение измененного списка тегов """
         new_tags = new_tags.lower()
-        new_tags = new_tags.replace(',', ' ')
-        new_tags = set(new_tags.split())
+        new_tags = ' '.join(new_tags.split())
+        new_tags = set(new_tags.split(','))
 
         old_tags = {t.tag for t in self.tags.all()}
 
