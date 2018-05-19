@@ -121,7 +121,7 @@ def problem_edit_page(request, problem_id=None):
         form = ProblemForm(request.POST, instance=problem)
         if form.is_valid():
             problem = form.save()
-            problem.set_tags(form.cleaned_data['tags'])
+            problem.set_tags_from_string(form.cleaned_data['tags'])
             return redirect('problem_list')
     else:
         form = ProblemForm(initial=initial, instance=problem)
