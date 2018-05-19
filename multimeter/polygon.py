@@ -86,7 +86,7 @@ def process_problem(_path, _lang=EN):
     problem.solutions = solution_source
     problem.checker = checker_source
     problem.checker_lang = checker_lang
-    result = ImportResult(problem, get_tags(_path))
+    result = ImportResult(problem, get_tags(root))
     return result
 
 
@@ -119,13 +119,13 @@ def try_get_checker_lang(checker_path):
     return Language.objects.filter(source_ext=extension).first()
 
 
-def get_tags(problem_root):
+def get_tags(_xmlroot):
     tags = set()
-    tags_path = os.path.join(problem_root, 'tags')
-    if os.path.isfile(tags_path):
-        with open(tags_path, 'r') as file:
-            for tag in file:
-                tags.add(tag)
+    root = _xmlroot.find('tags')
+    if root is None:
+        return tags
+    for tag in root.iter('tag'):
+        tags.add(tag.attrib['value'])
     return tags
 
 
