@@ -120,12 +120,12 @@ def try_get_checker_lang(checker_path):
 
 
 def get_tags(problem_root):
-    tags = ''
+    tags = set()
     tags_path = os.path.join(problem_root, 'tags')
     if os.path.isfile(tags_path):
         with open(tags_path, 'r') as file:
             for tag in file:
-                tags += tag.replace(' ', '_') + ' '
+                tags.add(tag)
     return tags
 
 
