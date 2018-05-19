@@ -44,26 +44,26 @@ def process_problem(_path, _lang=EN):
             title = t.attrib['value']
 
     conditions_source = ''
-    conditions_path = try_get_conditions_path(root, _lang)
-    if conditions_path is not None:
-        conditions_path = os.path.join(_path, conditions_path)
-        with open(conditions_path, 'r', encoding='utf-8') as file:
+    found, path = try_get_conditions_path(root, _lang)
+    if found:
+        path = os.path.join(_path, path)
+        with open(path, 'r', encoding='utf-8') as file:
             conditions_source = file.read()
 
     solution_source = ''
-    solution_path = try_get_solutions_path(root, _lang)
-    if solution_path is not None:
-        solution_path = os.path.join(_path, solution_path)
-        with open(solution_path, 'r', encoding='utf-8') as file:
+    found, path = try_get_solutions_path(root, _lang)
+    if found:
+        path = os.path.join(_path, path)
+        with open(path, 'r', encoding='utf-8') as file:
             solution_source = file.read()
 
     checker_source = ''
     checker_lang = None
     source_node = root.find('assets/checker/source')
     if source_node is not None:
-        checker_path = os.path.join(_path, source_node.attrib['path'])
-        checker_lang = try_get_checker_lang(checker_path)
-        with open(checker_path, 'r') as checker_file:
+        path = os.path.join(_path, source_node.attrib['path'])
+        checker_lang = try_get_checker_lang(path)
+        with open(path, 'r') as checker_file:
             checker_source = checker_file.read()
     judging = root.find('judging')
     input_file = judging.attrib['input-file']
@@ -91,23 +91,27 @@ def process_problem(_path, _lang=EN):
 
 
 def try_get_conditions_path(_xmlroot, _lang):
+    found = False
     path = None
     for statement in _xmlroot.find('statements').iter('statement'):
         lang = statement.attrib['language']
         _type = statement.attrib['type']
         if lang == _lang and _type == 'application/x-tex':
             path = statement.attrib['path']
-    return path
+            found = True
+    return found, path
 
 
 def try_get_solutions_path(_xmlroot, _lang):
+    found = False
     path = None
     for tutorial in _xmlroot.find('tutorials').iter('tutorial'):
         lang = tutorial.attrib['language']
         _type = tutorial.attrib['type']
         if lang == _lang and _type == 'application/x-tex':
             path = tutorial.attrib['path']
-    return path
+            found = True
+    return found, path
 
 
 def try_get_checker_lang(checker_path):
