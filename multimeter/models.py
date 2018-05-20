@@ -167,6 +167,8 @@ class Problem(Model):
         for tag in tags_to_del:
             tag_object, _ = Tag.objects.get_or_create(tag=tag)
             tag_object.problems.remove(self)
+            if tag_object.problems.count() == 0:
+                tag_object.delete()
 
 
 class ContestProblem(Model):
