@@ -148,23 +148,27 @@ class Problem(Model):
     def __str__(self):
         return self.name
 
-    def set_tags(self, new_tags: str):
+    def set_tags_from_string(self, new_tags: str):
         """ Сохранение измененного списка тегов """
         new_tags = new_tags.lower()
-        new_tags = new_tags.replace(',', ' ')
-        new_tags = set(new_tags.split())
+        new_tags = ' '.join(new_tags.split())
+        new_tags = set(new_tags.split(','))
+        self.set_tags(new_tags)
 
+    def set_tags(self, tags: set):
         old_tags = {t.tag for t in self.tags.all()}
 
-        tags_to_add = new_tags - old_tags
+        tags_to_add = tags - old_tags
         for tag in tags_to_add:
             tag_object, _ = Tag.objects.get_or_create(tag=tag)
             tag_object.problems.add(self)
 
-        tags_to_del = old_tags - new_tags
+        tags_to_del = old_tags - tags
         for tag in tags_to_del:
             tag_object, _ = Tag.objects.get_or_create(tag=tag)
             tag_object.problems.remove(self)
+            if tag_object.problems.count() == 0:
+                tag_object.delete()
 
 
 class ContestProblem(Model):

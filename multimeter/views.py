@@ -115,13 +115,13 @@ def problem_edit_page(request, problem_id=None):
     problem = None if problem_id is None else get_object_or_404(Problem, pk=problem_id)
     initial = {
         'author': request.user if problem is None else problem.author,
-        'tags': '' if problem is None else ' '.join([t.tag for t in problem.tags.all()])
+        'tags': '' if problem is None else ','.join([t.tag for t in problem.tags.all()])
     }
     if request.method == 'POST':
         form = ProblemForm(request.POST, instance=problem)
         if form.is_valid():
             problem = form.save()
-            problem.set_tags(form.cleaned_data['tags'])
+            problem.set_tags_from_string(form.cleaned_data['tags'])
             return redirect('problem_list')
     else:
         form = ProblemForm(initial=initial, instance=problem)
