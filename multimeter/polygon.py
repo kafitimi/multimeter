@@ -10,6 +10,13 @@ EN = 'english'
 RU = 'russian'
 
 
+class ResourceSearchResult:
+    def __init__(self, found, path, encoding):
+        self.found = found
+        self.path = path
+        self.encoding = encoding
+
+
 def process_archive(_path, _lang=EN):
     problems = []
     tempdir = tempfile.mkdtemp()
@@ -43,19 +50,21 @@ def process_problem(_path, _lang=EN):
         if t.attrib['language'] == _lang:
             title = t.attrib['value']
 
-    conditions_source = ''
-    found, path = try_get_conditions_path(root, _lang)
-    if found:
-        path = os.path.join(_path, path)
-        with open(path, 'r', encoding='utf-8') as file:
+    condition = try_get_condition_resource(root, _lang)
+    if condition.found:
+        path = os.path.join(_path, condition.path)
+        with open(path, 'r', encoding=condition.encoding) as file:
             conditions_source = file.read()
+    else:
+        conditions_source = ''
 
-    solution_source = ''
-    found, path = try_get_solutions_path(root, _lang)
-    if found:
-        path = os.path.join(_path, path)
-        with open(path, 'r', encoding='utf-8') as file:
+    solution = try_get_solution_resource(root, _lang)
+    if solution.found:
+        path = os.path.join(_path, solution.path)
+        with open(path, 'r', encoding=solution.encoding) as file:
             solution_source = file.read()
+    else:
+        solution_source = ''
 
     checker_source = ''
     checker_lang = None
@@ -90,28 +99,24 @@ def process_problem(_path, _lang=EN):
     return result
 
 
-def try_get_conditions_path(_xmlroot, _lang):
-    found = False
-    path = None
-    for statement in _xmlroot.find('statements').iter('statement'):
-        lang = statement.attrib['language']
-        _type = statement.attrib['type']
-        if lang == _lang and _type == 'application/x-tex':
-            path = statement.attrib['path']
-            found = True
-    return found, path
+def try_get_condition_resource(_xmlroot, _lang) -> ResourceSearchResult:
+    return try_get_resource(_xmlroot, 'statements', 'statement', _lang)
 
 
-def try_get_solutions_path(_xmlroot, _lang):
-    found = False
-    path = None
-    for tutorial in _xmlroot.find('tutorials').iter('tutorial'):
+def try_get_solution_resource(_xmlroot, _lang) -> ResourceSearchResult:
+    return try_get_resource(_xmlroot, 'tutorials', 'tutorial', _lang)
+
+
+def try_get_resource(_xmlroot, parent_node: str, child_node: str, _lang: str):
+    for tutorial in _xmlroot.find(parent_node).iter(child_node):
         lang = tutorial.attrib['language']
         _type = tutorial.attrib['type']
         if lang == _lang and _type == 'application/x-tex':
-            path = tutorial.attrib['path']
             found = True
-    return found, path
+            path = tutorial.attrib['path']
+            encoding = tutorial.attrib['charset']
+            break
+    return ResourceSearchResult(found, path, encoding)
 
 
 def try_get_checker_lang(checker_path):
