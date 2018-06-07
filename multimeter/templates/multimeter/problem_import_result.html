@@ -1,0 +1,51 @@
+{% extends "multimeter/menu.html" %}
+{% block content %}
+	<div class="container">
+		<div class="row">
+			<div class="col">
+				<h1>{% block title %}Результаты импорта{% endblock %}</h1>
+				{% if object_list %}
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Название</th>
+                                <th>Разбор</th>
+                                <th>Условия</th>
+                                <th>Чекер</th>
+							</tr>
+						</thead>
+						<tbody>
+						{% for result in object_list %}
+							<tr>
+								<td>{{ result.problem.name }}</td>
+                                {% if result.has_statement %}
+                                    <td>Да</td>
+                                {% else %}
+                                    <td>Нет</td>
+                                {% endif %}
+                                {% if result.has_solution %}
+                                    <td>Да</td>
+                                {% else %}
+                                    <td>Нет</td>
+                                {% endif %}
+                                {% if result.has_checker %}
+                                    {% if result.language %}
+                                        <td>{{ result.language.name }}</td>
+                                    {% else %}
+                                        <td>Язык не определён</td>
+                                    {% endif %}
+                                {% else %}
+                                    <td>Нет</td>
+                                {% endif %}
+							</tr>
+						{% endfor %}
+						</tbody>
+					</table>
+				{% else %}
+					<p>Не было импортировано ни одной задачи</p>
+				{% endif %}
+				<a href="{% url 'problem_list' %}" class="btn btn-primary">Принять</a>
+			</div>
+		</div>
+	</div>
+{% endblock %}

@@ -311,6 +311,7 @@ class Language(Model):
     Язык программирования
     """
     name = CharField('название', max_length=100)
+    source_ext = CharField('расширение файла', max_length=5, default='')
     compilation = TextField('строки компиляции')
     execution = TextField('строка выполнения')
 

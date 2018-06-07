@@ -1,0 +1,10 @@
+<HTML><HEAD><META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <META content="no-cache" http-equiv="pragma">
+    <META content="-1" http-equiv="expires">
+    <META content="text/html;charset=UTF-8" http-equiv="content-type">
+    <LINK href="problem-statement.css" rel="stylesheet" type="text/css">
+    <TITLE>Пожарная охрана</TITLE>
+</HEAD><BODY>
+    <DIV class="problem-statement"><DIV class="header"><DIV class="title">Пожарная охрана</DIV></DIV><DIV class="tutorial"><P>Для решения задачи будем использовать метод динамического программирования. Пусть <SPAN class="tex-span"><I>A</I><SUB class="lower-index"><I>i</I></SUB></SPAN>&nbsp;&mdash; это минимальные затраты на обеспечение пожарной безопасности населенных пунктов с&nbsp;1 по <SPAN class="tex-span"><I>i</I></SPAN>, при условии, что в&nbsp;пункте <SPAN class="tex-span"><I>i</I></SPAN> находится пожарная станция. Очевидно, что <SPAN class="tex-span"><I>A</I><SUB class="lower-index">1</SUB>&thinsp;=&thinsp;<I>C</I><SUB class="lower-index">1</SUB></SPAN>. Если станция находится в&nbsp;пункте <SPAN class="tex-span"><I>i</I></SPAN>, то нужно, чтобы предыдущая станция находилась на расстоянии не превышающем <SPAN class="tex-span">2<I>k</I>&thinsp;+&thinsp;1</SPAN>. Поэтому <SPAN class="tex-span"><I>A</I><SUB class="lower-index"><I>i</I></SUB>&thinsp;=&thinsp;<I>min</I>(<I>A</I><SUB class="lower-index"><I>max</I>(<I>i</I>&thinsp;-&thinsp;2<I>k</I>&thinsp;-&thinsp;1,&thinsp;1)</SUB>,&thinsp;<I>A</I><SUB class="lower-index"><I>max</I>(<I>i</I>&thinsp;-&thinsp;2<I>k</I>&thinsp;-&thinsp;1,&thinsp;1)&thinsp;+&thinsp;1</SUB>,&thinsp;...,&thinsp;<I>A</I><SUB class="lower-index"><I>i</I>&thinsp;-&thinsp;1</SUB>)&thinsp;+&thinsp;<I>C</I><SUB class="lower-index"><I>i</I></SUB></SPAN>. Ответом задачи будет <SPAN class="tex-span"><I>min</I>(<I>A</I><SUB class="lower-index"><I>max</I>(<I>n</I>&thinsp;-&thinsp;<I>k</I>,&thinsp;1)</SUB>,&thinsp;<I>A</I><SUB class="lower-index"><I>max</I>(<I>n</I>&thinsp;-&thinsp;<I>k</I>,&thinsp;1)&thinsp;+&thinsp;1</SUB>,&thinsp;...,&thinsp;<I>A</I><SUB class="lower-index"><I>n</I></SUB>)</SPAN>.</P></DIV></DIV>   
+
+</BODY></HTML>
