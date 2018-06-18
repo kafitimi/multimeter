@@ -1,3 +1,5 @@
+""" Импорт из Polygon """
+
 import os
 import tempfile
 import shutil
@@ -11,6 +13,7 @@ RU = 'russian'
 
 
 class ResourceSearchResult:
+    """ Результат поиска ресурса """
     def __init__(self, found, path, encoding):
         self.found = found
         self.path = path
@@ -18,6 +21,7 @@ class ResourceSearchResult:
 
 
 def process_archive(_path, _lang=EN):
+    """ Обработать архив """
     problems = []
     tempdir = tempfile.mkdtemp()
     try:
@@ -41,6 +45,7 @@ def process_archive(_path, _lang=EN):
 
 
 def process_problem(_path, _lang=EN):
+    """ Обработка задачи """
     path = os.path.join(_path, 'problem.xml')
     with open(path, 'r', encoding='utf-8') as file:
         root = ET.parse(file).getroot()
@@ -77,37 +82,42 @@ def process_problem(_path, _lang=EN):
     judging = root.find('judging')
     input_file = judging.attrib['input-file']
     output_file = judging.attrib['output-file']
-    tl = 0
-    ml = 0
+    time_limit = 0
+    memory_limit = 0
     tl_node = root.find('judging/testset/time-limit')
     if tl_node is not None:
-        tl = int(float(tl_node.text) * 0.001)
+        time_limit = int(float(tl_node.text) * 0.001)
     ml_node = root.find('judging/testset/memory-limit')
     if ml_node is not None:
-        ml = int(ml_node.text) // (1024 * 1024)
+        memory_limit = int(ml_node.text) // (1024 * 1024)
+
     problem = Problem()
     problem.name = title
     problem.input_file = input_file
     problem.output_file = output_file
-    problem.time_limit = tl
-    problem.memory_limit = ml
+    problem.time_limit = time_limit
+    problem.memory_limit = memory_limit
     problem.conditions = conditions_source
     problem.solutions = solution_source
     problem.checker = checker_source
     problem.checker_lang = checker_lang
+
     result = ImportResult(problem, get_tags(root))
     return result
 
 
 def try_get_condition_resource(_xmlroot, _lang) -> ResourceSearchResult:
+    """ Получить условия """
     return try_get_resource(_xmlroot, 'statements', 'statement', _lang)
 
 
 def try_get_solution_resource(_xmlroot, _lang) -> ResourceSearchResult:
+    """ Получить решение """
     return try_get_resource(_xmlroot, 'tutorials', 'tutorial', _lang)
 
 
 def try_get_resource(_xmlroot, parent_node: str, child_node: str, _lang: str):
+    """ Получить ресурс (решение / условия) """
     for tutorial in _xmlroot.find(parent_node).iter(child_node):
         lang = tutorial.attrib['language']
         _type = tutorial.attrib['type']
@@ -120,11 +130,13 @@ def try_get_resource(_xmlroot, parent_node: str, child_node: str, _lang: str):
 
 
 def try_get_checker_lang(checker_path):
+    """ Получить язык программирования на котором написан чекер """
     extension = Path(checker_path).suffix
     return Language.objects.filter(source_ext=extension).first()
 
 
 def get_tags(_xmlroot):
+    """ Получить теги """
     tags = set()
     root = _xmlroot.find('tags')
     if root is None:
@@ -135,6 +147,7 @@ def get_tags(_xmlroot):
 
 
 class ImportResult:
+    """ Результат импорта """
     def __init__(self, problem, tags):
         self.problem = problem
         self.has_statement = bool(problem.conditions)

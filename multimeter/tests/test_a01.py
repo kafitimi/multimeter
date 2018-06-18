@@ -66,8 +66,8 @@ class TestA01(TestCase):
         self.assertEqual(1000, created_problem.time_limit)
         self.assertEqual(64, created_problem.memory_limit)
         self.assertEqual(self.author, created_problem.author)
-        self.assertLess(time1, created_problem.last_modified)
-        self.assertGreater(time2, created_problem.last_modified)
+        self.assertLessEqual(time1, created_problem.last_modified)
+        self.assertGreaterEqual(time2, created_problem.last_modified)
 
     def test_problem_list(self):
         """ Проверка списка задач """
@@ -109,5 +109,5 @@ class TestA01(TestCase):
         self.assertEqual(1000, updated_problem.time_limit)
         self.assertEqual(64, updated_problem.memory_limit)
         self.assertEqual(self.author, updated_problem.author)
-        self.assertLess(time1, updated_problem.last_modified)
-        self.assertGreater(time2, updated_problem.last_modified)
+        self.assertLessEqual(time1, updated_problem.last_modified)
+        self.assertGreaterEqual(time2, updated_problem.last_modified)

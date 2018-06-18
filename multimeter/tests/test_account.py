@@ -1,4 +1,5 @@
 """ Модульный тест для проверки работы учётных записей """
+
 from django.test import TestCase, Client
 
 from multimeter import models
@@ -20,7 +21,7 @@ class TestAccount(TestCase):
 
         # Неавторизованный пользователь
         response = client.get('/')
-        self.assertRedirects(response, '/login/?next=/')
+        self.assertTemplateUsed(response, 'multimeter/index.html')
 
         # Страница входа
         response = client.get('/login/')
