@@ -1,6 +1,8 @@
 """ Multimeter forms """
+
 from django.core.exceptions import ValidationError
-from django.forms import Form, ModelForm, CharField, HiddenInput, PasswordInput, EmailField, FileField, ChoiceField
+from django.forms import Form, ModelForm, CharField, PasswordInput
+from django.forms import ChoiceField, EmailField, FileField, HiddenInput
 
 from multimeter.models import Account, Problem
 
@@ -12,6 +14,7 @@ class LoginForm(Form):
 
 
 class SignupForm(ModelForm):
+    """ Форма регистрации """
     password = CharField(widget=PasswordInput())
     email = EmailField(label='Адрес электронной почты')
 
@@ -60,6 +63,8 @@ class ProblemForm(ModelForm):
 
 
 class ImportProblemForm(Form):
+    """ Форма импорта задачи из Polygon """
     file = FileField(label='Файл', required=True)
-    language = ChoiceField(label='Предпочтительный язык', choices=(('russian', 'Русский'), ('english', 'English')))
-
+    language = ChoiceField(label='Предпочтительный язык', choices=(
+        ('russian', 'Русский'), ('english', 'English')
+    ))

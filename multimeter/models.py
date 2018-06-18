@@ -1,8 +1,8 @@
 """ Multimeter models """
+
 from django.db.models import (Model, BooleanField, CASCADE, CharField, IntegerField, ForeignKey,
                               TextField, DateTimeField, DateField, ManyToManyField)
 from django.contrib.auth.models import AbstractUser
-from django.utils.timezone import now
 
 
 CE = 'CE'
@@ -156,6 +156,7 @@ class Problem(Model):
         self.set_tags(new_tags)
 
     def set_tags(self, tags: set):
+        """ Изменение тегов """
         old_tags = {t.tag for t in self.tags.all()}
 
         tags_to_add = tags - old_tags

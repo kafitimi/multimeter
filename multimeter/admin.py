@@ -1,6 +1,7 @@
+""" Настройка интерфейса администратора """
+
 from django.contrib import admin
 from . import models
-
 
 admin.site.register(models.CountryReference)
 admin.site.register(models.Account)

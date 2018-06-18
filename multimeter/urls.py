@@ -4,7 +4,7 @@ from django.contrib.auth.views import logout_then_login
 
 from . import views
 
-urlpatterns = [
+urlpatterns = [  # pylint: disable=invalid-name
     path('login/', views.login_page, name='login'),
     path('logout/', logout_then_login, name='logout'),
     path('signup/', views.SignupFormView.as_view(), name="signup"),

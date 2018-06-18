@@ -1,4 +1,5 @@
 """ Multimeter views """
+
 from django.contrib.auth import authenticate, login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
@@ -6,11 +7,10 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DeleteView, CreateView, UpdateView
 
-from multimeter.forms import LoginForm, AccountForm, PasswordForm, ProblemForm, SignupForm, ImportProblemForm
-from multimeter.models import Problem, Account
-from multimeter import models
-import multimeter.polygon
-from multimeter.polygon import ImportResult
+from multimeter.forms import (LoginForm, AccountForm, PasswordForm, ProblemForm, SignupForm,
+                              ImportProblemForm)
+from multimeter.models import Account, Contest, Problem, SubTask
+from multimeter import polygon
 
 
 def login_page(request):
@@ -63,16 +63,16 @@ def password_page(request):
     return render(request, 'multimeter/password_change.html', {'form': form})
 
 
-@method_decorator(user_passes_test(lambda u: u.is_superuser), name='dispatch')  # pylint: disable=too-many-ancestors
+@method_decorator(user_passes_test(lambda u: u.is_superuser), name='dispatch')
 class ContestList(ListView):
     """ Список контестов """
-    model = models.Contest
+    model = Contest
 
 
-@method_decorator(user_passes_test(lambda u: u.is_superuser), name='dispatch')  # pylint: disable=too-many-ancestors
+@method_decorator(user_passes_test(lambda u: u.is_superuser), name='dispatch')
 class ContestCreate(CreateView):
     """ Создание контеста """
-    model = models.Contest
+    model = Contest
     fields = [
         'brief_name', 'full_name', 'conditions', 'rules',
         'start', 'stop', 'freeze',
@@ -83,10 +83,10 @@ class ContestCreate(CreateView):
     success_url = reverse_lazy('contest_list')
 
 
-@method_decorator(user_passes_test(lambda u: u.is_superuser), name='dispatch')  # pylint: disable=too-many-ancestors
+@method_decorator(user_passes_test(lambda u: u.is_superuser), name='dispatch')
 class ContestUpdate(UpdateView):
     """ Редактирование контеста """
-    model = models.Contest
+    model = Contest
     fields = [
         'brief_name', 'full_name', 'conditions', 'rules',
         'start', 'stop', 'freeze',
@@ -97,10 +97,10 @@ class ContestUpdate(UpdateView):
     success_url = reverse_lazy('contest_list')
 
 
-@method_decorator(user_passes_test(lambda u: u.is_superuser), name='dispatch')  # pylint: disable=too-many-ancestors
+@method_decorator(user_passes_test(lambda u: u.is_superuser), name='dispatch')
 class ContestDelete(DeleteView):
     """ Удаление контеста """
-    model = models.Contest
+    model = Contest
     success_url = reverse_lazy('contest_list')
 
 
@@ -131,20 +131,24 @@ def problem_edit_page(request, problem_id=None):
 
 
 class SignupFormView(CreateView):
+    """ Форма регистрации """
     form_class = SignupForm
     template_name = 'multimeter/signup.html'
 
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
+        """ метод GET протокола HTTP """
         form = self.form_class(None)
         return render(request, self.template_name, {'form': form})
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
+        """ метод GET протокола HTTP """
         form = self.form_class(request.POST)
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
             email = form.cleaned_data['email']
-            if not (Account.objects.filter(username=username).exists() or Account.objects.filter(email=email).exists()):
+            if not (Account.objects.filter(username=username).exists() or
+                    Account.objects.filter(email=email).exists()):
                 user = form.save(commit=False)
                 user.set_password(password)
                 user.save()
@@ -156,49 +160,52 @@ class SignupFormView(CreateView):
         return render(request, self.template_name, {'form': form})
 
 
-@method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')  # pylint: disable=too-many-ancestors
+@method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')
 class ProblemDelete(DeleteView):
     """ Удаление задачи """
-    model = models.Problem
+    model = Problem
     success_url = reverse_lazy('problem_list')
 
 
-@method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')  # pylint: disable=too-many-ancestors
+@method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')
 class SubTaskCreate(CreateView):
     """ Создание подзадачи """
-    model = models.SubTask
+    model = SubTask
     fields = [
         'problem', 'number', 'scoring', 'results'
     ]
     success_url = reverse_lazy('problem_list')
 
-@method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')  # pylint: disable=too-many-ancestors
+
+@method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')
 class SubTaskUpdate(UpdateView):
     """ Редактирование подзадачи """
-    model = models.SubTask
+    model = SubTask
     fields = [
         'problem', 'number', 'scoring', 'results'
     ]
     success_url = reverse_lazy('problem_list')
 
 
-@method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')  # pylint: disable=too-many-ancestors
+@method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')
 class SubTaskDelete(DeleteView):
     """ Удаление подзадачи """
-    model = models.SubTask
+    model = SubTask
     success_url = reverse_lazy('problem_list')
 
 
 @user_passes_test(lambda u: u.is_staff)
 def problem_import(request):
+    """ Импорт задачи из Polygon """
     if request.method == 'POST':
         form = ImportProblemForm(request.POST, request.FILES)
         if form.is_valid():
-            problems = multimeter.polygon.process_archive(request.FILES['file'].file, form.cleaned_data.get('language'))
-            for p in problems:
-                p.problem.author = request.user
-                p.problem.save()
-                p.problem.set_tags(p.tags)
+            language = form.cleaned_data.get('language')
+            problems = polygon.process_archive(request.FILES['file'].file, language)
+            for problem in problems:
+                problem.problem.author = request.user
+                problem.problem.save()
+                problem.problem.set_tags(problem.tags)
         return render(request, 'multimeter/problem_import_result.html', {'object_list': problems})
     else:
         form = ImportProblemForm()
