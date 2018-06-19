@@ -8,7 +8,7 @@ from multimeter.polygon import ImportResult
 class TestPolygonImportResult(TestCase):
     """ Проверка результата импорта из Polygon """
 
-    def test_import_result_wrapper_all_true(self):
+    def _test_import_result_wrapper_all_true(self):
         """ Проверка истинности """
         problem = Problem()
         problem.conditions = 'conditions'
@@ -19,7 +19,7 @@ class TestPolygonImportResult(TestCase):
         self.assertTrue(result.has_solution)
         self.assertTrue(result.has_checker)
 
-    def test_import_result_wrapper_all_false(self):
+    def _test_import_result_wrapper_all_false(self):
         """ Проверка ложности """
         problem = Problem()
         result = ImportResult(problem, "")

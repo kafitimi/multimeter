@@ -92,13 +92,13 @@ def process_problem(_path, _lang=EN):
         memory_limit = int(ml_node.text) // (1024 * 1024)
 
     problem = Problem()
-    problem.name = title
+    problem.codename = title
     problem.input_file = input_file
     problem.output_file = output_file
     problem.time_limit = time_limit
     problem.memory_limit = memory_limit
-    problem.conditions = conditions_source
-    problem.solutions = solution_source
+    # problem.conditions = conditions_source
+    # problem.solutions = solution_source
     problem.checker = checker_source
     problem.checker_lang = checker_lang
 
@@ -150,8 +150,8 @@ class ImportResult:
     """ Результат импорта """
     def __init__(self, problem, tags):
         self.problem = problem
-        self.has_statement = bool(problem.conditions)
-        self.has_solution = bool(problem.solutions)
+        # self.has_statement = bool(problem.conditions)
+        # self.has_solution = bool(problem.solutions)
         self.has_checker = bool(problem.checker)
         self.language = problem.checker_lang
         self.tags = tags

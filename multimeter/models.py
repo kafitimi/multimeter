@@ -3,6 +3,7 @@
 from django.db.models import (Model, BooleanField, CASCADE, CharField, IntegerField, ForeignKey,
                               TextField, DateTimeField, DateField, ManyToManyField)
 from django.contrib.auth.models import AbstractUser
+from django.utils.translation import gettext_lazy as _
 
 
 CE = 'CE'
@@ -127,26 +128,27 @@ class Problem(Model):
     """
     Задача
     """
-    name = CharField('название', max_length=100)
-    input_file = CharField('входной файл', max_length=100, blank=True, default='')
-    output_file = CharField('выходной файл', max_length=100, blank=True, default='')
-    conditions = TextField('условия в формате TeX', blank=True)
-    solutions = TextField('разбор в формате TeX', blank=True)
-    checker = TextField('чекер', blank=True)
-    checker_lang = ForeignKey('multimeter.Language', on_delete=CASCADE, blank=True, null=True,
-                              verbose_name='язык программирования')
-    author = ForeignKey('multimeter.Account', on_delete=CASCADE, verbose_name='контесты')
-    time_limit = IntegerField('лимит времени (мс)', default=1000)
-    memory_limit = IntegerField('лимит памяти (мб)', default=64)
+    codename = CharField(_('codename'), max_length=100)
+    input_file = CharField(_('input filename'), max_length=100, blank=True, default='',
+                           help_text=_('If empty then standard input will be used'))
+    output_file = CharField(_('output filename'), max_length=100, blank=True, default='',
+                            help_text=_('If empty then standard output will be used'))
+    author = ForeignKey('multimeter.Account', on_delete=CASCADE, verbose_name=_('contests'))
+    time_limit = IntegerField(_('time limit (ms)'), default=1000)
+    memory_limit = IntegerField(_('memory limit (MiB)'), default=64)
     last_modified = DateTimeField(auto_now=True)
 
+    checker = TextField(_('checker'), blank=True)
+    checker_lang = ForeignKey('multimeter.Language', on_delete=CASCADE, blank=True, null=True,
+                              verbose_name=_('programming language'))
+
     class Meta:
-        verbose_name = 'задача'
-        verbose_name_plural = 'задачи'
-        ordering = ['name']
+        verbose_name = _('problem')
+        verbose_name_plural = _('problems')
+        ordering = ['author', 'codename']
 
     def __str__(self):
-        return self.name
+        return "%s (%s)" % (self.codename, self.author)
 
     def set_tags_from_string(self, new_tags: str):
         """ Сохранение измененного списка тегов """
@@ -168,6 +170,31 @@ class Problem(Model):
             tag_object.problems.remove(self)
             if tag_object.problems.count() == 0:
                 tag_object.delete()
+
+
+class ProblemText(Model):
+    """
+    Тексты задачи
+    """
+    NAME = 1
+    LEGEND = 2
+    SCORING = 3
+    INPUT_FORMAT = 4
+    OUTPUT_FORMAT = 5
+    TUTORIAL = 6
+
+    TEXT_TYPES = (
+        (NAME, _('name')),  # официальное название
+        (LEGEND, _('conditions')),  # текст условий
+        (SCORING, _('scoring')),  # правила начисления баллов
+        (INPUT_FORMAT, _('input format')),  # формат входных данных
+        (OUTPUT_FORMAT, _('output format')),  # формат выходных данных
+        (TUTORIAL, _('tutorial')),  # разбор
+    )
+    problem = ForeignKey('Problem', on_delete=CASCADE, verbose_name=_('problem'))
+    language = CharField(_('language'), max_length=2)
+    text_type = IntegerField(_('text type'), choices=TEXT_TYPES)
+    text = TextField(_('text'))
 
 
 class ContestProblem(Model):

@@ -3,6 +3,7 @@
 from django.core.exceptions import ValidationError
 from django.forms import Form, ModelForm, CharField, PasswordInput
 from django.forms import ChoiceField, EmailField, FileField, HiddenInput
+from django.utils.translation import gettext_lazy as _
 
 from multimeter.models import Account, Problem
 
@@ -54,7 +55,7 @@ class PasswordForm(Form):
 
 class ProblemForm(ModelForm):
     """ Форма редактирования задачи """
-    tags = CharField(max_length=200, label='Теги', required=False)
+    tags = CharField(max_length=200, label=_('Tags'), help_text=_('Tags must be divided by comma'), required=False)
 
     class Meta:
         exclude = []

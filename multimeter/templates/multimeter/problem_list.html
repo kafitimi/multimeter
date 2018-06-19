@@ -1,22 +1,23 @@
 {% extends "multimeter/menu.html" %}
+{% load i18n %}
 {% block content %}
 	<div class="container">
 		<div class="row">
 			<div class="col">
-				<h1>{% block title %}Список задач{% endblock %}</h1>
+				<h1>{% block title %}{% trans 'Problem list' %}{% endblock %}</h1>
 				{% if object_list %}
 					<table class="table table-hover">
 						<thead>
 							<tr>
-								<th>Название</th>
-								<th>Автор</th>
+								<th>{% trans 'Codename' %}</th>
+								<th>{% trans 'Author' %}</th>
 								<th></th>
 							</tr>
 						</thead>
 						<tbody>
 						{% for problem in object_list %}
 							<tr data-url="{% url 'problem_update' problem.id %}">
-								<td>{{ problem.name }}</td>
+								<td>{{ problem.codename }}</td>
 								<td>{{ problem.author }}</td>
 								<td class="text-right">
 									<a href="{% url 'problem_delete' problem.id %}" class="btn btn-danger" role="button">
@@ -28,10 +29,10 @@
 						</tbody>
 					</table>
 				{% else %}
-					<p>Ни одна задаче ещё не создана</p>
+					<p>{% trans 'There are no problems yet' %}</p>
 				{% endif %}
-				<a href="{% url 'problem_create' %}" class="btn btn-primary">Создать</a>
-                <a href="{% url 'problem_import' %}" class="btn btn-primary">Импорт</a>
+				<a href="{% url 'problem_create' %}" class="btn btn-primary">{% trans 'Create' %}</a>
+                <a href="{% url 'problem_import' %}" class="btn btn-primary">{% trans 'Import' %}</a>
 			</div>
 		</div>
 	</div>
@@ -39,6 +40,7 @@
 {% block scripts %}
 	<script>
 		$(function () {
+		    // При клике на строку таблицы - нужно открыть форму редактирования задачи
 			$('table tbody tr').on('click', function(event) {
 				window.location.href = $(this).data('url');
 			});

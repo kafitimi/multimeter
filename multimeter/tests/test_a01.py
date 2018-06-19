@@ -21,7 +21,7 @@ class TestA01(TestCase):
         self.author.save()
 
         self.problem = models.Problem()
-        self.problem.name = 'Problem 1'
+        self.problem.codename = 'Problem 1'
         self.problem.author = self.author
         self.problem.time_limit = 1000
         self.problem.memory_limit = 64
@@ -41,16 +41,16 @@ class TestA01(TestCase):
         client = Client()
         client.login(username='author', password='password')
 
-        response = client.get('/problem/create/')
+        response = client.get('/ru/problem/create/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Редактирование задачи')
-        self.assertContains(response, 'Название')
+        self.assertContains(response, 'Кодовое название')
         self.assertContains(response, 'Теги')
         self.assertContains(response, 'Сохранить')
 
         time1 = now()
-        response = client.post('/problem/create/', {
-            'name': 'Problem 2',
+        response = client.post('/ru/problem/create/', {
+            'codename': 'Problem 2',
             'tags': 'tag1 tag3',
             'time_limit': 1000,
             'memory_limit': 64,
@@ -59,7 +59,7 @@ class TestA01(TestCase):
         time2 = now()
         self.assertEqual(response.status_code, 302)
 
-        created_problem = models.Problem.objects.get(name='Problem 2')
+        created_problem = models.Problem.objects.get(codename='Problem 2')
         tags = [t.tag for t in created_problem.tags.all()]
         self.assertIn('tag1', tags)
         self.assertIn('tag3', tags)
@@ -74,7 +74,7 @@ class TestA01(TestCase):
         client = Client()
         client.login(username='author', password='password')
 
-        response = client.get('/problem/list/')
+        response = client.get('/ru/problem/list/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Problem 1')
         self.assertContains(response, 'author')
@@ -85,14 +85,14 @@ class TestA01(TestCase):
         client = Client()
         client.login(username='author', password='password')
 
-        response = client.get('/problem/update/%d/' % self.problem.id)
+        response = client.get('/ru/problem/update/%d/' % self.problem.id)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Problem 1')
         self.assertContains(response, 'tag1')
 
         time1 = now()
-        response = client.post('/problem/update/%d/' % self.problem.id, {
-            'name': 'Problem 2',
+        response = client.post('/ru/problem/update/%d/' % self.problem.id, {
+            'codename': 'Problem 2',
             'tags': 'tag1 tag2',
             'time_limit': 1000,
             'memory_limit': 64,
@@ -101,7 +101,7 @@ class TestA01(TestCase):
         time2 = now()
         self.assertEqual(response.status_code, 302)
 
-        updated_problem = models.Problem.objects.get(name='Problem 2')
+        updated_problem = models.Problem.objects.get(codename='Problem 2')
         tags = [t.tag for t in updated_problem.tags.all()]
         self.assertIn('tag1', tags)
         self.assertIn('tag2', tags)

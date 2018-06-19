@@ -1,18 +1,18 @@
 {% extends "multimeter/menu.html" %}
+{% load i18n %}
 {% load static %}
+{% load multimeter_tags %}
 {% block content %}
-	<div id="form" class="d-none">{{ form }}</div>
 	<div class="container">
 		<div class="row">
 			<div class="col">
-				<h1>{% block title %}Редактирование задачи{% endblock %}</h1>
-				<div class="text-danger" data-form="nonfield-errorlist"></div>
+				<h1>{% block title %}{% trans 'Edit problem' %}{% endblock %}</h1>
 				<nav>
 					<div class="nav nav-tabs" id="tabs" role="tablist">
-						<a class="nav-item nav-link active" id="general-tab" data-toggle="tab" href="#general" role="tab">Общие</a>
-						<a class="nav-item nav-link" id="conditions-tab" data-toggle="tab" href="#conditions" role="tab">Условия</a>
-						<a class="nav-item nav-link" id="check-tab" data-toggle="tab" href="#check" role="tab">Чекер</a>
-						<a class="nav-item nav-link" id="subtasks-tab" data-toggle="tab" href="#subtasks" role="tab">Подзадачи</a>
+						<a class="nav-item nav-link active" id="general-tab" data-toggle="tab" href="#general" role="tab">{% trans 'General' %}</a>
+						<a class="nav-item nav-link" id="conditions-tab" data-toggle="tab" href="#conditions" role="tab">{% trans 'Conditions' %}</a>
+						<a class="nav-item nav-link" id="check-tab" data-toggle="tab" href="#check" role="tab">{% trans 'Checker' %}</a>
+						<a class="nav-item nav-link" id="subtasks-tab" data-toggle="tab" href="#subtasks" role="tab">{% trans 'Subtasks' %}</a>
 					</div>
 				</nav>
 				<form method="post">
@@ -22,54 +22,46 @@
 
 						<div class="tab-pane fade show active" id="general" role="tabpanel">
 							<div class="form-row">
-								<div class="form-group col" data-form="name"></div>
-								<div class="form-group col" data-form="tags">
-									<small class="form-text text-muted">
-	  									Тег — это предложение в нижнем регистре. Теги должны быть разделены запятыми.
-									</small>
-								</div>
+                                {% include 'multimeter/form_field.html' with field=form.codename %}
+                                {% include 'multimeter/form_field.html' with field=form.tags %}
 							</div>
 							<div class="form-row">
-								<div class="form-group col" data-form="input_file">
-									<small class="form-text text-muted">
-										Если не задано, то будет использоваться стандартный поток ввода
-									</small>
-								</div>
-								<div class="form-group col" data-form="output_file">
-									<small class="form-text text-muted">
-										Если не задано, то будет использоваться стандартный поток вывода
-									</small>
-								</div>
+                                {% include 'multimeter/form_field.html' with field=form.input_file %}
+                                {% include 'multimeter/form_field.html' with field=form.output_file %}
 							</div>
 							<div class="form-row">
-								<div class="form-group col" data-form="time_limit"></div>
-								<div class="form-group col" data-form="memory_limit"></div>
+                                {% include 'multimeter/form_field.html' with field=form.time_limit %}
+                                {% include 'multimeter/form_field.html' with field=form.memory_limit %}
 							</div>
-							<div class="form-group d-none" data-form="author"></div>
+							<div class="d-none">
+                                {% include 'multimeter/form_field.html' with field=form.author %}
+                            </div>
 						</div>
 
 						<div class="tab-pane fade show active" id="conditions" role="tabpanel">
-							<div class="form-group" data-form="conditions"></div>
-							<div class="form-group" data-form="solutions"></div>
 						</div>
 
-						<div class="tab-pane fade show active" id="check" role="tabpanel">
-							<div class="form-group" data-form="checker_lang"></div>
-							<div class="form-group" data-form="checker"></div>
-						</div>
+                        <div class="tab-pane fade show active" id="check" role="tabpanel">
+                            <div class="form-row">
+                                {% include 'multimeter/form_field.html' with field=form.checker_lang %}
+                            </div>
+                            <div class="form-row">
+                                {% include 'multimeter/form_field.html' with field=form.checker %}
+                            </div>
+                        </div>
 
 						<div class="tab-pane fade show active" id="subtasks" role="tabpanel">
 						{% if problem is None %}
-							<p>Подзадачи можно создать после сохранения задачи</p>
+							<p>{% trans 'Subtasks can be created after problem is saved' %}</p>
 						{% elif problem.subtask_set.all|length == 0 %}
-							<p>Подзадачи ещё не созданы</p>
+							<p>{% trans 'There are no subtasks yet' %}</p>
 						{% else %}
 							<table class="table table-hover">
 								<thead>
 									<tr>
-										<th>Номер</th>
-										<th>Начисление баллов</th>
-										<th>Отображение результатов</th>
+										<th>{% trans 'Number' %}</th>
+										<th>{% trans 'Scoring' %}</th>
+										<th>{% trans 'Results' %}</th>
 										<th></th>
 									</tr>
 								</thead>
@@ -93,10 +85,10 @@
 
 					</div>
 
-					<input type="submit" name="submit" class="btn btn-primary" value="Сохранить">
-					<a href="{% url 'problem_list' %}" class="btn btn-default">Отменить</a>
+					<input type="submit" name="submit" class="btn btn-primary" value="{% trans 'Save' %}">
+					<a href="{% url 'problem_list' %}" class="btn btn-default">{% trans 'Cancel' %}</a>
 					{% if not problem is None %}
-						<a href="{% url 'subtask_create' problem.id %}" class="btn btn-default" role="button">Создать подзадачу</a>
+						<a href="{% url 'subtask_create' problem.id %}" class="btn btn-default" role="button">{% trans 'Create subtask' %}</a>
 					{% endif %}
 				</form>
 			</div>
@@ -129,21 +121,21 @@
 	<script src="{% static 'multimeter/js/mode/clike.js' %}"></script>
 	<script>
 		$(function () {
-			CodeMirror.fromTextArea(
-				document.getElementById('id_conditions'), {
-					lineNumbers: true,
-					matchBrackets: true,
-					mode: 'text/x-stex'
-				}
-			);
+			{#CodeMirror.fromTextArea(#}
+			{#	document.getElementById('id_conditions'), {#}
+			{#		lineNumbers: true,#}
+			{#		matchBrackets: true,#}
+			{#		mode: 'text/x-stex'#}
+			{#	}#}
+			{#);#}
 
-			CodeMirror.fromTextArea(
-				document.getElementById('id_solutions'), {
-					lineNumbers: true,
-					matchBrackets: true,
-					mode: 'text/x-stex'
-				}
-			);
+			{#CodeMirror.fromTextArea(#}
+			{#	document.getElementById('id_solutions'), {#}
+			{#		lineNumbers: true,#}
+			{#		matchBrackets: true,#}
+			{#		mode: 'text/x-stex'#}
+			{#	}#}
+			{#);#}
 
 			CodeMirror.fromTextArea(
 				document.getElementById('id_checker'), {
