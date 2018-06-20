@@ -31,11 +31,11 @@ class CountryReference(Model):
     """
     Справочник государств
     """
-    name = CharField('название', max_length=50)
+    name = CharField(_('name'), max_length=50)
 
     class Meta:
-        verbose_name = 'государство'
-        verbose_name_plural = 'государства'
+        verbose_name = _('country')
+        verbose_name_plural = _('countries')
 
     def __str__(self):
         return self.name
@@ -48,14 +48,14 @@ class Account(AbstractUser):
     Флаг is_admin означает организатора контеста.
     Дополнительные атрибуты нужны для заполнения протоколов.
     """
-    patronymic_name = CharField('отчество', max_length=50, blank=True, default='')
-    birthday = DateField('дата рождения', blank=True, null=True)
+    patronymic_name = CharField(_('second name'), max_length=50, blank=True, default='')
+    birthday = DateField(_('birthday'), blank=True, null=True)
     country = ForeignKey('CountryReference', on_delete=CASCADE, blank=True, null=True,
-                         verbose_name='гражданство')
+                         verbose_name=_('country'))
 
     class Meta:
-        verbose_name = 'пользователь'
-        verbose_name_plural = 'пользователи'
+        verbose_name = _('user')
+        verbose_name_plural = _('users')
 
     def __str__(self):
         answer = self.username
@@ -97,27 +97,27 @@ class Contest(Model):
     Флаг show_tests разрешает участникам и гостям видеть тесты после окончания олимпиады.
 
     """
-    brief_name = CharField('краткое наименование', max_length=100)
-    full_name = TextField('полное наименование')
+    brief_name = CharField(_('brief name'), max_length=100)
+    full_name = TextField(_('full name'))
 
-    conditions = CharField('путь к файлу с условиями', max_length=255)
-    rules = CharField('путь к файлу с правилами', max_length=255)
+    conditions = CharField(_('conditions filename'), max_length=255)
+    rules = CharField(_('rules filename'), max_length=255)
 
-    start = DateTimeField('время начала')
-    stop = DateTimeField('время завершения', blank=True, null=True)
-    freeze = DateTimeField('время заморозки результатов', blank=True, null=True)
+    start = DateTimeField(_('start moment'))
+    stop = DateTimeField(_('stop time'), blank=True, null=True)
+    freeze = DateTimeField(_('freeze time'), blank=True, null=True)
 
-    personal_rules = BooleanField('использовать правила личного зачета')
-    command_rules = BooleanField('использовать правила командного зачета')
+    personal_rules = BooleanField(_('individual contest rules'))
+    command_rules = BooleanField(_('team contest rules'))
 
-    guest_access = BooleanField('гостевой доступ')
-    participant_access = BooleanField('доступ для участников')
-    show_tests = BooleanField('публиковать тесты для участников и гостей')
-    show_results = BooleanField('публиковать таблицу результаты для участников')
+    guest_access = BooleanField(_('guest access'))
+    participant_access = BooleanField(_('participant access'))
+    show_tests = BooleanField(_('show tests'))
+    show_results = BooleanField(_('show results'))
 
     class Meta:
-        verbose_name = 'олимпиада'
-        verbose_name_plural = 'олимпиады'
+        verbose_name = _('contest')
+        verbose_name_plural = _('contests')
         ordering = ['brief_name']
 
     def __str__(self):

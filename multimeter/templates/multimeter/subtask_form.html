@@ -1,10 +1,11 @@
 {% extends "multimeter/menu.html" %}
+{% load i18n %}
 {% block content %}
 	<div id="form" class="d-none">{{ form }}</div>
 	<div class="container">
 		<div class="row">
 			<div class="col">
-				<h1>{% block title %}Редактирование подзадачи{% endblock %}</h1>
+				<h1>{% block title %}{% trans 'Edit subtask' %}{% endblock %}</h1>
 				<form method="post">
 					{% csrf_token %}
 					
@@ -17,11 +18,11 @@
 					<div class="form-group" data-form="scoring"></div>
 					<div class="form-group" data-form="results"></div>
 
-					<input type="submit" name="submit" class="btn btn-primary" value="Сохранить">
+					<input type="submit" name="submit" class="btn btn-primary" value="{% trans 'Save' %}">
 					{% if object %}
-						<a href="{% url 'problem_update' object.problem.id %}#subtasks" class="btn btn-default">Отменить</a>
+						<a href="{% url 'problem_update' object.problem.id %}#subtasks" class="btn btn-default">{% trans 'Cancel' %}</a>
 					{% else %}
-						<a href="{% url 'problem_update' view.kwargs.problem_id %}#subtasks" class="btn btn-default">Отменить</a>
+						<a href="{% url 'problem_update' view.kwargs.problem_id %}#subtasks" class="btn btn-default">{% trans 'Cancel' %}</a>
 					{% endif %}
 				</form>
 			</div>

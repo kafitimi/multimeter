@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-19 19:29+0900\n"
+"POT-Creation-Date: 2018-06-20 14:22+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,6 +20,38 @@ msgstr ""
 "%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
 "%100>=11 && n%100<=14)? 2 : 3);\n"
 
+#: .\forms.py:13 .\forms.py:32
+msgid "Username"
+msgstr "Логин"
+
+#: .\forms.py:14
+msgid "Password"
+msgstr "Пароль"
+
+#: .\forms.py:20
+msgid "Email"
+msgstr "Email"
+
+#: .\forms.py:37
+msgid "Current password"
+msgstr "Текущий пароль"
+
+#: .\forms.py:38
+msgid "New password"
+msgstr "Новый пароль"
+
+#: .\forms.py:39
+msgid "Confirm new password"
+msgstr "Подтвердите новый пароль"
+
+#: .\forms.py:45
+msgid "Invalid current password"
+msgstr "Неправильный текущий пароль"
+
+#: .\forms.py:52
+msgid "Passwords does not match"
+msgstr "Пароли не совпадают"
+
 #: .\forms.py:58
 msgid "Tags"
 msgstr "Теги"
@@ -27,6 +59,106 @@ msgstr "Теги"
 #: .\forms.py:58
 msgid "Tags must be divided by comma"
 msgstr "Теги должны быть разделены запятыми"
+
+#: .\forms.py:69
+msgid "Preferred language"
+msgstr "Предпочитаемый язык"
+
+#: .\forms.py:70
+msgid "Russian"
+msgstr "Русский"
+
+#: .\forms.py:70
+msgid "English"
+msgstr "Английский"
+
+#: .\models.py:34 .\models.py:187
+msgid "name"
+msgstr "название"
+
+#: .\models.py:37 .\models.py:54
+msgid "country"
+msgstr "страна"
+
+#: .\models.py:38
+msgid "countries"
+msgstr "страны"
+
+#: .\models.py:51
+msgid "second name"
+msgstr "отчество"
+
+#: .\models.py:52
+msgid "birthday"
+msgstr "день рождения"
+
+#: .\models.py:57
+msgid "user"
+msgstr "пользователь"
+
+#: .\models.py:58
+msgid "users"
+msgstr "пользователи"
+
+#: .\models.py:100
+msgid "brief name"
+msgstr "краткое название"
+
+#: .\models.py:101
+msgid "full name"
+msgstr "полное название"
+
+#: .\models.py:103
+msgid "conditions filename"
+msgstr "имя файла условий"
+
+#: .\models.py:104
+msgid "rules filename"
+msgstr "имя файла правил"
+
+#: .\models.py:106
+msgid "start moment"
+msgstr "момент начала"
+
+#: .\models.py:107
+msgid "stop time"
+msgstr "момент окончания"
+
+#: .\models.py:108
+msgid "freeze time"
+msgstr "момент заморозки"
+
+#: .\models.py:110
+msgid "individual contest rules"
+msgstr "индивидуальный зачет"
+
+#: .\models.py:111
+msgid "team contest rules"
+msgstr "командный зачет"
+
+#: .\models.py:113
+msgid "guest access"
+msgstr "гостевой доступ"
+
+#: .\models.py:114
+msgid "participant access"
+msgstr "доступ участников"
+
+#: .\models.py:115
+msgid "show tests"
+msgstr "показать тесты"
+
+#: .\models.py:116
+msgid "show results"
+msgstr "показать результаты"
+
+#: .\models.py:119
+msgid "contest"
+msgstr "соревнование"
+
+#: .\models.py:120 .\models.py:136
+msgid "contests"
+msgstr "соревнования"
 
 #: .\models.py:131
 msgid "codename"
@@ -47,10 +179,6 @@ msgstr "имя выходного файла"
 #: .\models.py:135
 msgid "If empty then standard output will be used"
 msgstr "Если не задано то будет использован стандартный вывод"
-
-#: .\models.py:136
-msgid "contests"
-msgstr "соревнования"
 
 #: .\models.py:137
 msgid "time limit (ms)"
@@ -75,10 +203,6 @@ msgstr "задача"
 #: .\models.py:147
 msgid "problems"
 msgstr "задачи"
-
-#: .\models.py:187
-msgid "name"
-msgstr "название"
 
 #: .\models.py:188
 msgid "conditions"
@@ -111,6 +235,120 @@ msgstr "тип текста"
 #: .\models.py:197
 msgid "text"
 msgstr "текст"
+
+#: .\templates\multimeter\account_form.html:8
+msgid "User profile"
+msgstr "Профиль пользователия"
+
+#: .\templates\multimeter\account_form.html:20
+#: .\templates\multimeter\contest_form.html:50
+#: .\templates\multimeter\password_change.html:17
+#: .\templates\multimeter\problem_form.html:88
+#: .\templates\multimeter\subtask_form.html:21
+msgid "Save"
+msgstr "Сохранить"
+
+#: .\templates\multimeter\account_form.html:21
+#: .\templates\multimeter\contest_confirm_delete.html:12
+#: .\templates\multimeter\contest_form.html:51
+#: .\templates\multimeter\password_change.html:18
+#: .\templates\multimeter\problem_confirm_delete.html:12
+#: .\templates\multimeter\problem_form.html:89
+#: .\templates\multimeter\subtask_confirm_delete.html:12
+#: .\templates\multimeter\subtask_form.html:23
+#: .\templates\multimeter\subtask_form.html:25
+msgid "Cancel"
+msgstr "Отмена"
+
+#: .\templates\multimeter\contest_confirm_delete.html:7
+#: .\templates\multimeter\subtask_confirm_delete.html:7
+msgid "Confirm deletion"
+msgstr "Подтвердить удаление"
+
+#: .\templates\multimeter\contest_confirm_delete.html:10
+msgid "Are you really want to delete this contest"
+msgstr "Вы действительно хотите удалить соревнование"
+
+#: .\templates\multimeter\contest_confirm_delete.html:11
+#: .\templates\multimeter\problem_confirm_delete.html:11
+#: .\templates\multimeter\subtask_confirm_delete.html:11
+msgid "Delete"
+msgstr "Удалить"
+
+#: .\templates\multimeter\contest_form.html:8
+msgid "Edit contest"
+msgstr "Редактирование соревнования"
+
+#: .\templates\multimeter\contest_list.html:7
+msgid "Contest list"
+msgstr "Список соревнований"
+
+#: .\templates\multimeter\contest_list.html:12
+msgid "Brief name"
+msgstr "Краткое название"
+
+#: .\templates\multimeter\contest_list.html:13
+msgid "Begin time"
+msgstr "Время начала"
+
+#: .\templates\multimeter\contest_list.html:14
+msgid "End time"
+msgstr "Время окончания"
+
+#: .\templates\multimeter\contest_list.html:32
+msgid "There are no contests yet"
+msgstr "Ни одной подзадачи пока нет"
+
+#: .\templates\multimeter\contest_list.html:34
+#: .\templates\multimeter\problem_list.html:34
+msgid "Create"
+msgstr "Создать"
+
+#: .\templates\multimeter\index.html:7
+msgid "Index page"
+msgstr "Главная страница"
+
+#: .\templates\multimeter\login.html:8 .\templates\multimeter\login.html:14
+#: .\templates\multimeter\menu.html:44
+msgid "Login"
+msgstr "Вход"
+
+#: .\templates\multimeter\menu.html:11
+msgid "Rules"
+msgstr "Правила"
+
+#: .\templates\multimeter\menu.html:15
+msgid "Contests"
+msgstr "Соревнования"
+
+#: .\templates\multimeter\menu.html:20
+msgid "Problems"
+msgstr "Задачи"
+
+#: .\templates\multimeter\menu.html:32
+msgid "Profile"
+msgstr "Профиль"
+
+#: .\templates\multimeter\menu.html:35
+#: .\templates\multimeter\password_change.html:8
+msgid "Change password"
+msgstr "Изменить пароль"
+
+#: .\templates\multimeter\menu.html:38
+msgid "Logout"
+msgstr "Выход"
+
+#: .\templates\multimeter\menu.html:47 .\templates\multimeter\signup.html:8
+msgid "Registration"
+msgstr "Регистрация"
+
+#: .\templates\multimeter\problem_confirm_delete.html:7
+msgid "Confirm deletetion"
+msgstr "Подтвердить удаление"
+
+#: .\templates\multimeter\problem_confirm_delete.html:10
+msgid "Are you really want to delete this problem"
+msgstr "Вы действительно хотите удалить задачу"
 
 #: .\templates\multimeter\problem_form.html:9
 msgid "Edit problem"
@@ -152,14 +390,6 @@ msgstr "Начисление баллов"
 msgid "Results"
 msgstr "Отображение результатов"
 
-#: .\templates\multimeter\problem_form.html:88
-msgid "Save"
-msgstr "Сохранить"
-
-#: .\templates\multimeter\problem_form.html:89
-msgid "Cancel"
-msgstr "Отмена"
-
 #: .\templates\multimeter\problem_form.html:91
 msgid "Create subtask"
 msgstr "Создать подзадачу"
@@ -180,10 +410,18 @@ msgstr "Автор"
 msgid "There are no problems yet"
 msgstr "Ни одной задачи ещё нет"
 
-#: .\templates\multimeter\problem_list.html:34
-msgid "Create"
-msgstr "Создать"
-
 #: .\templates\multimeter\problem_list.html:35
 msgid "Import"
 msgstr "Импорт"
+
+#: .\templates\multimeter\signup.html:18
+msgid "Register"
+msgstr "Регистрация"
+
+#: .\templates\multimeter\subtask_confirm_delete.html:10
+msgid "Are you really want to delete this subtask"
+msgstr "Вы действительно хотите удалить подзадачу"
+
+#: .\templates\multimeter\subtask_form.html:8
+msgid "Edit subtask"
+msgstr "Редактировать подзадачу"

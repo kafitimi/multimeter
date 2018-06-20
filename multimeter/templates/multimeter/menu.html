@@ -1,4 +1,5 @@
 {% extends "multimeter/page.html" %}
+{% load i18n %}
 {% load static %}
 {% block body %}
     <div class="container">
@@ -7,16 +8,16 @@
                 <nav class="navbar navbar-expand navbar-light bg-light">
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item{% if request.resolver_match.view_name == 'template' %} active{% endif %}">
-                            <a class="nav-link" href="{% url 'index' %}">Правила</a>
+                            <a class="nav-link" href="{% url 'index' %}">{% trans 'Rules' %}</a>
                         </li>
                         {% if user.is_superuser %}
                             <li class="nav-item{% if request.resolver_match.view_name == 'contest_list' %} active{% endif %}">
-                                <a class="nav-link" href="{% url 'contest_list' %}">Контесты</a>
+                                <a class="nav-link" href="{% url 'contest_list' %}">{% trans 'Contests' %}</a>
                             </li>
                         {% endif %}
                         {% if user.is_staff %}
                             <li class="nav-item{% if request.resolver_match.view_name == 'problem_list' %} active{% endif %}">
-                                <a class="nav-link" href="{% url 'problem_list' %}">Задачи</a>
+                                <a class="nav-link" href="{% url 'problem_list' %}">{% trans 'Problems' %}</a>
                             </li>
                         {% endif %}
                     </ul>
@@ -28,22 +29,22 @@
                             </a>
                             <div class="dropdown-menu">
                                 <a class="dropdown-item" href="{% url 'account' %}">
-                                    <i class="fas fa-user"></i> Профиль
+                                    <i class="fas fa-user"></i> {% trans 'Profile' %}
                                 </a>
                                 <a class="dropdown-item" href="{% url 'password' %}">
-                                    <i class="fas fa-key"></i> Изменить пароль
+                                    <i class="fas fa-key"></i> {% trans 'Change password' %}
                                 </a>
                                 <a class="dropdown-item" href="{% url 'logout' %}">
-                                    <i class="fas fa-sign-out-alt"></i> Выйти
+                                    <i class="fas fa-sign-out-alt"></i> {% trans 'Logout' %}
                                 </a>
                             </div>
                         </li>
                         {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href={% url 'login' %}>Вход</a>
+                            <a class="nav-link" href={% url 'login' %}>{% trans 'Login' %}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href={% url 'signup' %}>Регистрация</a>
+                            <a class="nav-link" href={% url 'signup' %}>{% trans 'Registration' %}</a>
                         </li>
                         {% endif %}
                     </ul>
