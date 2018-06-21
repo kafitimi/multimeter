@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -8,137 +7,209 @@ using YamlDotNet.Serialization.NamingConventions;
 
 namespace Arbiter
 {
-    public class User
+    // Подзадача
+    public class Subtask
     {
-        public string Username { get; set; }
-        public string LastName { get; set; }
-        public string FirstName { get; set; }
-        public string SecondName { get; set; }
+        public string Scoring { get; set; }  // Начисление баллов: partial / entire
+        public string Information { get; set; }  // Информация для пользователей: full / brief
+        public int Score { get; set; }  // Количество баллов за подзадачу
     }
 
+    // Задача
     public class Problem
     {
-        public string Code { get; set; }
-        public string CodeName { get; set; }
-        public string Name { get; set; }
+        public string Name { get; set; }  // Название
+        public Dictionary<string, Subtask> Subtasks { get; set; }  // Подзадачи
+        public DateTime ModificationTime { get; set; }  // Дата и время изменения
     }
 
+    // Язык программирования
+    public class Language
+    {
+        public string Name { get; set; }  // Название
+        public List<string> Compilation { get; set; }  // Шаги компиляции
+        public string Execution { get; set; }  // Выполнение
+        public DateTime ModificationTime { get; set; }  // Дата и время изменения
+    }
+
+    // Результат проверки
     public class Result
     {
-        public string CompilationResult { get; set; }
-        public Dictionary<string, string> PreliminaryResult { get; set; }
-        public Dictionary<string, Dictionary<string, string>> ExecutionResult { get; set; }
-        public int Total { get; set; }
+        public string CompilationResult { get; set; }  // Результат компиляции
+        public Dictionary<string, string> PreliminaryTestsResults { get; set; }  // Результаты проверки на предварительных тестах
+        public Dictionary<string, Dictionary<string, string>> SubtasksResults { get; set; }  // Результаты проверки на подзадачах
+        public int Total { get; set; }  // Общий балл
     }
 
+    // Отправка
     public class Submission
     {
-        public int Attempt { get; set; }
-        public DateTime DateTime { get; set; }
-        public User User { get; set; }
-        public Problem Problem { get; set; }
-        public Result Result { get; set; }
-        public string Source { get; set; }
+        public int Attempt { get; set; }  // Номер попытки
+        public DateTime SubmissionTime { get; set; }  // Дата и время отправки
+        public string User { get; set; }  // Пользователь
+        public string Problem { get; set; }  // Код задачи
+        public string Language { get; set; }  // Код языка программирования
+        public Result Result { get; set; }  // Результат проверки
+        public string Source { get; set; }  // Исходный код решения
     }
 
+    // Арбитр
     class Arbiter
     {
-        //ThreadStart childref = new ThreadStart(CallToChildThread);
-        //Console.WriteLine("In Main: Creating the Child thread");
+        readonly string SettingsFolder = "settings";
+        readonly string QueueFolder = "queue";
+        readonly string ResultsFolder = "results";
+        Dictionary<string, Language> Languages;
+        Dictionary<string, Problem> Problems;
 
-        //Thread childThread = new Thread(childref);
-        //childThread.Start();
-
-        //public static void CallToChildThread()
-        //{
-            //Console.WriteLine("Child thread starts");
-            //for (int counter = 0; counter <= 10; counter++)
-            //{
-                //Thread.Sleep(500);
-                //Console.WriteLine(counter);
-            //}
-            //Console.WriteLine("Child Thread Completed");
-        //}
-
-        static readonly string Queue = "queue";
-        static readonly string Results = "results";
-
-        static bool Serialize(string fileName, Submission submission)
+        // Запись YAML-файла
+        bool Serialize(string fileName, Object submission)
         {
-            var namingConvention = new UnderscoredNamingConvention();
             var serializer = new SerializerBuilder()
-                .WithNamingConvention(namingConvention)
+                .WithNamingConvention(new UnderscoredNamingConvention())
                 .EmitDefaults()
                 .Build();
             File.WriteAllText(fileName, serializer.Serialize(submission));
             return true;
         }
 
-        static Submission Deserialize (string fileName)
+        // Чтение и парсинг YAML-файла
+        Submission DeserializeSubmission(string fileName)
         {
             var fileContent = File.ReadAllText(fileName);
-            var namingConvention = new UnderscoredNamingConvention();
             var deserializer = new DeserializerBuilder()
-                .WithNamingConvention(namingConvention)
+                .WithNamingConvention(new UnderscoredNamingConvention())
                 .Build();
             return deserializer.Deserialize<Submission>(fileContent);
         }
 
-        static string Compile(Submission submission)
+        // Компиляция
+        string Compilation(Language language, string source)
         {
-            return "OK";
-        }
-
-        static Dictionary<string, string> CheckResults(Submission submission)
-        {
-            return new Dictionary<string, string>() { { "01", "OK" } };
-        }
-
-        static bool QueueIsEmpty()
-        {
-            var queue = Directory.GetFiles(Queue);
-            foreach (var fileName in queue)
+            var result = "OK";
+            try
             {
-                if (!fileName.EndsWith(".yaml"))
-                    continue;
+                // Нужно выполнить шаги компиляции
+            }
+            catch
+            {
+                result = "CE";
+            }
+            return result;
+        }
+
+        // Проверка на тестов подзадачи
+        Dictionary<string, string> SubtaskCheck(Language language, Dictionary<string, Subtask> subtasks)
+        {
+            var result = new Dictionary<string, string>();
+            foreach (KeyValuePair<string, Subtask> entry in subtasks)
+            {
+                result[entry.Key] = "OK";
                 try
                 {
-                    var submission = Deserialize(fileName);
-                    submission.Result = new Result();
-                    submission.Result.CompilationResult = Compile(submission);
-                    if (submission.Result.CompilationResult == "OK")
-                    {
-                        submission.Result.PreliminaryResult = CheckResults(submission);
-                    }
-                    Serialize(fileName.Replace(Queue, Results), submission);
+                    // Проверить тест
                 }
-                catch (IOException) { }
+                catch
+                {
+                    result[entry.Key] = "RE";
+                }
             }
-            return true;
+            return result;
         }
 
+        // Проверка на предварительных тестах
+        Dictionary<string, string> PreliminaryTestsCheck(Language language, Problem problem, Submission submission)
+        {
+            var result = new Dictionary<string, string>();
+            var preliminaryFolder = "";
+            var queue = Directory.GetFiles(preliminaryFolder);
+            foreach (KeyValuePair<string, Subtask> entry in subtasks)
+            {
+                try
+                {
+                    submission.Result.PreliminaryTestsResults = new Dictionary<string, string>(){ { "01", "OK" } };
+                }
+                catch
+                {
+                    result[entry.Key] = "RE";
+                }
+            }
+            return result;
+        }
+
+        // Если настройки изменились, надо их проверить
+        bool SettingsAreUnchanged()
+        {
+            var Unchanged = true;
+
+            return Unchanged;
+        }
+
+        // Обход файлов в очереди
+        bool QueueIsEmpty()
+        {
+            var Empty = true;  // Нужно, чтобы определить можно ли поспать или нет
+            var queue = Directory.GetFiles(QueueFolder);
+            foreach (var fileName in queue)  // fileName включает в себя имя каталога
+            {
+                // Пропускаем ненужные файлы
+                if (!fileName.EndsWith(".yaml"))
+                    continue;
+
+                Empty = false;  // Блин, не получиться поспать
+
+                // Переместим файл, чтобы в следующий раз не обработать его повторно
+                var newFileName = fileName.Replace(QueueFolder, ResultsFolder);
+                // !!! Загуглить как перемещать файлы
+
+                var submission = DeserializeSubmission(newFileName);
+                submission.Result = new Result();
+                var language = Languages[submission.Language];
+                if (Compilation(language, submission.Source) == "OK")
+                {
+                    var problem = Problems[submission.Problem];
+                    if (PreliminaryTestsCheck(language, problem, submission) == "OK")
+                    {
+                        var total = 0;
+                        foreach (KeyValuePair<string, Subtask> entry in problem.Subtasks)
+                        {
+                            SubtaskCheck(submission, language, entry.Value);
+                        }
+                        submission.Result.Total = total;
+                    }
+                }
+
+                Serialize(newFileName, submission);
+            }
+            return Empty;
+        }
+
+        // Конструктор
+        Arbiter()
+        {
+            // Если каталог с настройками отсутствует, то нужно его создать
+            if (!Directory.Exists(SettingsFolder))
+                Directory.CreateDirectory(SettingsFolder);
+
+            // Если каталог с очередью отсутствует, то нужно его создать
+            if (!Directory.Exists(QueueFolder))
+                Directory.CreateDirectory(QueueFolder);
+
+            // Если каталог результатов отсутствует, то нужно его создать
+            if (!Directory.Exists(ResultsFolder))
+                Directory.CreateDirectory(ResultsFolder);
+        }
+
+        // Точка входа
         static void Main(string[] args)
         {
-            if (!Directory.Exists(Queue))
-                Directory.CreateDirectory(Queue);
-
-            if (!Directory.Exists(Results))
-                Directory.CreateDirectory(Results);
-
-            while (QueueIsEmpty())
-                Thread.Sleep(1000);
-
-            //var submission = new Submission();
-            //submission.Attempt = 1;
-            //submission.DateTime = new DateTime();
-            //submission.Problem = new Problem { Code = "A", CodeName = "Test", Name = "Тест" };
-            //submission.Result = new Result { CompilationResult = "OK", PreliminaryResult = { }, ExecutionResult = { }, Total = 0 };
-            //submission.User = new User { Username = "User", LastName = "Петров", FirstName = "Петр", SecondName = "Петрович" };
-            //submission.Source = "begin\n\nend.";
-            //Serialize(Queue + "\\test.yaml", submission);
-
-            //var submission = Deserialize(Queue + "\\test.yaml");
-            //Console.WriteLine("Done");
+            var arbiter = new Arbiter();
+            while (true)
+            {
+                // Если работы нет, то можно секундочку поспать
+                if (arbiter.SettingsAreUnchanged() && arbiter.QueueIsEmpty())
+                    Thread.Sleep(1000);
+            }
         }
     }
 }
