@@ -356,9 +356,7 @@ namespace Arbiter
             foreach (var dirname in dirnames)
             {
                 // Пропускаем служебные каталоги
-                if (dirname.ToLower() == LanguagesDir.ToLower()
-                    || dirname.ToLower() == QueueDir.ToLower()
-                    || dirname.ToLower() == ResultsDir.ToLower())
+                if (IsServiceDirectory(dirname))
                     continue;
 
                 // Пропускаем каталоги без описания задачи
@@ -387,6 +385,13 @@ namespace Arbiter
             }
 
             return Unchanged;
+        }
+
+        bool IsServiceDirectory(string dirname)
+        {
+            return string.Equals(dirname, LanguagesDir, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(dirname, QueueDir, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(dirname, ResultsDir, StringComparison.OrdinalIgnoreCase);
         }
 
         // Если языки программирования изменились, надо их обновить
