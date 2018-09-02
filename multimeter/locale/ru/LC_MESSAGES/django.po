@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-03 00:44+0900\n"
+"POT-Creation-Date: 2018-09-03 01:01+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -59,6 +59,10 @@ msgstr "Теги"
 #: .\forms.py:58
 msgid "Tags must be divided by comma"
 msgstr "Теги должны быть разделены запятыми"
+
+#: .\forms.py:68
+msgid "File"
+msgstr "Файл"
 
 #: .\forms.py:69
 msgid "Preferred language"
@@ -254,6 +258,7 @@ msgstr "Сохранить"
 #: .\templates\multimeter\password_change.html:18
 #: .\templates\multimeter\problem_confirm_delete.html:12
 #: .\templates\multimeter\problem_form.html:89
+#: .\templates\multimeter\problem_import.html:15
 #: .\templates\multimeter\subtask_confirm_delete.html:12
 #: .\templates\multimeter\subtask_form.html:23
 #: .\templates\multimeter\subtask_form.html:25
@@ -393,6 +398,15 @@ msgstr "Отображение результатов"
 msgid "Create subtask"
 msgstr "Создать подзадачу"
 
+#: .\templates\multimeter\problem_import.html:8
+msgid "Import problems from Polygon"
+msgstr "Импорт задач из Polygon"
+
+#: .\templates\multimeter\problem_import.html:14
+#: .\templates\multimeter\problem_list.html:35
+msgid "Import"
+msgstr "Импорт"
+
 #: .\templates\multimeter\problem_import_result.html:7
 msgid "Import result"
 msgstr "Результат импортирования"
@@ -445,10 +459,6 @@ msgstr "Автор"
 #: .\templates\multimeter\problem_list.html:32
 msgid "There are no problems yet"
 msgstr "Ни одной задачи ещё нет"
-
-#: .\templates\multimeter\problem_list.html:35
-msgid "Import"
-msgstr "Импорт"
 
 #: .\templates\multimeter\signup.html:18
 msgid "Register"
