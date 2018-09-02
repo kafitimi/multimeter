@@ -2,13 +2,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-20 14:22+0900\n"
+"POT-Creation-Date: 2018-09-03 00:44+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -261,6 +261,7 @@ msgid "Cancel"
 msgstr "Отмена"
 
 #: .\templates\multimeter\contest_confirm_delete.html:7
+#: .\templates\multimeter\problem_confirm_delete.html:7
 #: .\templates\multimeter\subtask_confirm_delete.html:7
 msgid "Confirm deletion"
 msgstr "Подтвердить удаление"
@@ -342,10 +343,6 @@ msgstr "Выход"
 msgid "Registration"
 msgstr "Регистрация"
 
-#: .\templates\multimeter\problem_confirm_delete.html:7
-msgid "Confirm deletetion"
-msgstr "Подтвердить удаление"
-
 #: .\templates\multimeter\problem_confirm_delete.html:10
 msgid "Are you really want to delete this problem"
 msgstr "Вы действительно хотите удалить задачу"
@@ -359,10 +356,12 @@ msgid "General"
 msgstr "Общие"
 
 #: .\templates\multimeter\problem_form.html:13
+#: .\templates\multimeter\problem_import_result.html:14
 msgid "Conditions"
 msgstr "Условия"
 
 #: .\templates\multimeter\problem_form.html:14
+#: .\templates\multimeter\problem_import_result.html:15
 msgid "Checker"
 msgstr "Чекер"
 
@@ -393,6 +392,43 @@ msgstr "Отображение результатов"
 #: .\templates\multimeter\problem_form.html:91
 msgid "Create subtask"
 msgstr "Создать подзадачу"
+
+#: .\templates\multimeter\problem_import_result.html:7
+msgid "Import result"
+msgstr "Результат импортирования"
+
+#: .\templates\multimeter\problem_import_result.html:12
+msgid "Name"
+msgstr "Название"
+
+#: .\templates\multimeter\problem_import_result.html:13
+#, fuzzy
+#| msgid "tutorial"
+msgid "Tutorial"
+msgstr "разбор"
+
+#: .\templates\multimeter\problem_import_result.html:23
+#: .\templates\multimeter\problem_import_result.html:28
+msgid "Yes"
+msgstr "Да"
+
+#: .\templates\multimeter\problem_import_result.html:25
+#: .\templates\multimeter\problem_import_result.html:30
+#: .\templates\multimeter\problem_import_result.html:39
+msgid "No"
+msgstr "Нет"
+
+#: .\templates\multimeter\problem_import_result.html:36
+msgid "Unknown"
+msgstr "Неизвестно"
+
+#: .\templates\multimeter\problem_import_result.html:46
+msgid "No problems have been imported"
+msgstr "Не было импортировано ни одной задачи"
+
+#: .\templates\multimeter\problem_import_result.html:48
+msgid "Accept"
+msgstr "Принять"
 
 #: .\templates\multimeter\problem_list.html:7
 msgid "Problem list"
