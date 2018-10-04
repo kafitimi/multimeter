@@ -1,0 +1,26 @@
+{# Чтобы выстроить поля в грид укажите класс с шириной колонки #}
+<div class="form-group{% if col %} {{ col }}{% endif %}">
+  <div class="form-check">
+
+    {# Собственно чекбокс ради которого весь огород #}
+    {{ form_field }}
+
+    {# Лейбл с вербоз-именем поля #}
+    <label class="form-check-label" for="{{ form_field.id_for_label }}">{{ form_field.label }}</label>
+
+    {# Подказки для склеротиков #}
+    {% if help %}
+      <small class="form-text text-muted">
+        {{ help }}
+      </small>
+    {% endif %}
+
+    {# Вспоминаем пользователю все его косяки #}
+    {% for error in form_field.errors %}
+      <div class="invalid-feedback">
+        {{ error }}
+      </div>
+    {% endfor %}
+
+  </div>
+</div>

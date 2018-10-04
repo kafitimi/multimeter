@@ -1,26 +1,39 @@
 {% extends "multimeter/menu.html" %}
 {% load i18n %}
+{% load multimeter_tags %}
 {% block content %}
-    <div id="form" class="d-none">{{ form }}</div>
-    <div class="container">
-        <div class="row">
-            <div class="col">
-                <h1>{% block title %}{% trans 'User profile' %}{% endblock %}</h1>
-                <div class="text-danger" data-form="nonfield-errorlist"></div>
-                <form method="post">
-                    {% csrf_token %}
+  <div class="container">
+    <div class="row">
+      <div class="col">
 
-                    <div class="form-group" data-form="username"></div>
-                    <div class="form-group" data-form="last_name"></div>
-                    <div class="form-group" data-form="first_name"></div>
-                    <div class="form-group" data-form="patronymic_name"></div>
-                    <div class="form-group" data-form="birthday"></div>
-                    <div class="form-group" data-form="country"></div>
+        <h1>{% block title %}{% trans 'User profile' %}{% endblock %}</h1>
 
-                    <input type="submit" name="submit" class="btn btn-primary" value="{% trans 'Save' %}">
-                    <a href="{% url 'index' %}" class="btn btn-default">{% trans 'Cancel' %}</a>
-                </form>
-            </div>
-        </div>
+        <form method="post">
+
+          {% csrf_token %}
+
+          {% for error in form.non_field_errors %}
+            <p class="text-danger">{{ error }}</p>
+          {% endfor %}
+
+          <div class="form-row">
+            {% form_control form.username "col-4" %}
+            {% form_control form.birthday "col-4" %}
+            {% form_control form.country "col-4" %}
+          </div>
+
+          <div class="form-row">
+            {% form_control form.last_name "col-4" %}
+            {% form_control form.first_name "col-4" %}
+            {% form_control form.patronymic_name "col-4" %}
+          </div>
+
+          <input type="submit" name="submit" class="btn btn-primary" value="{% trans 'Save' %}">
+          <a href="{% url 'index' %}" class="btn btn-default">{% trans 'Cancel' %}</a>
+
+        </form>
+
+      </div>
     </div>
+  </div>
 {% endblock %}
