@@ -1,56 +1,48 @@
 {% extends 'multimeter/menu.html' %}
 {% load i18n %}
+{% load multimeter_tags %}
 {% block content %}
-    <div id="form" class="d-none">{{ form }}</div>
-    <div class="container">
-        <div class="row">
-            <div class="col">
-                <h1>{% block title %}{% trans 'Edit contest' %}{% endblock %}</h1>
-                <form method="post">
-                    {% csrf_token %}
-                    
-                    <div class="form-group" data-form="brief_name"></div>
-                    <div class="form-group" data-form="full_name"></div>
-                    <div class="form-group" data-form="conditions"></div>
-                    <div class="form-group" data-form="rules"></div>
-                    
-                    <div class="form-row">
-                        <div class="form-group col" data-form="start"></div>
-                        <div class="form-group col" data-form="stop"></div>
-                        <div class="form-group col" data-form="freeze"></div>
-                    </div>
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <h1>{% block title %}{% trans 'Edit contest' %}{% endblock %}</h1>
+        <form method="post">
+          {% csrf_token %}
 
-                    <div class="form-row">
-                        <div class="form-group col">
-                            <div class="form-check" data-form="personal_rules"></div>
-                        </div>
-                        <div class="form-group col">
-                            <div class="form-check" data-form="command_rules"></div>
-                        </div>
-                    </div>
+          {% for error in form.non_field_errors %}
+            <p class="text-danger">{{ error }}</p>
+          {% endfor %}
 
-                    <div class="form-row">
-                        <div class="form-group col">
-                            <div class="form-check" data-form="guest_access"></div>
-                        </div>
-                        <div class="form-group col">
-                            <div class="form-check" data-form="participant_access"></div>
-                        </div>
-                    </div>
+          {% form_control form.brief_name %}
+          {% form_control form.full_name %}
+          {% form_control form.conditions %}
+          {% form_control form.rules %}
 
-                    <div class="form-row">
-                        <div class="form-group col">
-                            <div class="form-check" data-form="show_tests"></div>
-                        </div>
-                        <div class="form-group col">
-                            <div class="form-check" data-form="show_results"></div>
-                        </div>
-                    </div>
+          <div class="form-row">
+            {% form_control form.start "col-4" %}
+            {% form_control form.stop "col-4" %}
+            {% form_control form.freeze "col-4" %}
+          </div>
 
-                    <input type="submit" name="submit" class="btn btn-primary" value="{% trans 'Save' %}">
-                    <a href="{% url 'contest_list' %}" class="btn btn-default">{% trans 'Cancel' %}</a>
-                </form>
-            </div>
-        </div>
+          <div class="form-row">
+            {% form_check form.personal_rules "col-6" %}
+            {% form_check form.command_rules "col-6" %}
+          </div>
+
+          <div class="form-row">
+            {% form_check form.guest_access "col-6" %}
+            {% form_check form.participant_access "col-6" %}
+          </div>
+
+          <div class="form-row">
+            {% form_check form.show_tests "col-6" %}
+            {% form_check form.show_results "col-6" %}
+          </div>
+
+          <input type="submit" name="submit" class="btn btn-primary" value="{% trans 'Save' %}">
+          <a href="{% url 'contest_list' %}" class="btn btn-default">{% trans 'Cancel' %}</a>
+        </form>
+      </div>
     </div>
+  </div>
 {% endblock %}

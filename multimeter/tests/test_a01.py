@@ -1,10 +1,10 @@
-""" Приемочный тест A-01 Создание и редактирование задач
+""" Тест по карточке A-01 Создание и редактирование задач
 Автор может создавать, просматривать, редактировать и удалять задачи.
 Автор должен указать её название.
 Автор может указать теги для быстрого поиска.
 Система должна автоматически фиксировать дату её модификации. """
 
-from django.test import TestCase, Client
+from django.test import TestCase
 from django.utils.timezone import now
 
 from multimeter import models
@@ -38,18 +38,17 @@ class TestA01(TestCase):
 
     def test_problem_create(self):
         """ Проверка создания задачи """
-        client = Client()
-        client.login(username='author', password='password')
+        self.client.login(username='author', password='password')
 
-        response = client.get('/ru/problem/create/')
-        self.assertEqual(response.status_code, 200)
+        response = self.client.get('/ru/problem/create/')
+        self.assertEqual(200, response.status_code)
         self.assertContains(response, 'Редактирование задачи')
         self.assertContains(response, 'Кодовое название')
         self.assertContains(response, 'Теги')
         self.assertContains(response, 'Сохранить')
 
         time1 = now()
-        response = client.post('/ru/problem/create/', {
+        response = self.client.post('/ru/problem/create/', {
             'codename': 'Problem 2',
             'tags': 'tag1 tag3',
             'time_limit': 1000,
@@ -57,7 +56,7 @@ class TestA01(TestCase):
             'author': self.author.id,
         })
         time2 = now()
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(302, response.status_code)
 
         created_problem = models.Problem.objects.get(codename='Problem 2')
         tags = [t.tag for t in created_problem.tags.all()]
@@ -71,27 +70,25 @@ class TestA01(TestCase):
 
     def test_problem_list(self):
         """ Проверка списка задач """
-        client = Client()
-        client.login(username='author', password='password')
+        self.client.login(username='author', password='password')
 
-        response = client.get('/ru/problem/list/')
-        self.assertEqual(response.status_code, 200)
+        response = self.client.get('/ru/problem/list/')
+        self.assertEqual(200, response.status_code)
         self.assertContains(response, 'Problem 1')
         self.assertContains(response, 'author')
         self.assertContains(response, 'Создать')
 
     def test_problem_update(self):
         """ Проверка изменения задачи """
-        client = Client()
-        client.login(username='author', password='password')
+        self.client.login(username='author', password='password')
 
-        response = client.get('/ru/problem/update/%d/' % self.problem.id)
-        self.assertEqual(response.status_code, 200)
+        response = self.client.get('/ru/problem/update/%d/' % self.problem.id)
+        self.assertEqual(200, response.status_code)
         self.assertContains(response, 'Problem 1')
         self.assertContains(response, 'tag1')
 
         time1 = now()
-        response = client.post('/ru/problem/update/%d/' % self.problem.id, {
+        response = self.client.post('/ru/problem/update/%d/' % self.problem.id, {
             'codename': 'Problem 2',
             'tags': 'tag1 tag2',
             'time_limit': 1000,
@@ -99,7 +96,7 @@ class TestA01(TestCase):
             'author': self.author.id,
         })
         time2 = now()
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(302, response.status_code)
 
         updated_problem = models.Problem.objects.get(codename='Problem 2')
         tags = [t.tag for t in updated_problem.tags.all()]

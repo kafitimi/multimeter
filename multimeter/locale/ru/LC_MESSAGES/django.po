@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-03 01:01+0900\n"
+"POT-Creation-Date: 2018-10-05 00:03+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -240,11 +240,11 @@ msgstr "тип текста"
 msgid "text"
 msgstr "текст"
 
-#: .\templates\multimeter\account_form.html:8
+#: .\templates\multimeter\account_form.html:9
 msgid "User profile"
-msgstr "Профиль пользователия"
+msgstr "Профиль пользователя"
 
-#: .\templates\multimeter\account_form.html:20
+#: .\templates\multimeter\account_form.html:31
 #: .\templates\multimeter\contest_form.html:50
 #: .\templates\multimeter\password_change.html:17
 #: .\templates\multimeter\problem_form.html:88
@@ -252,7 +252,7 @@ msgstr "Профиль пользователия"
 msgid "Save"
 msgstr "Сохранить"
 
-#: .\templates\multimeter\account_form.html:21
+#: .\templates\multimeter\account_form.html:32
 #: .\templates\multimeter\contest_confirm_delete.html:12
 #: .\templates\multimeter\contest_form.html:51
 #: .\templates\multimeter\password_change.html:18

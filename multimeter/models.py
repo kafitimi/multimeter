@@ -98,22 +98,22 @@ class Contest(Model):
 
     """
     brief_name = CharField(_('brief name'), max_length=100)
-    full_name = TextField(_('full name'))
+    full_name = TextField(_('full name'), blank=True)
 
-    conditions = CharField(_('conditions filename'), max_length=255)
-    rules = CharField(_('rules filename'), max_length=255)
+    conditions = CharField(_('conditions filename'), max_length=255, blank=True)
+    rules = CharField(_('rules filename'), max_length=255, blank=True)
 
     start = DateTimeField(_('start moment'))
-    stop = DateTimeField(_('stop time'), blank=True, null=True)
+    stop = DateTimeField(_('stop time'))
     freeze = DateTimeField(_('freeze time'), blank=True, null=True)
 
-    personal_rules = BooleanField(_('individual contest rules'))
-    command_rules = BooleanField(_('team contest rules'))
+    personal_rules = BooleanField(_('individual contest rules'), default=False)
+    command_rules = BooleanField(_('team contest rules'), default=False)
 
-    guest_access = BooleanField(_('guest access'))
-    participant_access = BooleanField(_('participant access'))
-    show_tests = BooleanField(_('show tests'))
-    show_results = BooleanField(_('show results'))
+    guest_access = BooleanField(_('guest access'), default=False)
+    participant_access = BooleanField(_('participant access'), default=False)
+    show_tests = BooleanField(_('show tests'), default=False)
+    show_results = BooleanField(_('show results'), default=False)
 
     class Meta:
         verbose_name = _('contest')
