@@ -1,7 +1,7 @@
 {% extends "multimeter/menu.html" %}
 {% load i18n %}
+{% load multimeter_tags %}
 {% block content %}
-	<div id="form" class="d-none">{{ form }}</div>
 	<div class="container">
 		<div class="row">
 			<div class="col">
@@ -9,14 +9,19 @@
 				<form method="post">
 					{% csrf_token %}
 					
+          {% for error in form.non_field_errors %}
+            <p class="text-danger">{{ error }}</p>
+          {% endfor %}
+
 					{% if object %}
 						<input type="hidden" name="problem" value="{{ object.problem.id }}">
 					{% else %}
 						<input type="hidden" name="problem" value="{{ view.kwargs.problem_id }}">
 					{% endif %}
-					<div class="form-group" data-form="number"></div>
-					<div class="form-group" data-form="scoring"></div>
-					<div class="form-group" data-form="results"></div>
+
+          {% form_control form.number %}
+          {% form_control form.scoring %}
+          {% form_control form.results %}
 
 					<input type="submit" name="submit" class="btn btn-primary" value="{% trans 'Save' %}">
 					{% if object %}

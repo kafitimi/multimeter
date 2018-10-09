@@ -65,7 +65,7 @@ class ProblemForm(ModelForm):
 
 class ImportProblemForm(Form):
     """ Форма импорта задачи из Polygon """
-    file = FileField(label='Файл', required=True)
+    file = FileField(label=_('File'), required=True)
     language = ChoiceField(label=_('Preferred language'), choices=(
         ('russian', _('Russian')), ('english', _('English'))
     ))

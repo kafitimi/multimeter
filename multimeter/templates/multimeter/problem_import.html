@@ -1,19 +1,27 @@
 {% extends "multimeter/menu.html" %}
+{% load i18n %}
+{% load multimeter_tags %}
 {% block content %}
-<div id="form" class="d-none">{{ form }}</div>
-<div class="container">
+  <div class="container">
     <div class="row">
-        <div class="col">
-            <h1>{% block title %}Импорт задач из Polygon{% endblock %}</h1>
-            <div class="text-danger" data-form="nonfield-errorlist"></div>
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                <div class="form-group" data-form="file"></div>
-                <div class="form-group" data-form="language"></div>
-                <input type="submit" name="submit" class="btn btn-primary" value="Импортировать">
-                <a href="{% url 'problem_list' %}" class="btn btn-default">Отменить</a>
-            </form>
-        </div>
+      <div class="col">
+        <h1>{% block title %}{% trans 'Import problems from Polygon' %}{% endblock %}</h1>
+        <form method="post" enctype="multipart/form-data">
+
+          {% csrf_token %}
+
+          {% for error in form.non_field_errors %}
+            <p class="text-danger">{{ error }}</p>
+          {% endfor %}
+
+          {% form_control form.file %}
+          {% form_control form.language %}
+
+          <input type="submit" name="submit" class="btn btn-primary" value={% trans 'Import' %}>
+          <a href="{% url 'problem_list' %}" class="btn btn-default">{% trans 'Cancel' %}</a>
+
+        </form>
+      </div>
     </div>
-</div>
+  </div>
 {% endblock %}

@@ -1,6 +1,8 @@
+{% load i18n %}
 {% load static %}
+{% get_current_language as LANGUAGE_CODE %}
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -20,7 +22,6 @@
 {% block body %}{% endblock %}
 <script src="{% static 'multimeter/js/jquery-3.3.1.slim.min.js' %}"></script>
 <script src="{% static 'multimeter/js/bootstrap.min.js' %}"></script>
-<script src="{% static 'multimeter/js/fancy-forms.js' %}"></script>
 {% block scripts %}{% endblock %}
 </body>
 </html>
