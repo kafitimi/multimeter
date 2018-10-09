@@ -1,0 +1,8 @@
+name: Тестовая задача
+time_limit: 1000
+memory_limit: 64
+tests:
+  subtask1:
+    scoring: entire
+    information: full
+    score: 100

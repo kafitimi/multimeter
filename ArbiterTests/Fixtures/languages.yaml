@@ -1,0 +1,6 @@
+msvc:
+  compilation: |
+    call "C:\Program Files(x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat"
+    cl %1.cpp
+  execution: "%1.exe"
+  name: MS Visual C++

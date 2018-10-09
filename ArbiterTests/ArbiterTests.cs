@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
+using YamlDotNet.Serialization;
 using System.IO;
 
 namespace Arbiter.Tests
@@ -9,62 +9,86 @@ namespace Arbiter.Tests
     public class ArbiterTests
     {
         [TestMethod()]
-        public void SerializeTest()
+        public void GetDeserializerTest()
         {
-            Logger.Start();
+            var deserializer = Arbiter.GetDeserializer();
+            Assert.IsInstanceOfType(deserializer, typeof(Deserializer));
+        }
 
-            Submission submission = new Submission()
-            {
-                Attempt = 1,
-                Language = "Gcc",
-                Problem = "A",
-                Result = new Result()
-                {
-                    CompilationResult = "OK",
-                    PreliminaryTestsResults = new Dictionary<string, string>
-                    {
-                        { "01", "OK" },
-                        { "02", "OK" },
-                    },
-                },
-                Source = "begin\nend.",
-                SubmissionTime = new DateTime(2018, 1, 1, 0, 0, 0),
-                User = "Last First",
-            };
+        //[TestMethod()]
+        //public void QueueIsEmptyTest()
+        //{
+        //    Assert.Fail();
+        //}
 
-            var filename = "test.yaml";
-            Assert.IsTrue(Arbiter.Serialize(filename, submission));
-            var content = File.ReadAllText(filename);
-            Assert.IsTrue(content.Contains("Last First"));
-            Assert.IsTrue(content.Contains("Gcc"));
-            Assert.IsTrue(content.Contains("01"));
-            Assert.IsTrue(content.Contains("02"));
-            Assert.IsTrue(content.Contains("OK"));
-            Assert.IsTrue(content.Contains("begin"));
-            Assert.IsTrue(content.Contains("end"));
-            Assert.IsTrue(content.Contains("2018-01-01T00:00:00"));
+        //[TestMethod()]
+        //public void ProblemsAreUnchangedTest()
+        //{
+        //    Assert.Fail();
+        //}
 
-            Logger.Stop();
+        //[TestMethod()]
+        //public void LanguagesAreUnchangedTest()
+        //{
+        //    Assert.Fail();
+        //}
+
+        //[TestMethod()]
+        //public void ArbiterTest()
+        //{
+        //    Assert.Fail();
+        //}
+
+        [TestMethod()]
+        public void CheckSolutionTest_CE()
+        {
+            // Участник отправил решение, которое не компилириуется
+            var arbiter = new Arbiter("..\\..\\Fixtures");
+
+            var problem = Problem.Load("..\\..\\Fixtures\\TestProblem1");
+
+            var languages = Language.Load("..\\..\\Fixtures\\.languages", "..\\..\\Fixtures\\languages.yaml");
+            var language = languages["msvc"];
+
+            var result = arbiter.CheckSolution(problem, language);
+
+            Assert.IsInstanceOfType(result, typeof(Result));
+            Assert.AreEqual("CE", result.CompilationResult);
+            Assert.AreEqual(0, result.PreliminaryTestsResults.Count);
+            Assert.AreEqual(0, result.SubtasksResults.Count);
+            Assert.AreEqual(0, result.Total);
         }
 
         [TestMethod()]
-        public void DeserializeSubmissionTest()
+        public void CheckSolutionTest_Preliminary()
         {
-            Logger.Start();
+            // Участник отправил решение, которое не компилириуется
+            var arbiter = new Arbiter("..\\..\\Fixtures");
 
-            var filename = "test.yaml";
-            Submission submission = Arbiter.DeserializeSubmission(filename);
-            Assert.AreEqual(1, submission.Attempt);
-            Assert.AreEqual("Gcc", submission.Language);
-            Assert.AreEqual("A", submission.Problem);
-            Assert.AreEqual("OK", submission.Result.CompilationResult);
-            Assert.AreEqual("OK", submission.Result.PreliminaryTestsResults["01"]);
-            Assert.AreEqual("OK", submission.Result.PreliminaryTestsResults["02"]);
-            Assert.AreEqual("begin\nend.", submission.Source);
-            Assert.AreEqual(new DateTime(2018, 1, 1, 0, 0, 0), submission.SubmissionTime);
-            Assert.AreEqual("Last First", submission.User);
+            var problem = Problem.Load("..\\..\\Fixtures\\TestProblem2");
 
-            Logger.Stop();
+            var languages = Language.Load("..\\..\\Fixtures\\.languages", "..\\..\\Fixtures\\languages.yaml");
+            var language = languages["msvc"];
+
+            var result = arbiter.CheckSolution(problem, language);
+
+            Assert.IsInstanceOfType(result, typeof(Result));
+            Assert.AreEqual("OK", result.CompilationResult);
+            Assert.AreEqual(0, result.PreliminaryTestsResults.Count);
+            Assert.AreEqual(0, result.SubtasksResults.Count);
+            Assert.AreEqual(0, result.Total);
+        }
+
+        [TestMethod()]
+        public void MainTest()
+        {
+            var sw = new StringWriter();
+            Console.SetOut(sw);
+
+            // Help string
+            var args = new string[0];
+            Arbiter.Main(args);
+            Assert.IsTrue(sw.ToString().Contains("Usage:"));
         }
     }
 }

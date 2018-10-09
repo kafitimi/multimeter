@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -8,210 +7,6 @@ using YamlDotNet.Serialization.NamingConventions;
 
 namespace Arbiter
 {
-    public class Logger
-    {
-        static NLog.Logger LoggerInstance;
-
-        public static void Start()
-        {
-            var logfile = new NLog.Targets.FileTarget() { FileName = "arbiter.log" };
-            var console = new NLog.Targets.ConsoleTarget();
-            var config = new NLog.Config.LoggingConfiguration();
-            config.AddRuleForAllLevels(logfile);
-            config.AddRuleForAllLevels(console);
-            NLog.LogManager.Configuration = config;
-            LoggerInstance = NLog.LogManager.GetCurrentClassLogger();
-        }
-
-        public static void Stop()
-        {
-            NLog.LogManager.Shutdown();
-        }
-
-        public static void Message(string message)
-        {
-            LoggerInstance.Info(message);
-        }
-
-        public static void Message(string message, string arg)
-        {
-            LoggerInstance.Info(message, arg);
-        }
-    }
-
-
-    // Подзадача
-    public class Subtask
-    {
-        public string Scoring { get; set; }  // Начисление баллов: partial / entire
-        public string Information { get; set; }  // Информация для пользователей: full / brief
-        public int Score { get; set; }  // Количество баллов за подзадачу
-
-        // Проверить решение
-        public int CheckSolution()
-        {
-            // TODO: Проверить решение на тестах подзадачи
-            return 0;
-        }
-    }
-
-
-    // Задача
-    public class Problem
-    {
-        public string Name { get; set; }  // Название
-        public int TimeLimit { get; set; } // Лимит времени в миллисекундах
-        public int MemoryLimit { get; set; } // Лимит памяти в мегабайтах
-        public Dictionary<string, Subtask> Subtasks { get; set; }  // Подзадачи
-        public List<string> PreliminaryTests { get; set; }  // Предварительные тестые
-        public DateTime ModificationTime;  // Дата и время изменения
-
-        // Проверить решение
-        public static Problem Load(string filename)
-        {
-            var content = File.ReadAllText(filename);
-            Problem result = null;
-            try
-            {
-                result = Arbiter.GetDeserializer().Deserialize<Problem>(content);
-            }
-            catch (YamlDotNet.Core.YamlException e)
-            {
-                Logger.Message(filename + ":" + e.Message + "(" + e.InnerException.Message + ")");
-            }
-            return result;
-        }
-
-        // Проверить задачу
-        public bool Check()
-        {
-            var result = true;
-
-            // TODO: Проверить, что сумма баллов равна 100
-
-            // TODO: Проверить, что чекер работает с предварительными тестами
-
-            // TODO: Проверить, что чекер работает с основными тестами
-
-            return result;
-        }
-
-        // Проверить решение
-        public Result CheckSolution()
-        {
-            // TODO: Скомпилировать решение, проверить решение на предварительных и основных тестах
-            return null;
-        }
-    }
-
-    // Язык программирования
-    public class Language
-    {
-        public string Name { get; set; }  // Название
-        public List<string> Compilation { get; set; }  // Шаги компиляции
-        public string Execution { get; set; }  // Выполнение
-
-        // Компиляция
-        public string Compile(Language language, string source)
-        {
-            var result = "OK";
-            try
-            {
-                // TODO: Скомпилировать решение с помощью bat-файла
-            }
-            catch
-            {
-                result = "CE";
-            }
-            return result;
-        }
-
-        // Компиляция
-        public string Execute()
-        {
-            var result = "OK";
-            try
-            {
-                // TODO: Запустить решение на тесте
-            }
-            catch
-            {
-                result = "CE";
-            }
-            return result;
-        }
-
-        // Создание bat-файла для компиляции решения
-        public void CreateBatchFile(string languagesDir, string code)
-        {
-            var filename = languagesDir + '\\' + code + ".bat";
-            var file = File.CreateText(filename);
-            foreach (var str in Compilation)
-                file.WriteLine(str);
-            file.Close();
-        }
-
-        // Проверка языка программирования
-        public bool Check()
-        {
-            var result = true;
-
-            // TODO: Проверить, что для основных языков компиляция происходит без ошибок
-
-            // TODO: Проверить, что исполняемый файл работает
-
-            return result;
-        }
-
-        // Загрузка списка языков программирования из YAML-файла
-        public static Dictionary<string, Language> Load(string languagesDir, string filename)
-        {
-            Dictionary<string, Language> result = null;
-
-            // Удаляем старые bat-файлы
-            var batchFiles = Directory.GetFiles(languagesDir, "*.bat");
-            foreach (var batchFile in batchFiles)
-                File.Delete(batchFile);
-
-            // Читаем файл
-            try
-            {
-                var content = File.ReadAllText(filename);
-                result = Arbiter.GetDeserializer().Deserialize<Dictionary<string, Language>>(content);
-            }
-            catch (YamlDotNet.Core.YamlException e)
-            {
-                Logger.Message(filename + ": " + e.Message + " (" + e.InnerException.Message + ")");
-            }
-
-            // Если чтение не удалось тогда создаем пустой словарь
-            if (result == null)
-                result = new Dictionary<string, Language>();
-
-            // Проверяем результат
-            foreach (var entry in result)
-            {
-                var code = entry.Key;
-                var language = entry.Value;
-                if (language.Check())
-                {
-                    // Если все нормально, то создаем bat-файл
-                    language.CreateBatchFile(languagesDir, code);
-                    Logger.Message("Language {} successfully checked. Changes are committed.", code);
-                }
-                else
-                {
-                    // Если проверка не удалась, удаляем язык программирования
-                    result.Remove(code);
-                    Logger.Message("Languages {} check failed. Language was removed.", code);
-                }
-            }
-
-            return result;
-        }
-    }
-
-
     // Результат проверки
     public class Result
     {
@@ -220,7 +15,6 @@ namespace Arbiter
         public Dictionary<string, Dictionary<string, string>> SubtasksResults;  // Результаты проверки на подзадачах
         public int Total;  // Общий балл
     }
-
 
     // Отправка
     public class Submission
@@ -261,9 +55,12 @@ namespace Arbiter
         readonly string ResultsDir;
         readonly string WorkDir;
 
-        public Dictionary<string, Language> Languages;
-        public Dictionary<string, Problem> Problems;
+        public Dictionary<string, Language> languages;
+        public Dictionary<string, Problem> problems;
         public DateTime LanguagesModificationTime;
+
+        internal Dictionary<string, Language> Languages { get => languages; set => languages = value; }
+        internal Dictionary<string, Problem> Problems { get => problems; set => problems = value; }
 
         public static Deserializer GetDeserializer()
         {
@@ -309,7 +106,7 @@ namespace Arbiter
         }
 
         // Если задачи изменились, надо их обновить
-        bool ProblemsAreUnchanged()
+        public bool ProblemsAreUnchanged()
         {
             var Unchanged = true;
 
@@ -372,7 +169,7 @@ namespace Arbiter
                     continue;
 
                 Logger.Message("New problem {} has been found", code);
-                var problem = Problem.Load(filename);
+                var problem = Problem.Load(dirname);
                 if (problem != null && problem.Check())
                 {
                     Unchanged = false;
@@ -390,7 +187,7 @@ namespace Arbiter
         }
 
         // Если языки программирования изменились, надо их обновить
-        bool LanguagesAreUnchanged()
+        public bool LanguagesAreUnchanged()
         {
             var Unchanged = true;
 
@@ -409,6 +206,25 @@ namespace Arbiter
             }
 
             return Unchanged;
+        }
+
+        // Проверить решение
+        public Result CheckSolution(Problem problem, Language language)
+        {
+            var result = new Result
+            {
+                CompilationResult = "CE",
+                PreliminaryTestsResults = new Dictionary<string, string>(),
+                SubtasksResults = new Dictionary<string, Dictionary<string, string>>()
+            };
+            foreach (var subtask in problem.Tests)
+            {
+                foreach (var test in subtask.Value.Tests)
+                {
+                    language.Execute("", test, problem.MemoryLimit, problem.TimeLimit);
+                }
+            }
+            return result;
         }
 
         // Конструктор
@@ -453,7 +269,7 @@ namespace Arbiter
         }
 
         // Стоп-кран
-        static void CancelHandler(object sender, ConsoleCancelEventArgs e)
+        public static void CancelHandler(object sender, ConsoleCancelEventArgs e)
         {
             if (e.SpecialKey == ConsoleSpecialKey.ControlC)
             {
@@ -463,7 +279,7 @@ namespace Arbiter
         }
 
         // Точка входа
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             var workDir = "";
             if (args.Length >= 1)

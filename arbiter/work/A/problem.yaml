@@ -1,0 +1,8 @@
+name: Карлсон
+time_limit: 2000
+memory_limit: 32
+tests:
+  subtask1:
+    scoring: entire
+    information: full
+    score: 100
