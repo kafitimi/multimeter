@@ -183,11 +183,6 @@ namespace Arbiter
 
             return Unchanged;
         }
-<<<<<<< HEAD
-
-        // Если языки программирования изменились, надо их обновить
-        public bool LanguagesAreUnchanged()
-=======
 
         bool IsServiceDirectory(string dirname)
         {
@@ -198,7 +193,6 @@ namespace Arbiter
 
         // Если языки программирования изменились, надо их обновить
         bool LanguagesAreUnchanged()
->>>>>>> eabaa3b52a3a8bdf438b3a5bfddeedfd24b1a900
         {
             var Unchanged = true;
 
