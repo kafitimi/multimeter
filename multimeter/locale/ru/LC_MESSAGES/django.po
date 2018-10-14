@@ -32,6 +32,10 @@ msgstr "Пароль"
 msgid "Email"
 msgstr "Email"
 
+#: .\forms.py:25
+msgid "Patronymic name"
+msgstr "Отчество"
+
 #: .\forms.py:37
 msgid "Current password"
 msgstr "Текущий пароль"

@@ -16,12 +16,13 @@ class LoginForm(Form):
 
 class SignupForm(ModelForm):
     """ Форма регистрации """
-    password = CharField(widget=PasswordInput())
+    password = CharField(widget=PasswordInput(), label=_('Password'))
     email = EmailField(label=_('Email'))
 
     class Meta:
         model = Account
         fields = ['username', 'password', 'first_name', 'last_name', 'patronymic_name', 'email']
+        labels = {'patronymic_name': _('Patronymic name')}
 
 
 class AccountForm(ModelForm):
