@@ -36,9 +36,9 @@ def index_page(request):
     if request.user.is_authenticated:
         user_contests = Account.objects.get(pk=request.user.id).participations.all()
     else:
-        user_contests = None
+        user_contests = []
     context = {
-        'open_contests': Contest.objects.filter(participant_access=True),
+        'open_contests': Contest.objects.filter(participant_access=True).exclude(pk__in=user_contests),
         'user_contests': user_contests
     }
     return render(request, 'multimeter/index.html', context)
