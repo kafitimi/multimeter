@@ -52,6 +52,7 @@ class Account(AbstractUser):
     birthday = DateField(_('birthday'), blank=True, null=True)
     country = ForeignKey('CountryReference', on_delete=CASCADE, blank=True, null=True,
                          verbose_name=_('country'))
+    participations = ManyToManyField('Contest', verbose_name=_('participations'), blank=True)
 
     class Meta:
         verbose_name = _('user')
