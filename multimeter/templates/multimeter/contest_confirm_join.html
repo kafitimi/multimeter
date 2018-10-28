@@ -1,0 +1,17 @@
+{% extends 'multimeter/menu.html' %}
+{% load i18n %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h1>{% block title %}{% trans 'Confirm join' %}{% endblock %}</h1>
+                <form method="post">
+                    {% csrf_token %}
+                    <p>{% trans 'Are you really want to join this contest' %} "{{ contest }}"?</p>
+                    <input type="submit" class="btn btn-default" role="button" value="{% trans 'Yes' %}" />
+                    <a href="{% url 'index' %}" class="btn btn-default" role="button" >{% trans 'No' %}</a>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
