@@ -31,7 +31,16 @@ def login_page(request):
 
 def index_page(request):
     """ Главная страница """
-    return render(request, 'multimeter/index.html', {})
+    """ TODO proper open_contests filter"""
+    if request.user.is_authenticated:
+        user_contests = Account.objects.get(pk=request.user.id).participations.all()
+    else:
+        user_contests = None
+    context = {
+        'open_contests': Contest.objects.filter(participant_access=True),
+        'user_contests': user_contests
+    }
+    return render(request, 'multimeter/index.html', context)
 
 
 @login_required

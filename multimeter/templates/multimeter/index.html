@@ -7,5 +7,51 @@
                 <h1>{% block title %}{% trans 'Index page' %}{% endblock %}</h1>
             </div>
         </div>
+        <div class="row-12">
+        <h3>Your Contests</h3>
+        {% if user_contests %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>{% trans 'Brief name' %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contest in user_contests %}
+                        <tr>
+                            <td>{{ contest.brief_name }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>{% trans 'Empty' %}</p>
+        {% endif %}
+        </div>
+        <div class="row-12"></div>
+        <h3>Open Contests</h3>
+        {% if open_contests %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>{% trans 'Brief name' %}</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contest in open_contests %}
+                        <tr>
+                            <td>{{ contest.brief_name }}</td>
+                            <td class="text-right">
+                                <a href="{% url 'contest_confirm_join' contest.id %}" class="btn btn-primary" role="button">Join</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>{% trans 'There are no open contests yet' %}</p>
+        {% endif %}
+        </div>
     </div>
 {% endblock %}
