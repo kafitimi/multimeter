@@ -16,6 +16,7 @@ urlpatterns = [  # pylint: disable=invalid-name
     path('contest/create/', views.ContestCreate.as_view(), name='contest_create'),
     path('contest/update/<int:pk>/', views.ContestUpdate.as_view(), name='contest_update'),
     path('contest/delete/<int:pk>/', views.ContestDelete.as_view(), name='contest_delete'),
+    path('contest/<int:contest_pk>/join/', views.contest_confirm_join_page, name='contest_confirm_join'),
 
     path('problem/list/', views.problem_list_page, name='problem_list'),
     path('problem/create/', views.problem_edit_page, name='problem_create'),

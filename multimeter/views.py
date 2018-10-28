@@ -219,3 +219,19 @@ def problem_import(request):
     else:
         form = ImportProblemForm()
     return render(request, 'multimeter/problem_import.html', {'form': form})
+
+
+def contest_confirm_join_page(request, contest_pk=None):
+    if request.user.is_authenticated:
+        contest = Contest.objects.get(pk=contest_pk)
+        if request.method == 'POST':
+            account = Account.objects.get(pk=request.user.id)
+            account.participations.add(contest)
+            account.save()
+            """ TODO redirect to contest's page """
+            return redirect('index')
+        else:
+            return render(request, 'multimeter/contest_confirm_join.html', {'contest': contest})
+    else:
+        """ TODO proper signup """
+        return redirect('signup')
