@@ -6,6 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DeleteView, CreateView, UpdateView
+from django.http import HttpResponseForbidden
 
 from multimeter.forms import (LoginForm, AccountForm, PasswordForm, ProblemForm, SignupForm,
                               ImportProblemForm)
@@ -222,8 +223,11 @@ def problem_import(request):
 
 
 def contest_confirm_join_page(request, contest_pk=None):
+    contest = get_object_or_404(Contest, pk=contest_pk)
+    """ TODO proper open_contests filter"""
+    if not contest.participant_access:
+        return HttpResponseForbidden()
     if request.user.is_authenticated:
-        contest = Contest.objects.get(pk=contest_pk)
         if request.method == 'POST':
             account = Account.objects.get(pk=request.user.id)
             account.participations.add(contest)
