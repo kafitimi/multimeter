@@ -3,7 +3,7 @@
 from django.contrib.auth import authenticate, login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DeleteView, CreateView, UpdateView
 from django.http import HttpResponseForbidden
@@ -168,7 +168,7 @@ class SignupFormView(CreateView):
                     return redirect('index')
                 else:
                     contest_pk = request.GET['contest']
-                    return contest_confirm_join_page(request, contest_pk)
+                    return redirect(reverse('contest_confirm_join', kwargs={'contest_pk': contest_pk}))
             else:
                 form.add_error(None, "Логин и(или) адрес электронной почты уже заняты")
         return render(request, self.template_name, {'form': form})
