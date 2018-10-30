@@ -164,7 +164,11 @@ class SignupFormView(CreateView):
                 user.save()
                 user = authenticate(username=username, password=password)
                 login(request, user)
-                return redirect('index')
+                if 'contest' not in request.GET:
+                    return redirect('index')
+                else:
+                    contest_pk = request.GET['contest']
+                    return contest_confirm_join_page(request, contest_pk)
             else:
                 form.add_error(None, "Логин и(или) адрес электронной почты уже заняты")
         return render(request, self.template_name, {'form': form})
@@ -238,4 +242,4 @@ def contest_confirm_join_page(request, contest_pk=None):
             return render(request, 'multimeter/contest_confirm_join.html', {'contest': contest})
     else:
         """ TODO proper signup """
-        return redirect('signup')
+        return redirect(reverse_lazy('signup') + '?contest=%i' % contest_pk)
