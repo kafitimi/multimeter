@@ -8,24 +8,26 @@
             </div>
         </div>
         <div class="row-12">
-        <h3>Your Contests</h3>
-        {% if user_contests %}
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>{% trans 'Brief name' %}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for contest in user_contests %}
+        {% if user.is_authenticated %}
+            <h3>Your Contests</h3>
+            {% if user_contests %}
+                <table class="table">
+                    <thead>
                         <tr>
-                            <td>{{ contest.brief_name }}</td>
+                            <th>{% trans 'Brief name' %}</th>
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>{% trans 'Empty' %}</p>
+                    </thead>
+                    <tbody>
+                        {% for contest in user_contests %}
+                            <tr>
+                                <td>{{ contest.brief_name }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>{% trans 'Empty' %}</p>
+            {% endif %}
         {% endif %}
         </div>
         <div class="row-12"></div>
