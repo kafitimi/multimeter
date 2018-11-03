@@ -28,10 +28,10 @@
                           </li>
                       </ul>
                       <div class="tab-content">
-                          <div role="tabpanel" class="tab-pane {% if not is_login %} active {% endif %}" id="signup">
+                          <div role="tabpanel" class="tab-pane fade {% if not is_login %} show active {% endif %}" id="signup">
                               {% include 'multimeter/signup_form_controls.html' %}
                           </div>
-                          <div role="tabpanel" class="tab-pane {% if is_login %} active {% endif %}" id="signin">
+                          <div role="tabpanel" class="tab-pane fade {% if is_login %} show active {% endif %}" id="signin">
                               {% include 'multimeter/login_form_controls.html' %}
                           </div>
                       </div>
