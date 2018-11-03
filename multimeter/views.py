@@ -241,6 +241,7 @@ def contest_confirm_join_page(request, contest_pk=None):
     context = {
         'contest': contest,
         'login_form': login_form,
-        'signup_form': signup_form
+        'signup_form': signup_form,
+        'is_login': 'submit-login' in request.POST,
     }
     return render(request, 'multimeter/contest_confirm_join.html', context)

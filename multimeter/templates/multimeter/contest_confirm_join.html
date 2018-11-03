@@ -21,17 +21,17 @@
                 <div class="col-4 offset-4">
                       <ul class="nav nav-tabs nav-justified" role="tablist">
                           <li class="nav-item">
-                              <a class="nav-link active" href="#signup" role="tab" data-toggle="tab">{% trans 'Registration' %}</a>
+                              <a class="nav-link {% if not is_login %} active {% endif %}" href="#signup" role="tab" data-toggle="tab">{% trans 'Registration' %}</a>
                           </li>
                           <li class="nav-item">
-                              <a class="nav-link" href="#signin" role="tab" data-toggle="tab">{% trans 'Login' %}</a>
+                              <a class="nav-link {% if is_login %} active {% endif %}" href="#signin" role="tab" data-toggle="tab">{% trans 'Login' %}</a>
                           </li>
                       </ul>
                       <div class="tab-content">
-                          <div role="tabpanel" class="tab-pane active" id="signup">
+                          <div role="tabpanel" class="tab-pane {% if not is_login %} active {% endif %}" id="signup">
                               {% include 'multimeter/signup_form_controls.html' %}
                           </div>
-                          <div role="tabpanel" class="tab-pane" id="signin">
+                          <div role="tabpanel" class="tab-pane {% if is_login %} active {% endif %}" id="signin">
                               {% include 'multimeter/login_form_controls.html' %}
                           </div>
                       </div>
