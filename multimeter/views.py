@@ -218,15 +218,29 @@ def contest_confirm_join_page(request, contest_pk=None):
     """ TODO proper open_contests filter"""
     if not contest.participant_access:
         return HttpResponseForbidden()
-    if request.user.is_authenticated:
-        if request.method == 'POST':
-            account = Account.objects.get(pk=request.user.id)
-            account.participations.add(contest)
-            account.save()
-            """ TODO redirect to contest's page """
+    login_form = LoginForm(None)
+    signup_form = SignupForm(None)
+    if request.method == 'POST':
+        user = request.user if request.user.is_authenticated else None
+        if 'submit-login' in request.POST:
+            login_form = LoginForm(request.POST)
+            if login_form.is_valid():
+                user = login(request, login_form.cleaned_data)
+                if user is None:
+                    login_form.add_error(None, 'Неправильный логин или пароль')
+        elif 'submit-signup' in request.POST:
+            signup_form = SignupForm(request.POST)
+            if signup_form.is_valid():
+                user = signup(request, signup_form.cleaned_data)
+                if user is None:
+                    signup_form.add_error(None, 'Логин и(или) адрес электронной почты уже заняты')
+        if user is not None:
+            request.user.participations.add(contest)
+            request.user.save()
             return redirect('index')
-        else:
-            return render(request, 'multimeter/contest_confirm_join.html', {'contest': contest})
-    else:
-        """ TODO proper signup """
-        return redirect(reverse_lazy('signup') + '?contest=%i' % contest_pk)
+    context = {
+        'contest': contest,
+        'login_form': login_form,
+        'signup_form': signup_form
+    }
+    return render(request, 'multimeter/contest_confirm_join.html', context)
