@@ -8,20 +8,8 @@
 
         <h1>{% block title %}{% trans 'Login' %}{% endblock %}</h1>
 
-        <form method="post">
+        {% include 'multimeter/login_form_controls.html' %}
 
-          {% csrf_token %}
-
-          {% for error in form.non_field_errors %}
-            <p class="text-danger">{{ error }}</p>
-          {% endfor %}
-
-          {% form_control form.username %}
-          {% form_control form.password %}
-
-          <input type="submit" name="submit" class="btn btn-primary" value="{% trans 'Login' %}">
-
-        </form>
       </div>
     </div>
   </div>

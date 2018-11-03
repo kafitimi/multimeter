@@ -1,6 +1,6 @@
 """ Multimeter views """
 
-from django.contrib.auth import authenticate, login, update_session_auth_hash
+from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
@@ -8,6 +8,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DeleteView, CreateView, UpdateView
 from django.http import HttpResponseForbidden
 
+from multimeter.auth import login, signup
 from multimeter.forms import (LoginForm, AccountForm, PasswordForm, ProblemForm, SignupForm,
                               ImportProblemForm)
 from multimeter.models import Account, Contest, Problem, SubTask
@@ -19,11 +20,10 @@ def login_page(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
-            user = authenticate(**form.cleaned_data)
+            user = login(request, form.cleaned_data)
             if user is None:
                 form.add_error(None, 'Неправильный логин или пароль')
             else:
-                login(request, user)
                 return redirect('index')
     else:
         form = LoginForm()
@@ -154,21 +154,8 @@ class SignupFormView(CreateView):
         """ метод GET протокола HTTP """
         form = self.form_class(request.POST)
         if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            email = form.cleaned_data['email']
-            if not (Account.objects.filter(username=username).exists() or
-                    Account.objects.filter(email=email).exists()):
-                user = form.save(commit=False)
-                user.set_password(password)
-                user.save()
-                user = authenticate(username=username, password=password)
-                login(request, user)
-                if 'contest' not in request.GET:
-                    return redirect('index')
-                else:
-                    contest_pk = request.GET['contest']
-                    return redirect(reverse('contest_confirm_join', kwargs={'contest_pk': contest_pk}))
+            if signup(request, form.cleaned_data):
+                return redirect('index')
             else:
                 form.add_error(None, "Логин и(или) адрес электронной почты уже заняты")
         return render(request, self.template_name, {'form': form})

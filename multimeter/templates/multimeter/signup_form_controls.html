@@ -1,0 +1,15 @@
+{% load i18n %}
+{% load multimeter_tags %}
+<form method="post">
+  {% csrf_token %}
+  {% for error in form.non_field_errors %}
+    <p class="text-danger">{{ error }}</p>
+  {% endfor %}
+  {% form_control form.username %}
+  {% form_control form.password %}
+  {% form_control form.email %}
+  {% form_control form.last_name %}
+  {% form_control form.first_name %}
+  {% form_control form.patronymic_name %}
+  <input type="submit" name="submit" class="btn btn-primary" value="{% trans 'Register' %}">
+</form>
