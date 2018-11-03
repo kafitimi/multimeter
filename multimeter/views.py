@@ -27,7 +27,7 @@ def login_page(request):
                 return redirect('index')
     else:
         form = LoginForm()
-    return render(request, 'multimeter/login.html', {'form': form})
+    return render(request, 'multimeter/login.html', {'login_form': form})
 
 
 def index_page(request):
@@ -148,17 +148,17 @@ class SignupFormView(CreateView):
     def get(self, request, *args, **kwargs):
         """ метод GET протокола HTTP """
         form = self.form_class(None)
-        return render(request, self.template_name, {'form': form})
+        return render(request, self.template_name, {'signup_form': form})
 
     def post(self, request, *args, **kwargs):
         """ метод GET протокола HTTP """
         form = self.form_class(request.POST)
         if form.is_valid():
-            if signup(request, form.cleaned_data):
+            if signup(request, form.cleaned_data) is not None:
                 return redirect('index')
             else:
                 form.add_error(None, "Логин и(или) адрес электронной почты уже заняты")
-        return render(request, self.template_name, {'form': form})
+        return render(request, self.template_name, {'signup_form': form})
 
 
 @method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')
