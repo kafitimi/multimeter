@@ -218,18 +218,16 @@ def contest_confirm_join_page(request, contest_pk=None):
     """ TODO proper open_contests filter"""
     if not contest.participant_access:
         return HttpResponseForbidden()
-    login_form = LoginForm(None)
-    signup_form = SignupForm(None)
+    login_form = LoginForm(request.POST or None)
+    signup_form = SignupForm(request.POST or None)
     if request.method == 'POST':
         user = request.user if request.user.is_authenticated else None
         if 'submit-login' in request.POST:
-            login_form = LoginForm(request.POST)
             if login_form.is_valid():
                 user = login(request, login_form.cleaned_data)
                 if user is None:
                     login_form.add_error(None, 'Неправильный логин или пароль')
         elif 'submit-signup' in request.POST:
-            signup_form = SignupForm(request.POST)
             if signup_form.is_valid():
                 user = signup(request, signup_form.cleaned_data)
                 if user is None:
