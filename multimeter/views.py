@@ -213,7 +213,7 @@ def problem_import(request):
     return render(request, 'multimeter/problem_import.html', {'form': form})
 
 
-def contest_confirm_join_page(request, contest_pk=None):
+def contest_join_page(request, contest_pk=None):
     contest = get_object_or_404(Contest, pk=contest_pk)
     """ TODO proper open_contests filter"""
     if not contest.participant_access:
@@ -242,4 +242,4 @@ def contest_confirm_join_page(request, contest_pk=None):
         'signup_form': signup_form,
         'is_login': 'submit-login' in request.POST,
     }
-    return render(request, 'multimeter/contest_confirm_join.html', context)
+    return render(request, 'multimeter/contest_join.html', context)

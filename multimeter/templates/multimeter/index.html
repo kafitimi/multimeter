@@ -45,7 +45,7 @@
                         <tr>
                             <td>{{ contest.brief_name }}</td>
                             <td class="text-right">
-                                <a href="{% url 'contest_confirm_join' contest.id %}" class="btn btn-primary" role="button">Join</a>
+                                <a href="{% url 'contest_join' contest.id %}" class="btn btn-primary" role="button">Join</a>
                             </td>
                         </tr>
                     {% endfor %}
