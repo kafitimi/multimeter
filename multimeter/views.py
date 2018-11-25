@@ -243,3 +243,7 @@ def contest_join_page(request, contest_pk=None):
         'is_login': 'submit-login' in request.POST,
     }
     return render(request, 'multimeter/contest_join.html', context)
+
+
+def test(request):
+    return render(request, 'multimeter/ajax_test.html')
