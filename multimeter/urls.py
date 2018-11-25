@@ -3,6 +3,7 @@ from django.urls import path
 from django.contrib.auth.views import logout_then_login
 
 from . import views
+from . import ajax
 
 urlpatterns = [  # pylint: disable=invalid-name
     path('login/', views.login_page, name='login'),
@@ -10,6 +11,7 @@ urlpatterns = [  # pylint: disable=invalid-name
     path('signup/', views.SignupFormView.as_view(), name="signup"),
     path('', views.index_page, name='index'),
     path('account/', views.account_page, name='account'),
+    path('account/search/', ajax.account_list_by_username, name='account_search'),
     path('password/', views.password_page, name='password'),
 
     path('contest/list/', views.ContestList.as_view(), name='contest_list'),
@@ -17,6 +19,7 @@ urlpatterns = [  # pylint: disable=invalid-name
     path('contest/update/<int:pk>/', views.ContestUpdate.as_view(), name='contest_update'),
     path('contest/delete/<int:pk>/', views.ContestDelete.as_view(), name='contest_delete'),
     path('contest/<int:contest_pk>/join/', views.contest_join_page, name='contest_join'),
+    path('contest/<int:pk>/participants/', ajax.contest_participant_list, name='contest_participant_list'),
 
     path('problem/list/', views.problem_list_page, name='problem_list'),
     path('problem/create/', views.problem_edit_page, name='problem_create'),
