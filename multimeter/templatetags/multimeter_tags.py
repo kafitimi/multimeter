@@ -1,5 +1,6 @@
 from django import template
 from django.forms import BoundField
+from urllib.parse import urlencode
 
 register = template.Library()
 
@@ -78,3 +79,8 @@ def form_check(form_field: BoundField, col: str = '') -> dict:
 
     attributes['class'] = ' '.join(css_classes)
     return {'col': col, 'form_field': form_field, 'help': str(form_field.help_text)}
+
+
+@register.simple_tag
+def urlparams(*args, **kwargs):
+    return '?{}'.format(urlencode(kwargs))
