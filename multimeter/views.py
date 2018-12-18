@@ -7,6 +7,7 @@ from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DeleteView, CreateView, UpdateView
 from django.http import HttpResponseForbidden
+from django.db.models import Q
 
 from multimeter.auth import login, signup
 from multimeter.forms import (LoginForm, AccountForm, PasswordForm, ProblemForm, SignupForm,
@@ -243,3 +244,32 @@ def contest_join_page(request, contest_pk=None):
         'is_login': 'submit-login' in request.POST,
     }
     return render(request, 'multimeter/contest_join.html', context)
+
+
+class AccountList(ListView):
+    template_name = 'multimeter/account_list.html'
+    paginate_by = 10
+    context_object_name = 'accounts'
+
+    def get_context_data(self, **kwargs):
+        context = super(AccountList, self).get_context_data(**kwargs)
+        if self.request.GET.get('search', default='').strip():
+            context['search'] = self.request.GET['search']
+        elif 'search' in context:
+            context.pop('search')
+        return context
+
+    def get_queryset(self):
+        queryset = Account.objects.all()
+        if self.request.GET.get('search', default='').strip():
+            final_query = None
+            fields = ['username', 'first_name', 'last_name']
+            words = self.request.GET['search'].split()
+            for word in words:
+                or_query = None
+                for field in fields:
+                    query = Q(**{'%s__icontains' % field: word})
+                    or_query = query if or_query is None else or_query | query
+                final_query = or_query if final_query is None else final_query & or_query
+            queryset = queryset.filter(final_query)
+        return queryset
