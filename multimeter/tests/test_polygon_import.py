@@ -2,10 +2,12 @@
 simple tests
 just to check that importer can actually do something
 """
+import os
 
 from django.test import TestCase
-from multimeter.models import Account, Problem
+
 import multimeter.polygon as polygon
+from multimeter.models import Account, Problem
 
 
 class TestPolygonImport(TestCase):
@@ -18,17 +20,23 @@ class TestPolygonImport(TestCase):
         self.author.is_superuser = True
         self.author.save()
 
-        problem = polygon.process_problem('multimeter\\tests\\test_problem', polygon.EN).problem
+        test_problem_dir = os.path.join(os.getcwd(), 'multimeter', 'tests', 'test_problem')
+        problem = polygon.process_problem(test_problem_dir, polygon.EN).problem
         problem.author = self.author
         problem.save()
 
-        checker_source_path = 'multimeter\\tests\\test_problem\\files\\check.cpp'
+        check_cpp = os.path.join(test_problem_dir, 'files', 'check.cpp')
+        checker_source_path = check_cpp
         with open(checker_source_path) as checker_source_file:
             self.checker_source = checker_source_file.read()
-        statement_source_path = 'multimeter\\tests\\test_problem\\statements\\english\\problem.tex'
+
+        problem_tex = os.path.join(test_problem_dir, 'statements', 'english', 'problem.tex')
+        statement_source_path = problem_tex
         with open(statement_source_path) as file:
             self.statement_source = file.read()
-        tutorial_source_path = 'multimeter\\tests\\test_problem\\statements\\english\\tutorial.tex'
+
+        tutorial_tex = os.path.join(test_problem_dir, 'statements', 'english', 'tutorial.tex')
+        tutorial_source_path = tutorial_tex
         with open(tutorial_source_path) as file:
             self.tutorial_source = file.read()
 
