@@ -33,7 +33,7 @@
                 <td class="text-right">
                   <a href="">{% trans 'Reset password' %}</a>
                   &nbsp;
-                  <a href="">{% trans 'Delete' %}</a>
+                  <a href="{% url 'account_delete' account.pk %}">{% trans 'Delete' %}</a>
                 </td>
               </tr>
             {% empty %}

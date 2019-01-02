@@ -1,0 +1,17 @@
+{% extends 'multimeter/menu.html' %}
+{% load i18n %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h1>{% block title %}{% trans 'Confirm deletion' %}{% endblock %}</h1>
+                <form method="post">
+                    {% csrf_token %}
+                    <p>{% trans 'Are you really want to delete this account' %} "{{ object }}"?</p>
+                    <input type="submit" class="btn btn-danger" role="button" value="{% trans 'Delete' %}" />
+                    <a href="{% url 'account_list' %}" class="btn btn-default" role="button" >{% trans 'Cancel' %}</a>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

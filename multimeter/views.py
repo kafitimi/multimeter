@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DeleteView, CreateView, UpdateView
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.db.models import Q
 
 from multimeter.auth import login, signup
@@ -244,6 +244,19 @@ def contest_join_page(request, contest_pk=None):
         'is_login': 'submit-login' in request.POST,
     }
     return render(request, 'multimeter/contest_join.html', context)
+
+
+@method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')
+class AccountDelete(DeleteView):
+    """ Удаление (деактивация) аккаунта """
+    model = Account
+    success_url = reverse_lazy('account_list')
+
+    def delete(self, request, *args, **kwargs):
+        account = self.get_object()
+        account.is_active = False
+        account.save()
+        return HttpResponseRedirect(self.success_url)
 
 
 class AccountList(ListView):
