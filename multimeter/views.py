@@ -273,7 +273,7 @@ class AccountList(ListView):
         return context
 
     def get_queryset(self):
-        queryset = Account.objects.all()
+        queryset = Account.objects.filter(is_active=True)
         if self.request.GET.get('search', default='').strip():
             final_query = None
             fields = ['username', 'first_name', 'last_name']
