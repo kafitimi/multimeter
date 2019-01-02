@@ -28,5 +28,5 @@ urlpatterns = [  # pylint: disable=invalid-name
     path('subtask/update/<int:pk>/', views.SubTaskUpdate.as_view(), name='subtask_update'),
     path('subtask/delete/<int:pk>/', views.SubTaskDelete.as_view(), name='subtask_delete'),
 
-    path('accounts/', views.AccountList.as_view(), name='account_list')
+    path('account/list/', views.AccountList.as_view(), name='account_list')
 ]
