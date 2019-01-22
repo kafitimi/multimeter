@@ -9,12 +9,12 @@
         </div>
         <div class="row-12">
         {% if user.is_authenticated %}
-            <h3>Your Contests</h3>
+            <h3>{% trans 'Your Contests' %}</h3>
             {% if user_contests %}
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>{% trans 'Brief name' %}</th>
+                            <th>{% trans 'brief name' %}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -31,12 +31,12 @@
         {% endif %}
         </div>
         <div class="row-12"></div>
-        <h3>Open Contests</h3>
+        <h3>{% trans 'Open Contests' %}</h3>
         {% if open_contests %}
             <table class="table">
                 <thead>
                     <tr>
-                        <th>{% trans 'Brief name' %}</th>
+                        <th>{% trans 'brief name' %}</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -45,7 +45,9 @@
                         <tr>
                             <td>{{ contest.brief_name }}</td>
                             <td class="text-right">
-                                <a href="{% url 'contest_join' contest.id %}" class="btn btn-primary" role="button">Join</a>
+                                <a href="{% url 'contest_join' contest.id %}" 
+                                   class="btn btn-primary" 
+                                   role="button">{% trans 'Join' %}</a>
                             </td>
                         </tr>
                     {% endfor %}

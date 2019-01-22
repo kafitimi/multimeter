@@ -9,10 +9,10 @@
 				<h1>{% block title %}{% trans 'Edit problem' %}{% endblock %}</h1>
 				<nav>
 					<div class="nav nav-tabs" id="tabs" role="tablist">
-						<a class="nav-item nav-link active" id="general-tab" data-toggle="tab" href="#general" role="tab">{% trans 'General' %}</a>
-						<a class="nav-item nav-link" id="conditions-tab" data-toggle="tab" href="#conditions" role="tab">{% trans 'Conditions' %}</a>
-						<a class="nav-item nav-link" id="check-tab" data-toggle="tab" href="#check" role="tab">{% trans 'Checker' %}</a>
-						<a class="nav-item nav-link" id="subtasks-tab" data-toggle="tab" href="#subtasks" role="tab">{% trans 'Subtasks' %}</a>
+						<a class="nav-item nav-link active" id="general-tab" data-toggle="tab" href="#general" role="tab">{% trans 'general'|capfirst %}</a>
+						<a class="nav-item nav-link" id="statement-tab" data-toggle="tab" href="#statement" role="tab">{% trans 'statement'|capfirst %}</a>
+						<a class="nav-item nav-link" id="check-tab" data-toggle="tab" href="#check" role="tab">{% trans 'checker'|capfirst %}</a>
+						<a class="nav-item nav-link" id="subtasks-tab" data-toggle="tab" href="#subtasks" role="tab">{% trans 'subtasks'|capfirst %}</a>
 					</div>
 				</nav>
 				<form method="post">
@@ -38,7 +38,7 @@
                             </div>
 						</div>
 
-						<div class="tab-pane fade show active" id="conditions" role="tabpanel">
+						<div class="tab-pane fade show active" id="statement" role="tabpanel">
 						</div>
 
                         <div class="tab-pane fade show active" id="check" role="tabpanel">
@@ -59,9 +59,9 @@
 							<table class="table table-hover">
 								<thead>
 									<tr>
-										<th>{% trans 'Number' %}</th>
-										<th>{% trans 'Scoring' %}</th>
-										<th>{% trans 'Results' %}</th>
+										<th>{% trans 'number'|capfirst %}</th>
+										<th>{% trans 'scoring'|capfirst %}</th>
+										<th>{% trans 'results'|capfirst %}</th>
 										<th></th>
 									</tr>
 								</thead>
@@ -122,7 +122,7 @@
 	<script>
 		$(function () {
 			{#CodeMirror.fromTextArea(#}
-			{#	document.getElementById('id_conditions'), {#}
+			{#	document.getElementById('id_statement'), {#}
 			{#		lineNumbers: true,#}
 			{#		matchBrackets: true,#}
 			{#		mode: 'text/x-stex'#}

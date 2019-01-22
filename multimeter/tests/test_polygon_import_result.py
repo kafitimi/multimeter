@@ -11,7 +11,7 @@ class TestPolygonImportResult(TestCase):
     def _test_import_result_wrapper_all_true(self):
         """ Проверка истинности """
         problem = Problem()
-        problem.conditions = 'conditions'
+        problem.statement = 'statement'
         problem.solutions = 'solutions'
         problem.checker = 'checker'
         result = ImportResult(problem, "")

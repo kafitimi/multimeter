@@ -57,7 +57,7 @@ class TestPolygonImport(TestCase):
     def _test_statement_source(self):
         """ Проверить исходный код условия """
         problem = Problem.objects.get(name='Fire stations')
-        self.assertEqual(problem.conditions, self.statement_source)
+        self.assertEqual(problem.statement, self.statement_source)
 
     def _test_solution_source(self):
         """ Проверить исходный код решения """

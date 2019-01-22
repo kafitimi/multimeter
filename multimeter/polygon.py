@@ -55,13 +55,13 @@ def process_problem(_path, _lang=EN):
         if t.attrib['language'] == _lang:
             title = t.attrib['value']
 
-    condition = try_get_condition_resource(root, _lang)
-    if condition.found:
-        path = os.path.join(_path, condition.path)
-        with open(path, 'r', encoding=condition.encoding) as file:
-            conditions_source = file.read()
+    statement = try_get_statement_resource(root, _lang)
+    if statement.found:
+        path = os.path.join(_path, statement.path)
+        with open(path, 'r', encoding=statement.encoding) as file:
+            statement_source = file.read()
     else:
-        conditions_source = ''
+        statement_source = ''
 
     solution = try_get_solution_resource(root, _lang)
     if solution.found:
@@ -97,7 +97,7 @@ def process_problem(_path, _lang=EN):
     problem.output_file = output_file
     problem.time_limit = time_limit
     problem.memory_limit = memory_limit
-    # problem.conditions = conditions_source
+    # problem.statement = statement_source
     # problem.solutions = solution_source
     problem.checker = checker_source
     problem.checker_lang = checker_lang
@@ -106,7 +106,7 @@ def process_problem(_path, _lang=EN):
     return result
 
 
-def try_get_condition_resource(_xmlroot, _lang) -> ResourceSearchResult:
+def try_get_statement_resource(_xmlroot, _lang) -> ResourceSearchResult:
     """ Получить условия """
     return try_get_resource(_xmlroot, 'statements', 'statement', _lang)
 
@@ -150,7 +150,7 @@ class ImportResult:
     """ Результат импорта """
     def __init__(self, problem, tags):
         self.problem = problem
-        # self.has_statement = bool(problem.conditions)
+        # self.has_statement = bool(problem.statement)
         # self.has_solution = bool(problem.solutions)
         self.has_checker = bool(problem.checker)
         self.language = problem.checker_lang

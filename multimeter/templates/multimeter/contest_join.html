@@ -12,7 +12,7 @@
                 <div class="col">
                     <form method="post">
                         {% csrf_token %}
-                        <p>{% trans 'Are you really want to join this contest' %} "{{ contest.brief_name }}"?</p>
+                        <p>{% trans 'Do you really want to join this contest' %} "{{ contest.brief_name }}"?</p>
                         <input type="submit" class="btn btn-danger" role="button" value="{% trans 'Yes' %}" />
                         <a href="{% url 'index' %}" class="btn btn-default" role="button" >{% trans 'Cancel' %}</a>
                     </form>
