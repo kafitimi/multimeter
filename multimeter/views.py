@@ -84,7 +84,7 @@ class ContestCreate(CreateView):
     """ Создание контеста """
     model = Contest
     fields = [
-        'brief_name', 'full_name', 'conditions', 'rules',
+        'brief_name', 'full_name', 'statements', 'rules',
         'start', 'stop', 'freeze',
         'personal_rules', 'command_rules',
         'guest_access', 'participant_access',
@@ -98,7 +98,7 @@ class ContestUpdate(UpdateView):
     """ Редактирование контеста """
     model = Contest
     fields = [
-        'brief_name', 'full_name', 'conditions', 'rules',
+        'brief_name', 'full_name', 'statements', 'rules',
         'start', 'stop', 'freeze',
         'personal_rules', 'command_rules',
         'guest_access', 'participant_access',

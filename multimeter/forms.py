@@ -10,27 +10,27 @@ from multimeter.models import Account, Problem
 
 class LoginForm(Form):
     """ Форма входа в систему """
-    username = CharField(max_length=150, label=_('Username'))
-    password = CharField(widget=PasswordInput(), label=_('Password'))
+    username = CharField(max_length=150, label=_('username'))
+    password = CharField(widget=PasswordInput(), label=_('password'))
 
 
 class SignupForm(ModelForm):
     """ Форма регистрации """
-    password = CharField(widget=PasswordInput(), label=_('Password'))
-    email = EmailField(label=_('Email'))
+    password = CharField(widget=PasswordInput(), label=_('password'))
+    email = EmailField(label=_('email'))
 
     class Meta:
         model = Account
-        fields = ['username', 'password', 'first_name', 'last_name', 'patronymic_name', 'email']
-        labels = {'patronymic_name': _('Patronymic name')}
+        fields = ['username', 'password', 'first_name', 'last_name', 'second_name', 'email']
+        labels = {'second_name': _('second name')}
 
 
 class AccountForm(ModelForm):
     """ Форма настроек учетной записи пользователя """
     class Meta:
         model = Account
-        fields = ['username', 'first_name', 'last_name', 'patronymic_name', 'birthday', 'country']
-        labels = {'username': _('Username')}
+        fields = ['username', 'first_name', 'last_name', 'second_name', 'birthday', 'country']
+        labels = {'username': _('username')}
 
 
 class PasswordForm(Form):
@@ -56,7 +56,7 @@ class PasswordForm(Form):
 
 class ProblemForm(ModelForm):
     """ Форма редактирования задачи """
-    tags = CharField(max_length=200, label=_('Tags'), help_text=_('Tags must be divided by comma'), required=False)
+    tags = CharField(max_length=200, label=_('Tags'), help_text=_('Tags must be separated by commas'), required=False)
 
     class Meta:
         exclude = []
@@ -66,7 +66,8 @@ class ProblemForm(ModelForm):
 
 class ImportProblemForm(Form):
     """ Форма импорта задачи из Polygon """
-    file = FileField(label=_('File'), required=True)
+    file = FileField(label=_('file'), required=True)
     language = ChoiceField(label=_('Preferred language'), choices=(
         ('russian', _('Russian')), ('english', _('English'))
     ))
+

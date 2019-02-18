@@ -2,7 +2,7 @@
 <div class="form-group{% if col %} {{ col }}{% endif %}">
 
   {# Лейбл с вербоз-именем поля #}
-  <label for="{{ form_field.id_for_label }}">{{ form_field.label }}</label>
+  <label for="{{ form_field.id_for_label }}">{{ form_field.label|capfirst}}</label>
 
   {# Собственно поле формы ради которой весь огород #}
   {{ form_field }}

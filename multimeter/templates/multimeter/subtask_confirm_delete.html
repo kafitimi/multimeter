@@ -7,7 +7,7 @@
                 <h1>{% block title %}{% trans 'Confirm deletion' %}{% endblock %}</h1>
                 <form method="post">
                     {% csrf_token %}
-                    <p>{% trans 'Are you really want to delete this subtask' %} "{{ object }}"?</p>
+                    <p>{% trans 'Do you really want to delete this subtask' %} "{{ object }}"?</p>
                     <input type="submit" class="btn btn-danger" role="button" value="{% trans 'Delete' %}" />
                     <a href="{% url 'problem_update' object.problem.id %}#subtasks" class="btn btn-default">{% trans 'Cancel' %}</a>
                 </form>

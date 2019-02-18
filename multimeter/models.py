@@ -48,7 +48,7 @@ class Account(AbstractUser):
     Флаг is_admin означает организатора контеста.
     Дополнительные атрибуты нужны для заполнения протоколов.
     """
-    patronymic_name = CharField(_('second name'), max_length=50, blank=True, default='')
+    second_name = CharField(_('second name'), max_length=50, blank=True, default='')
     birthday = DateField(_('birthday'), blank=True, null=True)
     country = ForeignKey('CountryReference', on_delete=CASCADE, blank=True, null=True,
                          verbose_name=_('country'))
@@ -101,10 +101,10 @@ class Contest(Model):
     brief_name = CharField(_('brief name'), max_length=100)
     full_name = TextField(_('full name'), blank=True)
 
-    conditions = CharField(_('conditions filename'), max_length=255, blank=True)
+    statements = CharField(_('statements filename'), max_length=255, blank=True)
     rules = CharField(_('rules filename'), max_length=255, blank=True)
 
-    start = DateTimeField(_('start moment'))
+    start = DateTimeField(_('start time'))
     stop = DateTimeField(_('stop time'))
     freeze = DateTimeField(_('freeze time'), blank=True, null=True)
 
@@ -131,9 +131,9 @@ class Problem(Model):
     """
     codename = CharField(_('codename'), max_length=100)
     input_file = CharField(_('input filename'), max_length=100, blank=True, default='',
-                           help_text=_('If empty then standard input will be used'))
+                           help_text=_('Standard input will be used if left blank'))
     output_file = CharField(_('output filename'), max_length=100, blank=True, default='',
-                            help_text=_('If empty then standard output will be used'))
+                            help_text=_('Standard output will be used if left blank'))
     author = ForeignKey('multimeter.Account', on_delete=CASCADE, verbose_name=_('contests'))
     time_limit = IntegerField(_('time limit (ms)'), default=1000)
     memory_limit = IntegerField(_('memory limit (MiB)'), default=64)
@@ -186,7 +186,7 @@ class ProblemText(Model):
 
     TEXT_TYPES = (
         (NAME, _('name')),  # официальное название
-        (LEGEND, _('conditions')),  # текст условий
+        (LEGEND, _('statement')),  # текст условий
         (SCORING, _('scoring')),  # правила начисления баллов
         (INPUT_FORMAT, _('input format')),  # формат входных данных
         (OUTPUT_FORMAT, _('output format')),  # формат выходных данных
@@ -227,8 +227,8 @@ class SubTask(Model):
     ENTIRE = 'ENT'
 
     SCORING = (
-        (PARTIAL, 'за каждый тест'),
-        (ENTIRE, 'за подзадачу в целом'),
+        (PARTIAL, _('for each test independently')),
+        (ENTIRE, _('only for entire subtask')),
     )
 
     BRIEF = 'BRF'
@@ -236,9 +236,9 @@ class SubTask(Model):
     FULL = 'FUL'
 
     RESULTS = (
-        (BRIEF, 'за подзадачу в целом'),
-        (ERROR, 'до первой ошибки'),
-        (FULL, 'за каждый тест'),
+        (BRIEF, _('only for entire subtask')),
+        (ERROR, _('up to the first failing test')),
+        (FULL, _('for each test independently')),
     )
 
     problem = ForeignKey('multimeter.Problem', verbose_name='задача', on_delete=CASCADE)
@@ -403,8 +403,8 @@ class Tag(Model):
     problems = ManyToManyField('Problem', related_name="tags", blank=True)
 
     class Meta:
-        verbose_name = 'тег'
-        verbose_name_plural = 'теги'
+        verbose_name = _('tag')
+        verbose_name_plural = _('tags')
 
     def __str__(self):
         return self.tag
