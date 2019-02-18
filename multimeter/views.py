@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DeleteView, CreateView, UpdateView
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, HttpResponseNotFound
 
 from multimeter.auth import login, signup
 from multimeter.forms import (LoginForm, AccountForm, PasswordForm, ProblemForm, SignupForm,
@@ -245,5 +245,12 @@ def contest_join_page(request, contest_pk=None):
     return render(request, 'multimeter/contest_join.html', context)
 
 
-def test(request):
-    return render(request, 'multimeter/ajax_test.html')
+def contest_participants_edit_page(request, pk):
+    if request.method == 'GET':
+        contest = get_object_or_404(Contest, pk=pk)
+        context = {
+            'contest': contest
+        }
+        return render(request, 'multimeter/contest_participants_list.html', context)
+    else:
+        return HttpResponseNotFound()

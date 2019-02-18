@@ -11,7 +11,7 @@ urlpatterns = [  # pylint: disable=invalid-name
     path('signup/', views.SignupFormView.as_view(), name="signup"),
     path('', views.index_page, name='index'),
     path('account/', views.account_page, name='account'),
-    path('account/search/', ajax.account_list_by_username, name='account_search'),
+    path('account/list/', ajax.account_list, name='account_list'),
     path('password/', views.password_page, name='password'),
 
     path('contest/list/', views.ContestList.as_view(), name='contest_list'),
@@ -19,7 +19,6 @@ urlpatterns = [  # pylint: disable=invalid-name
     path('contest/update/<int:pk>/', views.ContestUpdate.as_view(), name='contest_update'),
     path('contest/delete/<int:pk>/', views.ContestDelete.as_view(), name='contest_delete'),
     path('contest/<int:contest_pk>/join/', views.contest_join_page, name='contest_join'),
-    path('contest/<int:pk>/participants/', ajax.contest_participant_list, name='contest_participant_list'),
 
     path('problem/list/', views.problem_list_page, name='problem_list'),
     path('problem/create/', views.problem_edit_page, name='problem_create'),
@@ -31,5 +30,6 @@ urlpatterns = [  # pylint: disable=invalid-name
     path('subtask/update/<int:pk>/', views.SubTaskUpdate.as_view(), name='subtask_update'),
     path('subtask/delete/<int:pk>/', views.SubTaskDelete.as_view(), name='subtask_delete'),
 
-    path('test/', views.test)
+    path('contest/<int:pk>/participants/list', views.contest_participants_edit_page, name='contest_participants_list'),
+    path('contest/<int:pk>/participants/update', ajax.update_contest_participants, name='contest_participants_update')
 ]

@@ -1,20 +1,28 @@
-from .models import Account
-from django.shortcuts import render
-from django.http import HttpResponseNotFound
+from .models import Account, Contest
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import user_passes_test
+from django.http import HttpResponseNotFound, HttpResponse, QueryDict
+import json
 
 
-def contest_participant_list(request):
-    if request.is_ajax():
-        if 'pk' in request.GET:
-            accounts = Account.objects.filter(participations__in=[request.GET['pk']])
-        else:
-            accounts = []
+def account_list(request):
+    if request.is_ajax() and request.method == 'POST':
+        payload = json.loads(request.body)
+        filters = payload.get('include', dict())
+        exclusion_filters = payload.get('exclude', dict())
+        accounts = Account.objects.exclude(**exclusion_filters).filter(**filters)
         return render(request, 'multimeter/account_list.html', {'accounts': accounts})
-    return HttpResponseNotFound()
+    else:
+        return HttpResponseNotFound()
 
 
-def account_list_by_username(request):
-    if request.is_ajax():
-        accounts = Account.objects.filter(username__istartswith=request.GET.get('username.sw', default=''))
-        return render(request, 'multimeter/account_list.html', {'accounts': accounts})
-    return HttpResponseNotFound()
+@user_passes_test(lambda u: u.is_staff)
+def update_contest_participants(request, pk):
+    if request.is_ajax() and request.method == 'PUT':
+        payload = QueryDict(request.body)
+        participants = payload.getlist('ids[]')
+        contest = get_object_or_404(Contest, pk=pk)
+        contest.account_set.set(participants)
+        return HttpResponse(status=204)
+    else:
+        return HttpResponseNotFound()
