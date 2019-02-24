@@ -36,9 +36,7 @@
         <form id="form">
           <input type="hidden" id="contest_id" value="{{ contest.pk }}">
           <ul class="scroll-list" id="participant-list">
-          {% with accounts=contest.account_set.all %}
-          {% include 'multimeter/account_list.html' %}
-          {% endwith %}
+          {% include 'multimeter/account_list.html' with accounts=contest.account_set.all %}
           </ul>
           <div class="form-button-group">
             <input type="submit" class="btn btn-primary" value="Save">
