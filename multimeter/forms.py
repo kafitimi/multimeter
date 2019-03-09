@@ -2,10 +2,10 @@
 
 from django.core.exceptions import ValidationError
 from django.forms import Form, ModelForm, CharField, PasswordInput
-from django.forms import ChoiceField, EmailField, FileField, HiddenInput
+from django.forms import ChoiceField, EmailField, FileField, HiddenInput, Textarea
 from django.utils.translation import gettext_lazy as _
 
-from multimeter.models import Account, Problem
+from multimeter.models import Account, Problem, ProblemText
 
 
 class LoginForm(Form):
@@ -71,3 +71,10 @@ class ImportProblemForm(Form):
         ('russian', _('Russian')), ('english', _('English'))
     ))
 
+
+class ProblemStatementsForm(Form):
+    name = CharField(label=_('name'), required=True)
+    legend = CharField(label=_('legend'), widget=Textarea, required=False)
+    input_format = CharField(label=_('input format'), widget=Textarea, required=False)
+    output_format = CharField(label=_('output format'), widget=Textarea, required=False)
+    tutorial = CharField(label=_('tutorial'), widget=Textarea, required=False)

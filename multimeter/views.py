@@ -6,12 +6,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DeleteView, CreateView, UpdateView
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, HttpResponseNotAllowed
 
 from multimeter.auth import login, signup
 from multimeter.forms import (LoginForm, AccountForm, PasswordForm, ProblemForm, SignupForm,
-                              ImportProblemForm)
-from multimeter.models import Account, Contest, Problem, SubTask
+                              ImportProblemForm, ProblemStatementsForm)
+from multimeter.models import Account, Contest, Problem, SubTask, ProblemText
 from multimeter import polygon
 
 
@@ -243,3 +243,28 @@ def contest_join_page(request, contest_pk=None):
         'is_login': 'submit-login' in request.POST,
     }
     return render(request, 'multimeter/contest_join.html', context)
+
+
+@user_passes_test(lambda u: u.is_staff)
+def problem_statements_form_page(request, pk):
+    problem = get_object_or_404(Problem, pk=pk)
+    if request.method == 'POST':
+        form = ProblemStatementsForm(request.POST)
+        if form.is_valid():
+            statements = form.cleaned_data
+            lang = statements.pop('lang', ProblemText.LANGUAGES[0][0])
+            problem.set_statements(lang, statements)
+            return redirect('problem_update', problem_id=pk)
+    elif request.method == 'GET':
+        lang = request.GET.get('lang', '') or ProblemText.LANGUAGES[0][0]
+        statements = problem.get_statements(lang)
+        form = ProblemStatementsForm(statements)
+        context = {
+            'problem_id': pk,
+            'lang': lang,
+            'form': form
+        }
+        return render(request, 'multimeter/problem_statements_form.html', context)
+    else:
+        return HttpResponseNotAllowed()
+

@@ -172,6 +172,36 @@ class Problem(Model):
             if tag_object.problems.count() == 0:
                 tag_object.delete()
 
+    def get_statements(self, lang):
+        all_statements = ProblemText.objects.filter(problem_id=self.pk, language=lang)
+        result = {}
+        for key, text_type in [
+            ('name', ProblemText.NAME),
+            ('legend', ProblemText.LEGEND),
+            ('input_format', ProblemText.INPUT_FORMAT),
+            ('output_format', ProblemText.OUTPUT_FORMAT),
+            ('tutorial', ProblemText.TUTORIAL)
+        ]:
+            try:
+                statement = all_statements.get(text_type=text_type)
+                result[key] = statement.text
+            except ProblemText.DoesNotExist:
+                result[key] = ''
+        return result
+
+    def set_statements(self, lang, statements):
+        ProblemText.objects.filter(problem_id=self.pk, language=lang).delete()
+        for key, text_type in [
+            ('name', ProblemText.NAME),
+            ('legend', ProblemText.LEGEND),
+            ('input_format', ProblemText.INPUT_FORMAT),
+            ('output_format', ProblemText.OUTPUT_FORMAT),
+            ('tutorial', ProblemText.TUTORIAL)
+        ]:
+            if key in statements:
+                statement = ProblemText(problem_id=self.pk, language=lang, text_type=text_type, text=statements[key])
+                statement.save()
+
 
 class ProblemText(Model):
     """
@@ -192,6 +222,12 @@ class ProblemText(Model):
         (OUTPUT_FORMAT, _('output format')),  # формат выходных данных
         (TUTORIAL, _('tutorial')),  # разбор
     )
+
+    LANGUAGES = (
+        ('english', _('english')),
+        ('russian', _('russian')),
+    )
+
     problem = ForeignKey('Problem', on_delete=CASCADE, verbose_name=_('problem'))
     language = CharField(_('language'), max_length=2)
     text_type = IntegerField(_('text type'), choices=TEXT_TYPES)
