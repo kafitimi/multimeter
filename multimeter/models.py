@@ -198,7 +198,7 @@ class Problem(Model):
             ('output_format', ProblemText.OUTPUT_FORMAT),
             ('tutorial', ProblemText.TUTORIAL)
         ]:
-            if key in statements:
+            if key in {k: v for k, v in statements.items() if v}:
                 statement = ProblemText(problem_id=self.pk, language=lang, text_type=text_type, text=statements[key])
                 statement.save()
 
