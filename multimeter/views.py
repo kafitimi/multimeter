@@ -253,6 +253,7 @@ def problem_statements_form_page(request, pk):
         if form.is_valid():
             statements = form.cleaned_data
             lang = statements.pop('lang', ProblemText.LANGUAGES[0][0])
+            lang = statements.pop('lang', LANGUAGES[0][0])
             problem.set_statements(lang, statements)
             return redirect('problem_update', problem_id=pk)
     elif request.method == 'GET':

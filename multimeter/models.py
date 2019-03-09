@@ -26,6 +26,11 @@ EXECUTION_RESULTS = (
     (OK, 'OK'),
 )
 
+LANGUAGES = (
+    ('english', _('english')),
+    ('russian', _('russian')),
+)
+
 
 class CountryReference(Model):
     """
@@ -221,11 +226,6 @@ class ProblemText(Model):
         (INPUT_FORMAT, _('input format')),  # формат входных данных
         (OUTPUT_FORMAT, _('output format')),  # формат выходных данных
         (TUTORIAL, _('tutorial')),  # разбор
-    )
-
-    LANGUAGES = (
-        ('english', _('english')),
-        ('russian', _('russian')),
     )
 
     problem = ForeignKey('Problem', on_delete=CASCADE, verbose_name=_('problem'))
