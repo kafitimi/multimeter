@@ -11,7 +11,7 @@ from django.http import HttpResponseForbidden, HttpResponseNotAllowed
 from multimeter.auth import login, signup
 from multimeter.forms import (LoginForm, AccountForm, PasswordForm, ProblemForm, SignupForm,
                               ImportProblemForm, ProblemStatementsForm)
-from multimeter.models import Account, Contest, Problem, SubTask, ProblemText
+from multimeter.models import Account, Contest, Problem, SubTask, ProblemText, LANGUAGES
 from multimeter import polygon
 
 
@@ -137,7 +137,13 @@ def problem_edit_page(request, problem_id=None):
             return redirect('problem_list')
     else:
         form = ProblemForm(initial=initial, instance=problem)
-    return render(request, 'multimeter/problem_form.html', {'form': form, 'problem': problem})
+        statement_langs = [k for k, v in LANGUAGES]
+        context = {
+            'form': form,
+            'problem': problem,
+            'statement_langs': statement_langs
+        }
+        return render(request, 'multimeter/problem_form.html', context)
 
 
 class SignupFormView(CreateView):

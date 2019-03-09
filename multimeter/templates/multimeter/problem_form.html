@@ -39,6 +39,11 @@
 						</div>
 
 						<div class="tab-pane fade show active" id="statement" role="tabpanel">
+              {% for lang in statement_langs %}
+                <a href={% url 'problem_statements' problem.pk %}?lang={{ lang }}>{% trans lang|capfirst %}</a><br>
+              {% empty %}
+                <p>{% trans 'There are no statements yet' %}</p>
+              {% endfor %}
 						</div>
 
                         <div class="tab-pane fade show active" id="check" role="tabpanel">
