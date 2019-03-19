@@ -73,7 +73,7 @@ class ImportProblemForm(Form):
 
 
 class ProblemStatementsForm(Form):
-    name = CharField(label=_('name'), required=True)
+    name = CharField(label=_('name'), required=False)
     legend = CharField(label=_('legend'), widget=Textarea, required=False)
     input_format = CharField(label=_('input format'), widget=Textarea, required=False)
     output_format = CharField(label=_('output format'), widget=Textarea, required=False)
