@@ -11,7 +11,8 @@ from django.http import HttpResponseForbidden, HttpResponseNotAllowed
 from multimeter.auth import login, signup
 from multimeter.forms import (LoginForm, AccountForm, PasswordForm, ProblemForm, SignupForm,
                               ImportProblemForm, ProblemStatementsForm)
-from multimeter.models import Account, Contest, Problem, SubTask, ProblemText, LANGUAGES
+from multimeter.models import (Account, Contest, Problem, SubTask, ProblemText, DEFAULT_PROBLEM_TEXT_LANGUAGE,
+                               PROBLEM_TEXT_LANGUAGES)
 from multimeter import polygon
 
 
@@ -137,11 +138,12 @@ def problem_edit_page(request, problem_id=None):
             return redirect('problem_list')
     else:
         form = ProblemForm(initial=initial, instance=problem)
-        statement_langs = [k for k, v in LANGUAGES]
+        statements_languages = {text.language for text in problem.problemtext_set.all()}
         context = {
             'form': form,
             'problem': problem,
-            'statement_langs': statement_langs
+            'statements_languages': statements_languages,
+            'statements_to_add': set(PROBLEM_TEXT_LANGUAGES) - statements_languages
         }
         return render(request, 'multimeter/problem_form.html', context)
 
@@ -258,11 +260,11 @@ def problem_statements_form_page(request, pk):
         form = ProblemStatementsForm(request.POST)
         if form.is_valid():
             statements = form.cleaned_data
-            lang = request.POST.get('lang', LANGUAGES[0][0])
+            lang = request.POST.get('lang', DEFAULT_PROBLEM_TEXT_LANGUAGE)
             problem.set_statements(lang, statements)
             return redirect('problem_update', problem_id=pk)
     elif request.method == 'GET':
-        lang = request.GET.get('lang', '') or LANGUAGES[0][0]
+        lang = request.GET.get('lang', DEFAULT_PROBLEM_TEXT_LANGUAGE)
         statements = problem.get_statements(lang)
         form = ProblemStatementsForm(statements)
         context = {
@@ -273,4 +275,3 @@ def problem_statements_form_page(request, pk):
         return render(request, 'multimeter/problem_statements_form.html', context)
     else:
         return HttpResponseNotAllowed()
-
