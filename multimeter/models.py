@@ -26,9 +26,11 @@ EXECUTION_RESULTS = (
     (OK, 'OK'),
 )
 
-LANGUAGES = (
-    ('english', _('english')),
-    ('russian', _('russian')),
+DEFAULT_PROBLEM_TEXT_LANGUAGE = 'english'
+
+PROBLEM_TEXT_LANGUAGES = (
+    DEFAULT_PROBLEM_TEXT_LANGUAGE,
+    'russian',
 )
 
 
