@@ -78,3 +78,14 @@ class ProblemStatementsForm(Form):
     input_format = CharField(label=_('input format'), widget=Textarea, required=False)
     output_format = CharField(label=_('output format'), widget=Textarea, required=False)
     tutorial = CharField(label=_('tutorial'), widget=Textarea, required=False)
+
+    FIELD_NAME_TO_TEXT_TYPE = (
+        ('name', ProblemText.NAME),
+        ('legend', ProblemText.LEGEND),
+        ('input_format', ProblemText.INPUT_FORMAT),
+        ('output_format', ProblemText.OUTPUT_FORMAT),
+        ('tutorial', ProblemText.TUTORIAL)
+    )
+
+    def map_to_text_types(self):
+        return {(_type, self.cleaned_data.get(name)) for (name, _type) in self.FIELD_NAME_TO_TEXT_TYPE}

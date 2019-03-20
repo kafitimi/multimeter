@@ -180,34 +180,20 @@ class Problem(Model):
                 tag_object.delete()
 
     def get_statements(self, lang):
-        all_statements = ProblemText.objects.filter(problem_id=self.pk, language=lang)
-        result = {}
-        for key, text_type in [
-            ('name', ProblemText.NAME),
-            ('legend', ProblemText.LEGEND),
-            ('input_format', ProblemText.INPUT_FORMAT),
-            ('output_format', ProblemText.OUTPUT_FORMAT),
-            ('tutorial', ProblemText.TUTORIAL)
-        ]:
-            try:
-                statement = all_statements.get(text_type=text_type)
-                result[key] = statement.text
-            except ProblemText.DoesNotExist:
-                result[key] = ''
-        return result
+        return self.problemtext_set.filter(language=lang)
 
     def set_statements(self, lang, statements):
-        ProblemText.objects.filter(problem_id=self.pk, language=lang).delete()
-        for key, text_type in [
-            ('name', ProblemText.NAME),
-            ('legend', ProblemText.LEGEND),
-            ('input_format', ProblemText.INPUT_FORMAT),
-            ('output_format', ProblemText.OUTPUT_FORMAT),
-            ('tutorial', ProblemText.TUTORIAL)
-        ]:
-            if key in {k: v for k, v in statements.items() if v}:
-                statement = ProblemText(problem_id=self.pk, language=lang, text_type=text_type, text=statements[key])
-                statement.save()
+        for text_type, text in statements:
+            if text:
+                try:
+                    statement = self.problemtext_set.get(text_type=text_type, language=lang)
+                    statement.text = text
+                    statement.save()
+                except ProblemText.DoesNotExist:
+                    ProblemText(problem=self, text_type=text_type, text=text, language=lang).save()
+            else:
+                self.problemtext_set.filter(text_type=text_type, language=lang).delete()
+
 
 
 class ProblemText(Model):

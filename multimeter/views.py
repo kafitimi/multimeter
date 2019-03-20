@@ -259,14 +259,19 @@ def problem_statements_form_page(request, pk):
     if request.method == 'POST':
         form = ProblemStatementsForm(request.POST)
         if form.is_valid():
-            statements = form.cleaned_data
             lang = request.POST.get('lang', DEFAULT_PROBLEM_TEXT_LANGUAGE)
-            problem.set_statements(lang, statements)
+            problem.set_statements(lang, form.map_to_text_types())
             return redirect('problem_update', problem_id=pk)
     elif request.method == 'GET':
         lang = request.GET.get('lang', DEFAULT_PROBLEM_TEXT_LANGUAGE)
-        statements = problem.get_statements(lang)
-        form = ProblemStatementsForm(statements)
+        data = {}
+        for name, _type in ProblemStatementsForm.FIELD_NAME_TO_TEXT_TYPE:
+            try:
+                text = problem.problemtext_set.get(language=lang, text_type=_type)
+                data[name] = text.text
+            except ProblemText.DoesNotExist:
+                data[name] = ''
+        form = ProblemStatementsForm(data)
         context = {
             'problem_id': pk,
             'lang': lang,
