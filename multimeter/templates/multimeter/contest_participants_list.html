@@ -39,7 +39,7 @@
           {% include 'multimeter/account_list.html' with accounts=contest.account_set.all %}
           </ul>
           <div class="form-button-group">
-            <input type="submit" class="btn btn-primary" value="Save">
+            <a id="save" href='{% url 'contest_list' %}' class="btn btn-primary">{% trans 'Save' %}</a>
             <input type="button" id="clear-btn" class="btn btn-secondary" value="Clear">
           </div>
         </form>
@@ -70,7 +70,7 @@ $(function () {
     const searchInput = $('#search-input');
     const accountList = $('#account-list');
     const participantList = $('#participant-list');
-    const submitForm = $('#form');
+    const saveButton = $('#save');
     const clearButton = $('#clear-btn');
 
     $.ajaxSetup({
@@ -93,8 +93,7 @@ $(function () {
         updateAccountList(query);
     });
 
-    submitForm.submit(function(ev){
-        ev.preventDefault();
+    saveButton.on('click', function(){
         const ids = getIdsFromListElement(participantList);
         const data = {
             contest_id: {{ contest.pk }},
