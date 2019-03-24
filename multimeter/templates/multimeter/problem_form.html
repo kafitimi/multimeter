@@ -46,7 +46,7 @@
                                     <div class="col">
                                         <select id="add-statement-lang" class="form-control">
                                             {% for lang in statements_to_add %}
-                                                <option value="{{ lang }}" data-url="{% url 'problem_statements' problem.pk %}?lang={{ lang }}">
+                                                <option value="{{ lang }}" data-url="{% url 'problem_statements' problem.pk lang %}">
                                                     {{ lang|capfirst }}
                                                 </option>
                                             {% endfor %}
@@ -64,7 +64,7 @@
                                         <table class="table table-hover" id="statements">
                                             <tbody>
                                             {% for lang in statements_languages %}
-                                                <tr data-url="{% url 'problem_statements' problem.pk %}?lang={{ lang }}">
+                                                <tr data-url="{% url 'problem_statements' problem.pk lang %}">
                                                     <td>{{ lang |capfirst }}</td>
                                                     <td class="text-right">
                                                     <a href="#" class="btn btn-danger" role="button">

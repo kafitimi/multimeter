@@ -254,16 +254,14 @@ def contest_join_page(request, contest_pk=None):
 
 
 @user_passes_test(lambda u: u.is_staff)
-def problem_statements_form_page(request, pk):
+def problem_statements_form_page(request, pk, lang):
     problem = get_object_or_404(Problem, pk=pk)
     if request.method == 'POST':
         form = ProblemStatementsForm(request.POST)
         if form.is_valid():
-            lang = request.POST.get('lang', DEFAULT_PROBLEM_TEXT_LANGUAGE)
             problem.set_statements(lang, form.map_to_text_types())
             return redirect('problem_update', problem_id=pk)
     elif request.method == 'GET':
-        lang = request.GET.get('lang', DEFAULT_PROBLEM_TEXT_LANGUAGE)
         data = {}
         for name, _type in ProblemStatementsForm.FIELD_NAME_TO_TEXT_TYPE:
             try:

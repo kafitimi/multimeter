@@ -10,7 +10,6 @@
         <h3>{% trans lang|capfirst %}</h3>
         <form method="post">
           {% csrf_token %}
-          <input type="text" name="lang" hidden value={{ lang }}>
           {% form_control form.name %}
           {% form_control form.legend %}
           {% form_control form.input_format %}

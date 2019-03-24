@@ -23,7 +23,8 @@ urlpatterns = [  # pylint: disable=invalid-name
     path('problem/update/<int:problem_id>/', views.problem_edit_page, name='problem_update'),
     path('problem/delete/<int:pk>/', views.ProblemDelete.as_view(), name='problem_delete'),
     path('problem/import/', views.problem_import, name='problem_import'),
-    path('problem/update/<int:pk>/statements', views.problem_statements_form_page, name='problem_statements'),
+    path('problem/update/<int:pk>/statements/<str:lang>',
+         views.problem_statements_form_page, name='problem_statements'),
 
     path('subtask/create/<int:problem_id>/', views.SubTaskCreate.as_view(), name='subtask_create'),
     path('subtask/update/<int:pk>/', views.SubTaskUpdate.as_view(), name='subtask_update'),
