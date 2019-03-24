@@ -278,3 +278,17 @@ def problem_statements_form_page(request, pk, lang):
         return render(request, 'multimeter/problem_statements_form.html', context)
     else:
         return HttpResponseNotAllowed()
+
+
+def problem_statements_delete_page(request, pk, lang):
+    problem = get_object_or_404(Problem, pk=pk)
+    if request.method == 'POST':
+        problem.get_statements(lang).delete()
+        return redirect('problem_update', problem_id=pk)
+    else:
+        context = {
+            'lang': lang,
+            'problem': problem
+        }
+        return render(request, 'multimeter/problem_statements_confirm_delete.html', context)
+

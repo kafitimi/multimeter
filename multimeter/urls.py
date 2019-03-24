@@ -25,6 +25,8 @@ urlpatterns = [  # pylint: disable=invalid-name
     path('problem/import/', views.problem_import, name='problem_import'),
     path('problem/update/<int:pk>/statements/<str:lang>',
          views.problem_statements_form_page, name='problem_statements'),
+    path('problem/update/<int:pk>/statements/<str:lang>/delete',
+         views.problem_statements_delete_page, name='problem_statements_delete'),
 
     path('subtask/create/<int:problem_id>/', views.SubTaskCreate.as_view(), name='subtask_create'),
     path('subtask/update/<int:pk>/', views.SubTaskUpdate.as_view(), name='subtask_update'),

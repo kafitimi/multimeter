@@ -67,7 +67,7 @@
                                                 <tr data-url="{% url 'problem_statements' problem.pk lang %}">
                                                     <td>{{ lang |capfirst }}</td>
                                                     <td class="text-right">
-                                                    <a href="#" class="btn btn-danger" role="button">
+                                                    <a href="{% url 'problem_statements_delete' problem.id lang %}" class="btn btn-danger" role="button">
                                                         <i class="fas fa-trash-alt"></i>
                                                     </a>
                                                     </td>
