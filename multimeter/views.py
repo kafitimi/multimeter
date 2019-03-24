@@ -138,7 +138,7 @@ def problem_edit_page(request, problem_id=None):
             return redirect('problem_list')
     else:
         form = ProblemForm(initial=initial, instance=problem)
-        statements_languages = {text.language for text in problem.problemtext_set.all()}
+        statements_languages = set() if problem is None else problem.get_statement_languages()
         context = {
             'form': form,
             'problem': problem,

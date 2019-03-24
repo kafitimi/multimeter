@@ -179,6 +179,9 @@ class Problem(Model):
             if tag_object.problems.count() == 0:
                 tag_object.delete()
 
+    def get_statement_languages(self):
+        return {statement.language for statement in self.problemtext_set.all()}
+
     def get_statements(self, lang):
         return self.problemtext_set.filter(language=lang)
 

@@ -39,43 +39,47 @@
 						</div>
 
 						<div class="tab-pane fade show active" id="statement" role="tabpanel">
-                            {% if statements_to_add %}
-                            <label for="stat">{% trans 'Add statement' %}</label>
-                            <div class="row mb-3">
-                                <div class="col">
-                                    <select id="add-statement-lang" class="form-control">
-                                        {% for lang in statements_to_add %}
-                                            <option value="{{ lang }}" data-url="{% url 'problem_statements' problem.pk %}?lang={{ lang }}">
-                                                {{ lang|capfirst }}
-                                            </option>
-                                        {% endfor %}
-                                    </select>
+                            {% if problem %}
+                                {% if statements_to_add %}
+                                <label for="stat">{% trans 'Add statement' %}</label>
+                                <div class="row mb-3">
+                                    <div class="col">
+                                        <select id="add-statement-lang" class="form-control">
+                                            {% for lang in statements_to_add %}
+                                                <option value="{{ lang }}" data-url="{% url 'problem_statements' problem.pk %}?lang={{ lang }}">
+                                                    {{ lang|capfirst }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-auto pl-0">
+                                        <button class="btn btn-primary" id="add-statement-button">Add Statement</button>
+                                    </div>
                                 </div>
-                                <div class="col-auto pl-0">
-                                    <button class="btn btn-primary" id="add-statement-button">Add Statement</button>
+                                {% endif %}
+                                {% if statements_languages %}
+                                <div class="row">
+                                    <div class="col">
+                                        <p>{% trans 'Edit statements' %}</p>
+                                        <table class="table table-hover" id="statements">
+                                            <tbody>
+                                            {% for lang in statements_languages %}
+                                                <tr data-url="{% url 'problem_statements' problem.pk %}?lang={{ lang }}">
+                                                    <td>{{ lang |capfirst }}</td>
+                                                    <td class="text-right">
+                                                    <a href="#" class="btn btn-danger" role="button">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </a>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                            </div>
-                            {% endif %}
-                            {% if statements_languages %}
-                            <div class="row">
-                                <div class="col">
-                                    <p>{% trans 'Edit statements' %}</p>
-                                    <table class="table table-hover" id="statements">
-                                        <tbody>
-                                        {% for lang in statements_languages %}
-                                            <tr data-url="{% url 'problem_statements' problem.pk %}?lang={{ lang }}">
-                                                <td>{{ lang |capfirst }}</td>
-                                                <td class="text-right">
-                                                <a href="#" class="btn btn-danger" role="button">
-                                                    <i class="fas fa-trash-alt"></i>
-                                                </a>
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
+                                {% endif %}
+                            {% else %}
+                                <p>{% trans 'Statements can be created after problem is saved' %}</p>
                             {% endif %}
 						</div>
 
