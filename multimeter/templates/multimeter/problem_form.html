@@ -39,6 +39,48 @@
 						</div>
 
 						<div class="tab-pane fade show active" id="statement" role="tabpanel">
+                            {% if problem %}
+                                {% if statements_to_add %}
+                                <label for="stat">{% trans 'Add statement' %}</label>
+                                <div class="row mb-3">
+                                    <div class="col">
+                                        <select id="add-statement-lang" class="form-control">
+                                            {% for lang in statements_to_add %}
+                                                <option value="{{ lang }}" data-url="{% url 'problem_statements' problem.pk lang %}">
+                                                    {{ lang|capfirst }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-auto pl-0">
+                                        <button class="btn btn-primary" id="add-statement-button">Add Statement</button>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% if statements_languages %}
+                                <div class="row">
+                                    <div class="col">
+                                        <p>{% trans 'Edit statements' %}</p>
+                                        <table class="table table-hover" id="statements">
+                                            <tbody>
+                                            {% for lang in statements_languages %}
+                                                <tr data-url="{% url 'problem_statements' problem.pk lang %}">
+                                                    <td>{{ lang |capfirst }}</td>
+                                                    <td class="text-right">
+                                                    <a href="{% url 'problem_statements_delete' problem.id lang %}" class="btn btn-danger" role="button">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </a>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% else %}
+                                <p>{% trans 'Statements can be created after problem is saved' %}</p>
+                            {% endif %}
 						</div>
 
                         <div class="tab-pane fade show active" id="check" role="tabpanel">
@@ -56,7 +98,7 @@
 						{% elif problem.subtask_set.all|length == 0 %}
 							<p>{% trans 'There are no subtasks yet' %}</p>
 						{% else %}
-							<table class="table table-hover">
+							<table class="table table-hover" id="subtasks">
 								<thead>
 									<tr>
 										<th>{% trans 'number'|capfirst %}</th>
@@ -121,22 +163,6 @@
 	<script src="{% static 'multimeter/js/mode/clike.js' %}"></script>
 	<script>
 		$(function () {
-			{#CodeMirror.fromTextArea(#}
-			{#	document.getElementById('id_statement'), {#}
-			{#		lineNumbers: true,#}
-			{#		matchBrackets: true,#}
-			{#		mode: 'text/x-stex'#}
-			{#	}#}
-			{#);#}
-
-			{#CodeMirror.fromTextArea(#}
-			{#	document.getElementById('id_solutions'), {#}
-			{#		lineNumbers: true,#}
-			{#		matchBrackets: true,#}
-			{#		mode: 'text/x-stex'#}
-			{#	}#}
-			{#);#}
-
 			CodeMirror.fromTextArea(
 				document.getElementById('id_checker'), {
 					lineNumbers: true,
@@ -156,9 +182,18 @@
 			$tabs_should_be_hidden.removeClass('show active');
 
 			// При клике на подзадачу переходим на форму редактирования
-			$('table tbody tr').on('click', function(event) {
+			$('#subtasks').on('click', 'tr', function(event) {
 				window.location.href = $(this).data('url');
 			});
+
+			$('#statements').on('click', 'tr', function(event) {
+			    window.location.href = $(this).data('url');
+            });
+
+            $('#add-statement-button').on('click', function(event) {
+                window.location.href = $('#add-statement-lang :selected').data('url');
+                event.preventDefault();
+            });
 		});
 	</script>
 {% endblock %}

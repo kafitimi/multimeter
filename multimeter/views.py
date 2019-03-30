@@ -6,12 +6,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DeleteView, CreateView, UpdateView
-from django.http import HttpResponseForbidden, HttpResponseNotFound
+from django.http import HttpResponseForbidden, HttpResponseNotFound, HttpResponseNotAllowed
 
 from multimeter.auth import login, signup
 from multimeter.forms import (LoginForm, AccountForm, PasswordForm, ProblemForm, SignupForm,
-                              ImportProblemForm)
-from multimeter.models import Account, Contest, Problem, SubTask
+                              ImportProblemForm, ProblemStatementsForm)
+from multimeter.models import (Account, Contest, Problem, SubTask, ProblemText, DEFAULT_PROBLEM_TEXT_LANGUAGE,
+                               PROBLEM_TEXT_LANGUAGES)
 from multimeter import polygon
 
 
@@ -137,7 +138,14 @@ def problem_edit_page(request, problem_id=None):
             return redirect('problem_list')
     else:
         form = ProblemForm(initial=initial, instance=problem)
-    return render(request, 'multimeter/problem_form.html', {'form': form, 'problem': problem})
+        statements_languages = set() if problem is None else problem.get_statement_languages()
+        context = {
+            'form': form,
+            'problem': problem,
+            'statements_languages': statements_languages,
+            'statements_to_add': set(PROBLEM_TEXT_LANGUAGES) - statements_languages
+        }
+        return render(request, 'multimeter/problem_form.html', context)
 
 
 class SignupFormView(CreateView):
@@ -243,6 +251,47 @@ def contest_join_page(request, contest_pk=None):
         'is_login': 'submit-login' in request.POST,
     }
     return render(request, 'multimeter/contest_join.html', context)
+
+
+@user_passes_test(lambda u: u.is_staff)
+def problem_statements_form_page(request, pk, lang):
+    problem = get_object_or_404(Problem, pk=pk)
+    if request.method == 'POST':
+        form = ProblemStatementsForm(request.POST)
+        if form.is_valid():
+            problem.set_statements(lang, form.map_to_text_types())
+            return redirect('problem_update', problem_id=pk)
+    elif request.method == 'GET':
+        data = {}
+        for name, _type in ProblemStatementsForm.FIELD_NAME_TO_TEXT_TYPE:
+            try:
+                text = problem.problemtext_set.get(language=lang, text_type=_type)
+                data[name] = text.text
+            except ProblemText.DoesNotExist:
+                data[name] = ''
+        form = ProblemStatementsForm(data)
+        context = {
+            'problem_id': pk,
+            'lang': lang,
+            'form': form
+        }
+        return render(request, 'multimeter/problem_statements_form.html', context)
+    else:
+        return HttpResponseNotAllowed()
+
+
+def problem_statements_delete_page(request, pk, lang):
+    problem = get_object_or_404(Problem, pk=pk)
+    if request.method == 'POST':
+        problem.get_statements(lang).delete()
+        return redirect('problem_update', problem_id=pk)
+    else:
+        context = {
+            'lang': lang,
+            'problem': problem
+        }
+        return render(request, 'multimeter/problem_statements_confirm_delete.html', context)
+
 
 
 def contest_participants_edit_page(request, pk):

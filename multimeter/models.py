@@ -26,6 +26,13 @@ EXECUTION_RESULTS = (
     (OK, 'OK'),
 )
 
+DEFAULT_PROBLEM_TEXT_LANGUAGE = 'english'
+
+PROBLEM_TEXT_LANGUAGES = (
+    DEFAULT_PROBLEM_TEXT_LANGUAGE,
+    'russian',
+)
+
 
 class CountryReference(Model):
     """
@@ -172,6 +179,25 @@ class Problem(Model):
             if tag_object.problems.count() == 0:
                 tag_object.delete()
 
+    def get_statement_languages(self):
+        return {statement.language for statement in self.problemtext_set.all()}
+
+    def get_statements(self, lang):
+        return self.problemtext_set.filter(language=lang)
+
+    def set_statements(self, lang, statements):
+        for text_type, text in statements:
+            if text:
+                try:
+                    statement = self.problemtext_set.get(text_type=text_type, language=lang)
+                    statement.text = text
+                    statement.save()
+                except ProblemText.DoesNotExist:
+                    ProblemText(problem=self, text_type=text_type, text=text, language=lang).save()
+            else:
+                self.problemtext_set.filter(text_type=text_type, language=lang).delete()
+
+
 
 class ProblemText(Model):
     """
@@ -192,6 +218,7 @@ class ProblemText(Model):
         (OUTPUT_FORMAT, _('output format')),  # формат выходных данных
         (TUTORIAL, _('tutorial')),  # разбор
     )
+
     problem = ForeignKey('Problem', on_delete=CASCADE, verbose_name=_('problem'))
     language = CharField(_('language'), max_length=2)
     text_type = IntegerField(_('text type'), choices=TEXT_TYPES)

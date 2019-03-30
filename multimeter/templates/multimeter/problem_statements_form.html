@@ -1,0 +1,59 @@
+{% extends "multimeter/menu.html" %}
+{% load i18n %}
+{% load static %}
+{% load multimeter_tags %}
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <h1>{% block title %}{% trans 'Edit Statements' %}{% endblock %}</h1>
+        <h3>{% trans lang|capfirst %}</h3>
+        <form method="post">
+          {% csrf_token %}
+          {% form_control form.name %}
+          {% form_control form.legend %}
+          {% form_control form.input_format %}
+          {% form_control form.output_format %}
+          {% form_control form.tutorial %}
+          <input type="submit" name="submit" class="btn btn-primary" value={% trans 'Save' %}>
+          <a href="{% url 'problem_update' problem_id=problem_id %}" class="btn btn-default">{% trans 'Cancel' %}</a>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block styles %}
+  <link rel="stylesheet" href="{% static 'multimeter/css/codemirror.css' %}">
+	<style>
+		.CodeMirror {
+			border: 1px solid #ced4da;
+			border-radius: .25rem;
+			height: auto;
+		}
+
+		.CodeMirror-code {
+			min-height: 100px;
+		}
+
+		.CodeMirror-focused {
+			border-color: #80bdff;
+			outline: 0;
+			box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25);
+		}
+	</style>
+{% endblock %}
+{% block scripts %}
+  <script src="{% static 'multimeter/js/codemirror.js' %}"></script>
+  <script src="{% static 'multimeter/js/mode/stex.js' %}"></script>
+  <script>
+  $(function () {
+      $('textarea').each(function(){
+          CodeMirror.fromTextArea(this, {
+              lineNumbers: true,
+              matchBrackets: true,
+              mode: 'text/x-stex'
+          })
+      });
+		});
+  </script>
+{% endblock %}

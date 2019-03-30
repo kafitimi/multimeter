@@ -2,10 +2,10 @@
 
 from django.core.exceptions import ValidationError
 from django.forms import Form, ModelForm, CharField, PasswordInput
-from django.forms import ChoiceField, EmailField, FileField, HiddenInput
+from django.forms import ChoiceField, EmailField, FileField, HiddenInput, Textarea
 from django.utils.translation import gettext_lazy as _
 
-from multimeter.models import Account, Problem
+from multimeter.models import Account, Problem, ProblemText
 
 
 class LoginForm(Form):
@@ -71,3 +71,21 @@ class ImportProblemForm(Form):
         ('russian', _('Russian')), ('english', _('English'))
     ))
 
+
+class ProblemStatementsForm(Form):
+    name = CharField(label=_('name'), required=False)
+    legend = CharField(label=_('legend'), widget=Textarea, required=False)
+    input_format = CharField(label=_('input format'), widget=Textarea, required=False)
+    output_format = CharField(label=_('output format'), widget=Textarea, required=False)
+    tutorial = CharField(label=_('tutorial'), widget=Textarea, required=False)
+
+    FIELD_NAME_TO_TEXT_TYPE = (
+        ('name', ProblemText.NAME),
+        ('legend', ProblemText.LEGEND),
+        ('input_format', ProblemText.INPUT_FORMAT),
+        ('output_format', ProblemText.OUTPUT_FORMAT),
+        ('tutorial', ProblemText.TUTORIAL)
+    )
+
+    def map_to_text_types(self):
+        return {(_type, self.cleaned_data.get(name)) for (name, _type) in self.FIELD_NAME_TO_TEXT_TYPE}
