@@ -1,0 +1,6 @@
+{% for account in accounts %}
+  <li class="list-group-item" data-pk="{{ account.pk }}">
+    {{ account }}
+    <input type="hidden" name="pk" value={{ account.pk }} />
+  </li>
+{% endfor %}

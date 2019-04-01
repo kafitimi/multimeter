@@ -1,0 +1,149 @@
+{% extends 'multimeter/menu.html' %}
+{% load i18n %}
+{% load static %}
+{% block content %}
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <h1>{{ contest }}</h1>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <h4>all users</h4>
+        <div class="input-group mt-2 mb-2">
+          <input class="form-control" type="text" id="search-input">
+          <span class="input-group-append">
+            <button class="btn btn-primary" type="submit">
+              <i class="fas fa-search"></i>
+            </button>
+          </span>
+        </div>
+        <ul class="scroll-list" id="account-list">
+        </ul>
+      </div>
+      <div class="col">
+        <h4>contestants</h4>
+        <div class="input-group mt-2 mb-2">
+          <input class="form-control" type="text" id="search-input">
+          <span class="input-group-append">
+            <button class="btn btn-primary" type="submit">
+              <i class="fas fa-search"></i>
+            </button>
+          </span>
+        </div>
+        <form id="form">
+          <input type="hidden" id="contest_id" value="{{ contest.pk }}">
+          <ul class="scroll-list" id="participant-list">
+          {% include 'multimeter/account_list.html' with accounts=contest.account_set.all %}
+          </ul>
+          <div class="form-button-group">
+            <a id="save" href='{% url 'contest_list' %}' class="btn btn-primary">{% trans 'Save' %}</a>
+            <input type="button" id="clear-btn" class="btn btn-secondary" value="Clear">
+          </div>
+        </form>
+    </div>
+    </div>
+  </div>
+</body>
+{% endblock %}
+{% block styles %}
+<style>
+.scroll-list {
+  height: 400px;
+  overflow-y: scroll;
+  padding-left: 0;
+}
+.scroll-list > li:hover {
+  background: #ececec;
+}
+.form-button-group {
+  position: absolute;
+  margin-left: -100%;
+}
+</style>
+{% endblock %}
+{% block scripts %}
+<script>
+$(function () {
+    const searchInput = $('#search-input');
+    const accountList = $('#account-list');
+    const participantList = $('#participant-list');
+    const saveButton = $('#save');
+    const clearButton = $('#clear-btn');
+
+    $.ajaxSetup({
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}')
+        }
+    });
+
+    accountList.on('click', 'li', function () {
+        participantList.append($(this))
+    });
+
+    participantList.on('click', 'li', function () {
+        $(this).remove();
+        updateAccountList(searchInput.val())
+    });
+
+    searchInput.on('change', function () {
+        const query = $(this).val();
+        updateAccountList(query);
+    });
+
+    saveButton.on('click', function(){
+        const ids = getIdsFromListElement(participantList);
+        const data = {
+            contest_id: {{ contest.pk }},
+            ids: ids
+        };
+        $.ajax({
+            type: 'PUT',
+            url: '{% url 'contest_participants_update' contest.pk %}',
+            data: data,
+        });
+    });
+
+    clearButton.click(function(){
+        if (participantList.children().length > 0) {
+            participantList.empty();
+            updateAccountList(searchInput.val())
+        }
+    });
+
+    function updateAccountList(nameContains) {
+        let ids = getIdsFromListElement(participantList);
+        ids.push({{ request.user.pk }});
+        const filters = {
+            include: {
+                username__icontains: nameContains,
+                is_active: true,
+                is_staff: false
+            },
+            exclude: {
+                pk__in: ids
+            },
+        };
+        $.ajax({
+            type: 'POST',
+            url: '{% url 'account_list' %}',
+            data: JSON.stringify(filters),
+            context: accountList
+        }).done(function(html){
+            $(this).html(html);
+        });
+    }
+
+    function getIdsFromListElement(list) {
+        return $(list).children('li').map(function(){
+            return $(this).data('pk')
+        }).get()
+    }
+
+    updateAccountList('');
+});
+</script>
+{% endblock %}
+</html>

@@ -21,9 +21,11 @@
 								<td>{{ contest.brief_name }}</td>
 								<td>{{ contest.start }}</td>
 								<td>{{ contest.stop }}</td>
-								<td class="text-right">
-									<a href="{% url 'contest_delete' contest.id %}" class="btn btn-danger" role="button"><i class="fas fa-trash-alt"></i></a>
-								</td>
+                <td class="text-right">
+                  <a href="{% url 'contest_participants_list' contest.id %}" class="btn btn-primary" role="button"><i class="fas fa-user"></i></a>
+                  &nbsp;
+                  <a href="{% url 'contest_delete' contest.id %}" class="btn btn-danger" role="button"><i class="fas fa-trash-alt"></i></a>
+                </td>
 							</tr>
 						{% endfor %}
 						</tbody>

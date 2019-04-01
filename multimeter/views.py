@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DeleteView, CreateView, UpdateView
-from django.http import HttpResponseForbidden, HttpResponseNotAllowed
+from django.http import HttpResponseForbidden, HttpResponseNotFound, HttpResponseNotAllowed
 
 from multimeter.auth import login, signup
 from multimeter.forms import (LoginForm, AccountForm, PasswordForm, ProblemForm, SignupForm,
@@ -292,3 +292,14 @@ def problem_statements_delete_page(request, pk, lang):
         }
         return render(request, 'multimeter/problem_statements_confirm_delete.html', context)
 
+
+
+def contest_participants_edit_page(request, pk):
+    if request.method == 'GET':
+        contest = get_object_or_404(Contest, pk=pk)
+        context = {
+            'contest': contest
+        }
+        return render(request, 'multimeter/contest_participants_list.html', context)
+    else:
+        return HttpResponseNotFound()
