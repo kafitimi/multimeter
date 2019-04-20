@@ -115,6 +115,5 @@ class ContestForm(ModelForm):
             for index, problem_id in enumerate(new_problems_pks):
                 contest_problem = ContestProblem(contest=contest, problem_id=problem_id)
                 contest_problem.code = chr(97 + index)
-                print(contest_problem)
                 contest_problem.save()
         return contest
