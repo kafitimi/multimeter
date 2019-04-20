@@ -123,6 +123,8 @@ class Contest(Model):
     show_tests = BooleanField(_('show tests'), default=False)
     show_results = BooleanField(_('show results'), default=False)
 
+    problems = ManyToManyField('multimeter.Problem', through='multimeter.ContestProblem', blank=True)
+
     class Meta:
         verbose_name = _('contest')
         verbose_name_plural = _('contests')
