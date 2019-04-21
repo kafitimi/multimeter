@@ -89,7 +89,7 @@ class ContestCreate(CreateView):
         'start', 'stop', 'freeze',
         'personal_rules', 'command_rules',
         'guest_access', 'participant_access',
-        'show_tests', 'show_results',
+        'show_tests', 'show_results', 'owner'
     ]
     success_url = reverse_lazy('contest_list')
 

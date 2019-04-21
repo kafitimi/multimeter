@@ -8,7 +8,9 @@
         <h1>{% block title %}{% trans 'Edit contest' %}{% endblock %}</h1>
         <form method="post">
           {% csrf_token %}
-
+          {% if not contest %}
+            <input type="hidden" name="owner" value="{{ user.pk }}">
+          {% endif %}
           {% for error in form.non_field_errors %}
             <p class="text-danger">{{ error }}</p>
           {% endfor %}
