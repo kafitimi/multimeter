@@ -1,6 +1,6 @@
 """ Multimeter models """
 
-from django.db.models import (Model, BooleanField, CASCADE, CharField, IntegerField, ForeignKey,
+from django.db.models import (Model, BooleanField, CASCADE, SET_NULL, CharField, IntegerField, ForeignKey,
                               TextField, DateTimeField, DateField, ManyToManyField)
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
@@ -122,6 +122,8 @@ class Contest(Model):
     participant_access = BooleanField(_('participant access'), default=False)
     show_tests = BooleanField(_('show tests'), default=False)
     show_results = BooleanField(_('show results'), default=False)
+
+    owner = ForeignKey('multimeter.Account', null=True, limit_choices_to={'is_superuser': True}, on_delete=SET_NULL)
 
     class Meta:
         verbose_name = _('contest')
