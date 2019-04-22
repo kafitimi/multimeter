@@ -5,7 +5,7 @@ from django.forms import Form, ModelForm, CharField, PasswordInput
 from django.forms import ChoiceField, EmailField, FileField, HiddenInput, Textarea
 from django.utils.translation import gettext_lazy as _
 
-from multimeter.models import Account, Problem, ProblemText
+from multimeter.models import Account, Problem, ProblemText, Contest, ContestProblem
 
 
 class LoginForm(Form):
@@ -89,3 +89,31 @@ class ProblemStatementsForm(Form):
 
     def map_to_text_types(self):
         return {(_type, self.cleaned_data.get(name)) for (name, _type) in self.FIELD_NAME_TO_TEXT_TYPE}
+
+
+class ContestForm(ModelForm):
+    class Meta:
+        model = Contest
+        fields = [
+            'brief_name', 'full_name', 'statements', 'rules',
+            'start', 'stop', 'freeze',
+            'personal_rules', 'command_rules',
+            'guest_access', 'participant_access',
+            'show_tests', 'show_results', 'problems'
+        ]
+
+    def save(self, commit=True):
+        contest = super().save(commit=False)
+        if commit:
+            contest.save()
+            new_problems_pks = self.data.getlist('problems')
+            old_problems = self.initial['problems']
+
+            for problem in old_problems:
+                ContestProblem.objects.filter(contest=contest, problem=problem).delete()
+
+            for index, problem_id in enumerate(new_problems_pks):
+                contest_problem = ContestProblem(contest=contest, problem_id=problem_id)
+                contest_problem.code = chr(97 + index)
+                contest_problem.save()
+        return contest
