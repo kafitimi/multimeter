@@ -1,5 +1,6 @@
 {% extends 'multimeter/menu.html' %}
 {% load i18n %}
+{% load static %}
 {% load multimeter_tags %}
 {% block content %}
   <div class="container">
@@ -95,7 +96,7 @@
   </div>
 {% endblock %}
 {% block scripts %}
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+  <script src="{% static 'multimeter/js/jquery-ui-1.12.1.min.js' %}"></script>
   <script type="text/javascript">
       $(function () {
           const $problemsAll = $('#problems-all');
