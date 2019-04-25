@@ -123,6 +123,8 @@ class Contest(Model):
     show_tests = BooleanField(_('show tests'), default=False)
     show_results = BooleanField(_('show results'), default=False)
 
+    problems = ManyToManyField('multimeter.Problem', through='multimeter.ContestProblem', blank=True)
+
     owner = ForeignKey('multimeter.Account', null=True, limit_choices_to={'is_superuser': True}, on_delete=SET_NULL)
 
     class Meta:

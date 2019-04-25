@@ -6,45 +6,149 @@
     <div class="row">
       <div class="col">
         <h1>{% block title %}{% trans 'Edit contest' %}{% endblock %}</h1>
-        <form method="post">
+        <nav>
+          <div class="nav nav-tabs" id="tabs" role="tablist">
+            <a class="nav-item nav-link active" id="general-tab" data-toggle="tab" href="#general" role="tab">{% trans 'general'|capfirst %}</a>
+            <a class="nav-item nav-link" id="problems-tab" data-toggle="tab" href="#problems" role="tab">{% trans 'problems'|capfirst %}</a>
+          </div>
+        </nav>
+        <form method="post" id="form" action="">
           {% csrf_token %}
-          {% if not contest %}
-            <input type="hidden" name="owner" value="{{ user.pk }}">
-          {% endif %}
-          {% for error in form.non_field_errors %}
-            <p class="text-danger">{{ error }}</p>
-          {% endfor %}
+          <div class="tab-content">
+            <div class="tab-pane fade show active" id="general" role="tabpanel">
+              {% for error in form.non_field_errors %}
+                <p class="text-danger">{{ error }}</p>
+              {% endfor %}
+              {% if not contest %}
+                <input type="hidden" name="owner" value="{{ user.pk }}">
+              {% endif %}
 
-          {% form_control form.brief_name %}
-          {% form_control form.full_name %}
-          {% form_control form.statements %}
-          {% form_control form.rules %}
+              {% form_control form.brief_name %}
+              {% form_control form.full_name %}
+              {% form_control form.statements %}
+              {% form_control form.rules %}
 
-          <div class="form-row">
-            {% form_control form.start "col-4" %}
-            {% form_control form.stop "col-4" %}
-            {% form_control form.freeze "col-4" %}
+              <div class="form-row">
+                {% form_control form.start "col-4" %}
+                {% form_control form.stop "col-4" %}
+                {% form_control form.freeze "col-4" %}
+              </div>
+
+              <div class="form-row">
+                {% form_check form.personal_rules "col-6" %}
+                {% form_check form.command_rules "col-6" %}
+              </div>
+
+              <div class="form-row">
+                {% form_check form.guest_access "col-6" %}
+                {% form_check form.participant_access "col-6" %}
+              </div>
+
+              <div class="form-row">
+                {% form_check form.show_tests "col-6" %}
+                {% form_check form.show_results "col-6" %}
+              </div>
+            </div>
+            <div class="tab-pane fade show" id="problems" role="tabpanel">
+              {% if contest %}
+              <div class="row">
+                <div class="col-6">
+                  <div class="input-group mt-2 mb-2">
+                    <input class="form-control" type="text" id="problems-all-filter" placeholder="{% trans 'Search' %}">
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <ul id="problems-all" class="problem-list">
+                  {% for problem in problems_all %}
+                      <li class="list-group-item" data-name="{{ problem.codename|lower }}">
+                        {{ problem.codename }}
+                        <span class="handle"></span>
+                        <input type="hidden" name="problems" value="{{ problem.pk }}">
+                      </li>
+                  {% endfor %}
+                  </ul>
+                </div>
+                <div class="col">
+                  <ul id="problems-current" class="problem-list">
+                    {% for contest_problem in contest.contestproblem_set.all|dictsort:"code" %}
+                      <li class="list-group-item" data-name="{{ contest_problem.problem.codename|lower }}">
+                        {{ contest_problem.problem.codename }}
+                        <span class="handle"></span>
+                        <input type="hidden" name="problems" value="{{ contest_problem.problem.pk }}">
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+              {% else %}
+                <p>{% trans 'Problems can be assigned after contest is saved' %}</p>
+              {% endif %}
+            </div>
           </div>
-
-          <div class="form-row">
-            {% form_check form.personal_rules "col-6" %}
-            {% form_check form.command_rules "col-6" %}
-          </div>
-
-          <div class="form-row">
-            {% form_check form.guest_access "col-6" %}
-            {% form_check form.participant_access "col-6" %}
-          </div>
-
-          <div class="form-row">
-            {% form_check form.show_tests "col-6" %}
-            {% form_check form.show_results "col-6" %}
-          </div>
-
           <input type="submit" name="submit" class="btn btn-primary" value="{% trans 'Save' %}">
           <a href="{% url 'contest_list' %}" class="btn btn-default">{% trans 'Cancel' %}</a>
         </form>
       </div>
     </div>
   </div>
+{% endblock %}
+{% block scripts %}
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+  <script type="text/javascript">
+      $(function () {
+          const $problemsAll = $('#problems-all');
+          const $problemsCurrent = $('#problems-current');
+          const $problemAllFilter =$('#problems-all-filter');
+
+          $problemsCurrent.sortable({
+              handle: '.handle',
+          }).on('click', 'li', function() {
+              $(this).appendTo($problemsAll)
+          });
+
+          $problemsAll.on('click', 'li', function() {
+              $(this).appendTo($problemsCurrent)
+          });
+
+          $problemAllFilter.on('keyup', filterProblems);
+
+          $('#form').on('submit', function () {
+              $('#problems-all li input').prop("disabled", true);
+          });
+
+          function filterProblems() {
+              const filter = $problemAllFilter.val().toLowerCase();
+              $problemsAll.children('li').show();
+              if (filter)
+                  $problemsAll.children('li').not('[data-name*="' + filter + '"]').hide()
+          }
+      });
+  </script>
+{% endblock %}
+{% block styles %}
+  <style>
+  .problem-list {
+    height: 600px;
+    overflow-y: scroll;
+    padding-left: 0;
+  }
+  .handle:before {
+    float: right;
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    content: '\f0dc';
+    font-size: 1.33em;
+  }
+  #problems-current>li:before {
+    content: counter(list, lower-alpha) '.';
+  }
+  #problems-current>li {
+    counter-increment: list;
+  }
+  #problems-all > li > .handle {
+    display: none;
+  }
+  </style>
 {% endblock %}

@@ -10,8 +10,8 @@ from django.http import HttpResponseForbidden, HttpResponseNotFound, HttpRespons
 
 from multimeter.auth import login, signup
 from multimeter.forms import (LoginForm, AccountForm, PasswordForm, ProblemForm, SignupForm,
-                              ImportProblemForm, ProblemStatementsForm)
-from multimeter.models import (Account, Contest, Problem, SubTask, ProblemText, DEFAULT_PROBLEM_TEXT_LANGUAGE,
+                              ImportProblemForm, ProblemStatementsForm, ContestForm)
+from multimeter.models import (Account, Contest, ContestProblem, Problem, SubTask, ProblemText, DEFAULT_PROBLEM_TEXT_LANGUAGE,
                                PROBLEM_TEXT_LANGUAGES)
 from multimeter import polygon
 
@@ -98,14 +98,13 @@ class ContestCreate(CreateView):
 class ContestUpdate(UpdateView):
     """ Редактирование контеста """
     model = Contest
-    fields = [
-        'brief_name', 'full_name', 'statements', 'rules',
-        'start', 'stop', 'freeze',
-        'personal_rules', 'command_rules',
-        'guest_access', 'participant_access',
-        'show_tests', 'show_results',
-    ]
+    form_class = ContestForm
     success_url = reverse_lazy('contest_list')
+
+    def get_context_data(self):
+        context = super().get_context_data()
+        context['problems_all'] = Problem.objects.exclude(contest=self.get_object())
+        return context
 
 
 @method_decorator(user_passes_test(lambda u: u.is_superuser), name='dispatch')
