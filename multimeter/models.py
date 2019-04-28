@@ -125,7 +125,9 @@ class Contest(Model):
 
     problems = ManyToManyField('multimeter.Problem', through='multimeter.ContestProblem', blank=True)
 
-    owner = ForeignKey('multimeter.Account', null=True, limit_choices_to={'is_superuser': True}, on_delete=SET_NULL)
+    owner = ForeignKey('multimeter.Account', null=True, limit_choices_to={'is_superuser': True},
+                       on_delete=SET_NULL, related_name='owner')
+    maintainers = ManyToManyField('multimeter.Account', blank=True)
 
     class Meta:
         verbose_name = _('contest')

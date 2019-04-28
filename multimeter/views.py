@@ -102,9 +102,12 @@ class ContestUpdate(UpdateView):
     success_url = reverse_lazy('contest_list')
 
     def get_context_data(self):
-        context = super().get_context_data()
-        context['problems_all'] = Problem.objects.exclude(contest=self.get_object())
-        return context
+        contest = self.get_object()
+        ctx = super().get_context_data()
+        ctx['problems_all'] = Problem.objects.exclude(contest=contest)
+        ctx['users_all'] = Account.objects.filter(is_superuser=True)    \
+            .exclude(pk__in=(contest.owner.pk, *contest.maintainers.values_list('pk', flat=True)))
+        return ctx
 
 
 @method_decorator(user_passes_test(lambda u: u.is_superuser), name='dispatch')

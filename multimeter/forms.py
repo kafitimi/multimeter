@@ -99,7 +99,8 @@ class ContestForm(ModelForm):
             'start', 'stop', 'freeze',
             'personal_rules', 'command_rules',
             'guest_access', 'participant_access',
-            'show_tests', 'show_results', 'problems'
+            'show_tests', 'show_results', 'problems',
+            'maintainers'
         ]
 
     def save(self, commit=True):
@@ -116,4 +117,6 @@ class ContestForm(ModelForm):
                 contest_problem = ContestProblem(contest=contest, problem_id=problem_id)
                 contest_problem.code = chr(97 + index)
                 contest_problem.save()
+
+            contest.maintainers.set(self.cleaned_data['maintainers'])
         return contest
