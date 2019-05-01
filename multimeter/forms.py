@@ -105,15 +105,11 @@ class ContestForm(ModelForm):
     def save(self, commit=True):
         contest = super().save(commit=False)
         if commit:
+            ContestProblem.objects.filter(contest=contest).delete()
+            problems = self.data.getlist('problems')
+
+            for index, problem_id in enumerate(problems):
+                ContestProblem.objects.create(contest=contest, problem_id=problem_id, code=chr(97 + index))
+
             contest.save()
-            new_problems_pks = self.data.getlist('problems')
-            old_problems = self.initial['problems']
-
-            for problem in old_problems:
-                ContestProblem.objects.filter(contest=contest, problem=problem).delete()
-
-            for index, problem_id in enumerate(new_problems_pks):
-                contest_problem = ContestProblem(contest=contest, problem_id=problem_id)
-                contest_problem.code = chr(97 + index)
-                contest_problem.save()
         return contest
