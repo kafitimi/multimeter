@@ -104,9 +104,9 @@ class ContestUpdate(UpdateView):
     def get_context_data(self):
         contest = self.get_object()
         ctx = super().get_context_data()
-        ctx['problems_all'] = Problem.objects.exclude(contest=contest)
-        ctx['users_all'] = Account.objects.filter(is_superuser=True)    \
-            .exclude(pk__in=(contest.owner.pk, *contest.maintainers.values_list('pk', flat=True)))
+        maintainers_ids = [contest.owner.id, *contest.maintainers.values_list('id', flat=True)]
+        ctx['problems_all'] = Problem.objects.filter(author__id__in=maintainers_ids).exclude(contest=contest)
+        ctx['users_all'] = Account.objects.filter(is_superuser=True).exclude(id__in=maintainers_ids)
         return ctx
 
 
