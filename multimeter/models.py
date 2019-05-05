@@ -242,7 +242,7 @@ class ContestProblem(Model):
     class Meta:
         verbose_name = 'код задачи в олимпиаде'
         verbose_name_plural = 'коды задач в олимпиаде'
-        ordering = ['contest', 'code']
+        ordering = ['code', 'contest']
 
     def __str__(self):
         return '%s, задача %s "%s"' % (

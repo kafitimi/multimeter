@@ -10,7 +10,7 @@ from django.http import HttpResponseForbidden, HttpResponseNotFound, HttpRespons
 
 from multimeter.auth import login, signup
 from multimeter.forms import (LoginForm, AccountForm, PasswordForm, ProblemForm, SignupForm,
-                              ImportProblemForm, ProblemStatementsForm, ContestForm)
+                              ImportProblemForm, ProblemStatementsForm, ContestUpdateForm, ContestCreateForm)
 from multimeter.models import (Account, Contest, ContestProblem, Problem, SubTask, ProblemText, DEFAULT_PROBLEM_TEXT_LANGUAGE,
                                PROBLEM_TEXT_LANGUAGES)
 from multimeter import polygon
@@ -84,21 +84,20 @@ class ContestList(ListView):
 class ContestCreate(CreateView):
     """ Создание контеста """
     model = Contest
-    fields = [
-        'brief_name', 'full_name', 'statements', 'rules',
-        'start', 'stop', 'freeze',
-        'personal_rules', 'command_rules',
-        'guest_access', 'participant_access',
-        'show_tests', 'show_results', 'owner'
-    ]
+    form_class = ContestCreateForm
     success_url = reverse_lazy('contest_list')
+
+    def get_initial(self):
+        initial = super().get_initial()
+        initial.update({'owner': self.request.user})
+        return initial
 
 
 @method_decorator(user_passes_test(lambda u: u.is_superuser), name='dispatch')
 class ContestUpdate(UpdateView):
     """ Редактирование контеста """
     model = Contest
-    form_class = ContestForm
+    form_class = ContestUpdateForm
     success_url = reverse_lazy('contest_list')
 
     def get_context_data(self):
@@ -106,6 +105,7 @@ class ContestUpdate(UpdateView):
         ctx = super().get_context_data()
         maintainers_ids = [contest.owner.id, *contest.maintainers.values_list('id', flat=True)]
         ctx['problems_all'] = Problem.objects.filter(author__id__in=maintainers_ids).exclude(contest=contest)
+        ctx['problems_editable'] = Problem.objects.filter(author=self.request.user)
         ctx['users_all'] = Account.objects.filter(is_superuser=True).exclude(id__in=maintainers_ids)
         return ctx
 
