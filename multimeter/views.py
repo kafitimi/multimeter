@@ -100,6 +100,11 @@ class ContestUpdate(UpdateView):
     form_class = ContestUpdateForm
     success_url = reverse_lazy('contest_list')
 
+    def get_form_kwargs(self):
+        form_kwargs = super().get_form_kwargs()
+        form_kwargs.update({'user': self.request.user})
+        return form_kwargs
+
     def get_context_data(self):
         contest = self.get_object()
         ctx = super().get_context_data()

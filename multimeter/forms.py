@@ -105,6 +105,11 @@ class ContestUpdateForm(ModelForm):
         model = Contest
         exclude = ['owner']
 
+    def __init__(self, user, **kwargs):
+        super().__init__(**kwargs)
+        if self.instance.owner != user:
+            del self.fields['maintainers']
+
     def save(self, commit=True):
         contest = super().save(commit=False)
         if commit:
