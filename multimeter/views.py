@@ -302,7 +302,6 @@ def problem_statements_delete_page(request, pk, lang):
         return render(request, 'multimeter/problem_statements_confirm_delete.html', context)
 
 
-
 def contest_participants_edit_page(request, pk):
     if request.method == 'GET':
         contest = get_object_or_404(Contest, pk=pk)
