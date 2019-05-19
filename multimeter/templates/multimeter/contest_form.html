@@ -23,7 +23,6 @@
               {% endfor %}
 
               {{ form.owner }}
-
               {% form_control form.brief_name %}
               {% form_control form.full_name %}
               {% form_control form.statements %}
@@ -215,10 +214,10 @@
           }
 
           function pairLists($list_a, $list_b) {
-              $list_a.on('click', 'li:not(.disabled)', function() {
+              $list_a.on('click', 'li:not(.disabled)', function () {
                   $(this).appendTo($list_b)
               });
-              $list_b.on('click', 'li:not(.disabled)', function() {
+              $list_b.on('click', 'li:not(.disabled)', function () {
                   $(this).appendTo($list_a)
               });
           }
@@ -270,6 +269,10 @@
 
   .sort-handle:active {
     cursor: move;
+  }
+
+  #problems-current>li {
+    counter-increment: list;
   }
   </style>
 {% endblock %}
