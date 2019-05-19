@@ -99,20 +99,20 @@
                 </div>
                 <div class="col">
                   <ul id="problems-current" class="scroll-container">
-                    {% for problem in contest.problems.all %}
-                      <li class="list-group-item problem-item" data-name="{{ problem.codename|lower }}">
+                    {% for problem in contest.contestproblem_set.all %}
+                      <li class="list-group-item problem-item" data-name="{{ problem.problem.codename|lower }}">
                         <div class="problem-meta">
-                          {{ problem.codename }}<br>
-                          <small class="text-muted">{% trans 'Author' %}: {{ problem.author }}</small>
+                          {{ problem.problem.codename }}<br>
+                          <small class="text-muted">{% trans 'Author' %}: {{ problem.problem.author }}</small>
                         </div>
                         <div class="problem-controls">
                           <i class="fas fa-sort sort-handle"></i>
-                          {% if problem in problems_editable %}
+                          {% if problem.problem in problems_editable %}
                             &nbsp;
                             <i class="fas fa-arrow-left remove-handle"></i>
                           {% endif %}
                         </div>
-                        <input type="hidden" name="problems" value="{{ problem.id }}">
+                        <input type="hidden" name="problems" value="{{ problem.problem.id }}">
                       </li>
                     {% endfor %}
                   </ul>
