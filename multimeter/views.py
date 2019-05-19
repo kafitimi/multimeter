@@ -107,12 +107,14 @@ class ContestUpdate(UpdateView):
 
     def get_context_data(self):
         contest = self.get_object()
-        ctx = super().get_context_data()
+        context = super().get_context_data()
         maintainers_ids = [contest.owner.id, *contest.maintainers.values_list('id', flat=True)]
-        ctx['problems_all'] = Problem.objects.filter(author__id__in=maintainers_ids).exclude(contest=contest)
-        ctx['problems_editable'] = Problem.objects.filter(author=self.request.user)
-        ctx['users_all'] = Account.objects.filter(is_superuser=True).exclude(id__in=maintainers_ids)
-        return ctx
+        context.update({
+            'problems_all': Problem.objects.filter(author__id__in=maintainers_ids).exclude(contest=contest),
+            'problems_editable': Problem.objects.filter(author=self.request.user),
+            'users_all': Account.objects.filter(is_superuser=True).exclude(id__in=maintainers_ids)
+        })
+        return context
 
 
 @method_decorator(user_passes_test(lambda u: u.is_superuser), name='dispatch')
