@@ -346,7 +346,7 @@ class Submission(Model):
     language = ForeignKey('multimeter.Language', on_delete=CASCADE,
                           verbose_name='язык программирования')
     number = IntegerField('номер попытки')
-    moment = DateTimeField('дата и время отправки')
+    moment = DateTimeField('дата и время отправки', auto_now=True)
     source = TextField('текст решения')
 
     class Meta:
