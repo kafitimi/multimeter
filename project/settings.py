@@ -133,3 +133,5 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 AUTH_USER_MODEL = 'multimeter.Account'
 
 LOGIN_URL = '/login/'
+
+SUBMISSION_QUEUE_DIR = os.path.join(BASE_DIR, '.queue')
