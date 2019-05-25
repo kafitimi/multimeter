@@ -5,7 +5,7 @@ from django.forms import Form, ModelForm, CharField, PasswordInput
 from django.forms import ChoiceField, EmailField, FileField, HiddenInput, Textarea
 from django.utils.translation import gettext_lazy as _
 
-from multimeter.models import Account, Problem, ProblemText, Contest, ContestProblem
+from multimeter.models import Account, Problem, ProblemText, Contest, ContestProblem, Submission
 
 
 class LoginForm(Form):
@@ -113,3 +113,16 @@ class ContestForm(ModelForm):
 
             contest.save()
         return contest
+
+
+class SubmissionForm(ModelForm):
+    source_file = FileField(label=_('source'))
+
+    class Meta:
+        model = Submission
+        fields = ['contest_problem', 'language']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name in 'contest_problem', 'language':
+            self.fields[field_name].empty_label = None

@@ -354,6 +354,9 @@ class Submission(Model):
         verbose_name_plural = 'подзадачи'
         ordering = ['number']
 
+    def set_number(self):
+        self.number = Submission.objects.filter(contest_problem=self.contest_problem, user=self.user).count() + 1
+
     def __str__(self):
         return '%s, пользователь %s, попытка %s' % (
             self.contest_problem,

@@ -1,0 +1,31 @@
+{% extends "multimeter/menu.html" %}
+{% load i18n %}
+{% load multimeter_tags %}
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <h1>{% block title %}{% trans 'Solution submit' %}{% endblock %}</h1>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+
+          {% for error in form.non_field_errors %}
+            <p class="text-danger">{{ error }}</p>
+          {% endfor %}
+
+          {% form_control form.contest_problem %}
+          {% form_control form.language %}
+          {% form_control form.source_file %}
+
+          <input type="submit" name="submit" class="btn btn-primary" value="{% trans 'Submit' %}">
+          <a href="{% url 'index' %}" class="btn btn-default">{% trans 'Cancel' %}</a>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

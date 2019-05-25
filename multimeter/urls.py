@@ -35,5 +35,7 @@ urlpatterns = [  # pylint: disable=invalid-name
     path('subtask/delete/<int:pk>/', views.SubTaskDelete.as_view(), name='subtask_delete'),
 
     path('contest/<int:pk>/participants/list', views.contest_participants_edit_page, name='contest_participants_list'),
-    path('contest/<int:pk>/participants/update', ajax.update_contest_participants, name='contest_participants_update')
+    path('contest/<int:pk>/participants/update', ajax.update_contest_participants, name='contest_participants_update'),
+
+    path('contest/submit/<int:contest_id>', views.SubmissionCreate.as_view(), name='solution_submit')
 ]

@@ -10,9 +10,9 @@ from django.http import HttpResponseForbidden, HttpResponseNotFound, HttpRespons
 
 from multimeter.auth import login, signup
 from multimeter.forms import (LoginForm, AccountForm, PasswordForm, ProblemForm, SignupForm,
-                              ImportProblemForm, ProblemStatementsForm, ContestForm)
-from multimeter.models import (Account, Contest, ContestProblem, Problem, SubTask, ProblemText, DEFAULT_PROBLEM_TEXT_LANGUAGE,
-                               PROBLEM_TEXT_LANGUAGES)
+                              ImportProblemForm, ProblemStatementsForm, ContestForm, SubmissionForm)
+from multimeter.models import (Account, Contest, ContestProblem, Problem, SubTask, ProblemText, Submission,
+                               DEFAULT_PROBLEM_TEXT_LANGUAGE, PROBLEM_TEXT_LANGUAGES)
 from multimeter import polygon
 
 
@@ -302,3 +302,19 @@ def contest_participants_edit_page(request, pk):
         return render(request, 'multimeter/contest_participants_list.html', context)
     else:
         return HttpResponseNotFound()
+
+
+class SubmissionCreate(CreateView):
+    form_class = SubmissionForm
+    template_name = 'multimeter/submission_form.html'
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST, request.FILES)
+        if form.is_valid():
+            submission = form.save(commit=False)
+            # TODO smart decode
+            submission.source = request.FILES['source_file'].read().decode('utf-8')
+            submission.user = request.user
+            submission.set_number()
+            submission.save()
+        return redirect('problem_list')
