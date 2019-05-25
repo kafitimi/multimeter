@@ -241,11 +241,7 @@ class ContestProblem(Model):
         ordering = ['contest', 'code']
 
     def __str__(self):
-        return '%s, задача %s "%s"' % (
-            self.contest,
-            self.code,
-            self.problem,
-        )
+        return '%s. %s' % (self.code.upper(), self.problem.codename)
 
 
 class SubTask(Model):
