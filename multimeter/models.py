@@ -4,6 +4,8 @@ from django.db.models import (Model, BooleanField, CASCADE, CharField, IntegerFi
                               TextField, DateTimeField, DateField, ManyToManyField)
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
+from django.conf import settings
+import os
 
 
 CE = 'CE'
@@ -352,6 +354,25 @@ class Submission(Model):
 
     def set_number(self):
         self.number = Submission.objects.filter(contest_problem=self.contest_problem, user=self.user).count() + 1
+
+    def save(self, **kwargs):
+        if self.pk is None:
+            with open(os.path.join(settings.SUBMISSION_QUEUE_DIR, self.filename), 'w', encoding='utf-8') as file:
+                file.write(self.source)
+        super().save(self, **kwargs)
+
+    """
+    {code}-{user}-{lang}-{attempt}.{ext}
+    """
+    @property
+    def filename(self):
+        return '%i-%i-%i-%i.%s' % (
+            self.contest_problem.problem.id,
+            self.user.id,
+            self.language.id,
+            self.number,
+            self.language.source_ext
+        )
 
     def __str__(self):
         return '%s, пользователь %s, попытка %s' % (
