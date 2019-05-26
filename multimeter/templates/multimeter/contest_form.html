@@ -11,6 +11,7 @@
           <div class="nav nav-tabs" id="tabs" role="tablist">
             <a class="nav-item nav-link active" id="general-tab" data-toggle="tab" href="#general" role="tab">{% trans 'general'|capfirst %}</a>
             <a class="nav-item nav-link" id="problems-tab" data-toggle="tab" href="#problems" role="tab">{% trans 'problems'|capfirst %}</a>
+            <a class="nav-item nav-link" id="maintainers-tab" data-toggle="tab" href="#maintainers" role="tab">{% trans 'maintainers'|capfirst %}</a>
           </div>
         </nav>
         <form method="post" id="form" action="">
@@ -21,6 +22,7 @@
                 <p class="text-danger">{{ error }}</p>
               {% endfor %}
 
+              {{ form.owner }}
               {% form_control form.brief_name %}
               {% form_control form.full_name %}
               {% form_control form.statements %}
@@ -49,32 +51,68 @@
             </div>
             <div class="tab-pane fade show" id="problems" role="tabpanel">
               {% if contest %}
-              <div class="row">
+              <div class="row mt-2 mb-2">
                 <div class="col-6">
-                  <div class="input-group mt-2 mb-2">
-                    <input class="form-control" type="text" id="problems-all-filter" placeholder="{% trans 'Search' %}">
-                  </div>
+                  <input class="form-control" type="text" id="problems-all-filter" placeholder="{% trans 'Search' %}">
                 </div>
               </div>
               <div class="row">
                 <div class="col">
-                  <ul id="problems-all" class="problem-list">
-                  {% for problem in problems_all %}
-                      <li class="list-group-item" data-name="{{ problem.codename|lower }}">
-                        {{ problem.codename }}
-                        <span class="handle"></span>
-                        <input type="hidden" name="problems" value="{{ problem.pk }}">
-                      </li>
-                  {% endfor %}
-                  </ul>
+                  <div class="scroll-container">
+                    <h6>{% trans 'Your problems' %}</h6>
+                    <ul id="problems-all" class="no-padding">
+                      {% for problem in problems_all %}
+                        {% if problem in problems_editable %}
+                          <li class="list-group-item problem-item" data-name="{{ problem.codename|lower }}">
+                            <div class="problem-meta">
+                              {{ problem.codename }}<br>
+                              <small class="text-muted">{% trans 'Author' %}: {{ problem.author }}</small>
+                            </div>
+                            <div class="problem-controls">
+                              <i class="fas fa-sort sort-handle"></i>
+                              {% if problem in problems_editable %}
+                                &nbsp;
+                                <i class="fas fa-arrow-left remove-handle"></i>
+                              {% endif %}
+                            </div>
+                            <input type="hidden" name="problems" value="{{ problem.id }}">
+                          </li>
+                        {% endif %}
+                      {% endfor %}
+                      <p class="empty-list">{% trans 'Empty' %}</p>
+                    </ul>
+                    <h6>{% trans "Other maintainer's problems" %}</h6>
+                    <ul class="no-padding">
+                      {% for problem in problems_all %}
+                        {% if problem not in problems_editable %}
+                          <li class="list-group-item problem-item" data-name="{{ problem.codename|lower }}">
+                            <div class="problem-meta">
+                              {{ problem.codename }}<br>
+                              <small class="text-muted">{% trans 'Author' %}: {{ problem.author }}</small>
+                            </div>
+                          </li>
+                        {% endif %}
+                      {% endfor %}
+                      <p class="empty-list">{% trans 'Empty' %}</p>
+                    </ul>
+                  </div>
                 </div>
                 <div class="col">
-                  <ul id="problems-current" class="problem-list">
-                    {% for contest_problem in contest.contestproblem_set.all|dictsort:"code" %}
-                      <li class="list-group-item" data-name="{{ contest_problem.problem.codename|lower }}">
-                        {{ contest_problem.problem.codename }}
-                        <span class="handle"></span>
-                        <input type="hidden" name="problems" value="{{ contest_problem.problem.pk }}">
+                  <ul id="problems-current" class="scroll-container">
+                    {% for problem in contest.contestproblem_set.all %}
+                      <li class="list-group-item problem-item" data-name="{{ problem.problem.codename|lower }}">
+                        <div class="problem-meta">
+                          {{ problem.problem.codename }}<br>
+                          <small class="text-muted">{% trans 'Author' %}: {{ problem.problem.author }}</small>
+                        </div>
+                        <div class="problem-controls">
+                          <i class="fas fa-sort sort-handle"></i>
+                          {% if problem.problem in problems_editable %}
+                            &nbsp;
+                            <i class="fas fa-arrow-left remove-handle"></i>
+                          {% endif %}
+                        </div>
+                        <input type="hidden" name="problems" value="{{ problem.problem.id }}">
                       </li>
                     {% endfor %}
                   </ul>
@@ -82,6 +120,43 @@
               </div>
               {% else %}
                 <p>{% trans 'Problems can be assigned after contest is saved' %}</p>
+              {% endif %}
+            </div>
+            <div class="tab-pane fade show" id="maintainers" role="tabpanel">
+              {% if contest.owner == request.user %}
+                <div class="row">
+                  <div class="col-6">
+                    <div class="input-group mt-2 mb-2">
+                      <input class="form-control" type="text" id="users-filter" placeholder="{% trans 'Search' %}">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <ul id="users-all" class="scroll-container">
+                      {% for user in users_all %}
+                        <li class="list-group-item" data-name="{{ user|lower }}">
+                          {{ user }}
+                          <input type="hidden" name="maintainers" value="{{ user.pk }}">
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                  <div class="col">
+                    <ul id="users-current" class="scroll-container">
+                      {% for user in contest.maintainers.all %}
+                        <li class="list-group-item" data-name="{{ user|lower }}">
+                          {{ user }}
+                          <input type="hidden" name="maintainers" value="{{ user.pk }}">
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                </div>
+              {% elif contest %}
+                <p>{% trans 'Only contest owner can edit its maintainers' %}</p>
+              {% else %}
+                <p>{% trans 'Maintainers can be assigned after contest is saved' %}</p>
               {% endif %}
             </div>
           </div>
@@ -98,55 +173,105 @@
       $(function () {
           const $problemsAll = $('#problems-all');
           const $problemsCurrent = $('#problems-current');
-          const $problemAllFilter =$('#problems-all-filter');
+          const $problemAllFilter = $('#problems-all-filter');
 
-          $problemsCurrent.sortable({
-              handle: '.handle',
-          }).on('click', 'li', function() {
-              $(this).appendTo($problemsAll)
+          const $usersAll = $('#users-all');
+          const $usersCurrent = $('#users-current');
+          const $usersFilter = $('#users-filter');
+
+          pairLists($usersCurrent, $usersAll);
+
+          $problemsCurrent.on('click', '.remove-handle', function() {
+              $(this).parents('.problem-item').appendTo($problemsAll)
           });
 
           $problemsAll.on('click', 'li', function() {
               $(this).appendTo($problemsCurrent)
           });
 
-          $problemAllFilter.on('keyup', filterProblems);
-
-          $('#form').on('submit', function () {
-              $('#problems-all li input').prop("disabled", true);
+          $problemsCurrent.sortable({
+              handle: '.sort-handle',
           });
 
-          function filterProblems() {
-              const filter = $problemAllFilter.val().toLowerCase();
-              $problemsAll.children('li').show();
-              if (filter)
-                  $problemsAll.children('li').not('[data-name*="' + filter + '"]').hide()
+          $problemAllFilter.on('keyup', function() {
+              filterList($(this), $problemsAll);
+          });
+
+          $usersFilter.on('keyup', function() {
+              filterList($(this), $usersAll)
+          });
+
+          $('#form').on('submit', function () {
+              $('#problems-all li input, #users-all li input').prop("disabled", true);
+          });
+
+          function filterList($input, $list) {
+              const filter = $input.val().toLowerCase();
+              $list.children('li').show();
+              if (filter) {
+                  $list.children('li').not(''.concat('[data-name*="', filter, '"]')).hide();
+              }
+          }
+
+          function pairLists($list_a, $list_b) {
+              $list_a.on('click', 'li:not(.disabled)', function () {
+                  $(this).appendTo($list_b)
+              });
+              $list_b.on('click', 'li:not(.disabled)', function () {
+                  $(this).appendTo($list_a)
+              });
           }
       });
   </script>
 {% endblock %}
 {% block styles %}
   <style>
-  .problem-list {
+  .scroll-container {
     height: 600px;
     overflow-y: scroll;
-    padding-left: 0;
   }
-  .handle:before {
-    float: right;
-    font-family: 'Font Awesome 5 Free';
-    font-weight: 900;
-    content: '\f0dc';
-    font-size: 1.33em;
+
+  .scroll-container,
+  .no-padding {
+    padding: 0;
   }
-  #problems-current>li:before {
-    content: counter(list, lower-alpha) '.';
+
+  #problems-current > li > .problem-meta:before {
+    content: counter(list, upper-alpha) '. ';
+    font-weight: bold;
   }
-  #problems-current>li {
+
+  .problem-item {
+    display: flex;
+    align-items: center;
+  }
+
+  .problem-controls {
+    width: 10%;
+    margin-left: auto;
+    vertical-align: center;
+  }
+
+  #problems-current > li:not(.ui-sortable-placeholder) {
     counter-increment: list;
   }
-  #problems-all > li > .handle {
+
+  #problems-all li > .problem-controls,
+  #problems-all li > .problem-meta > small {
     display: none;
+  }
+
+  .empty-list:not(:only-child) {
+    display: none;
+  }
+
+  .sort-handle,
+  .remove-handle {
+    cursor: pointer;
+  }
+
+  .sort-handle:active {
+    cursor: move;
   }
   </style>
 {% endblock %}
