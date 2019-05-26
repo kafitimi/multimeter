@@ -91,16 +91,24 @@ class ProblemStatementsForm(Form):
         return {(_type, self.cleaned_data.get(name)) for (name, _type) in self.FIELD_NAME_TO_TEXT_TYPE}
 
 
-class ContestForm(ModelForm):
+class ContestCreateForm(ModelForm):
     class Meta:
         model = Contest
-        fields = [
-            'brief_name', 'full_name', 'statements', 'rules',
-            'start', 'stop', 'freeze',
-            'personal_rules', 'command_rules',
-            'guest_access', 'participant_access',
-            'show_tests', 'show_results', 'problems'
-        ]
+        exclude = ['problems', 'maintainers']
+        widgets = {
+            'owner': HiddenInput(attrs={'readonly': 'readonly'})
+        }
+
+
+class ContestUpdateForm(ModelForm):
+    class Meta:
+        model = Contest
+        exclude = ['owner']
+
+    def __init__(self, user, **kwargs):
+        super().__init__(**kwargs)
+        if self.instance.owner != user:
+            del self.fields['maintainers']
 
     def save(self, commit=True):
         contest = super().save(commit=False)
@@ -111,5 +119,7 @@ class ContestForm(ModelForm):
             for index, problem_id in enumerate(problems):
                 ContestProblem.objects.create(contest=contest, problem_id=problem_id, code=chr(97 + index))
 
+            if 'maintainers' in self.changed_data:
+                contest.maintainers.set(self.cleaned_data['maintainers'])
             contest.save()
         return contest

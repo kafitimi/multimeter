@@ -1,6 +1,6 @@
 """ Multimeter models """
 
-from django.db.models import (Model, BooleanField, CASCADE, CharField, IntegerField, ForeignKey,
+from django.db.models import (Model, BooleanField, CASCADE, SET_NULL, CharField, IntegerField, ForeignKey,
                               TextField, DateTimeField, DateField, ManyToManyField)
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
@@ -125,6 +125,10 @@ class Contest(Model):
 
     problems = ManyToManyField('multimeter.Problem', through='multimeter.ContestProblem', blank=True)
 
+    owner = ForeignKey('multimeter.Account', null=True, limit_choices_to={'is_superuser': True},
+                       on_delete=SET_NULL, related_name='owner')
+    maintainers = ManyToManyField('multimeter.Account', blank=True)
+
     class Meta:
         verbose_name = _('contest')
         verbose_name_plural = _('contests')
@@ -238,7 +242,7 @@ class ContestProblem(Model):
     class Meta:
         verbose_name = 'код задачи в олимпиаде'
         verbose_name_plural = 'коды задач в олимпиаде'
-        ordering = ['contest', 'code']
+        ordering = ['code', 'contest']
 
     def __str__(self):
         return '%s, задача %s "%s"' % (
