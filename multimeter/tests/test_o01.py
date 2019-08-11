@@ -26,6 +26,7 @@ class TestO01(TestCase):
         self.admin.save()
 
         self.contest1 = Contest()
+        self.contest1.owner = self.admin
         self.contest1.brief_name = "Олимпиада"
         self.contest1.start = datetime.datetime(2000, 1, 1, 12, 0, tzinfo=datetime.timezone.utc)
         self.contest1.stop = datetime.datetime(2000, 1, 1, 18, 0, tzinfo=datetime.timezone.utc)
